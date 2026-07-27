@@ -1,6 +1,10 @@
-import { clsx } from "clsx";
+import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
-export function cn(...inputs: Parameters<typeof clsx>) {
+/**
+ * Merge Tailwind CSS classes intelligently, resolving conflicts.
+ * Standard shadcn/ui helper.
+ */
+export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
