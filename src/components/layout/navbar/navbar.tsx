@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import styles from "./navbar.module.css";
 import { Button } from "@/components/ui/button";
 import { Logo }  from "./logo";
 import { DesktopNav } from "./desktopnav";
@@ -17,21 +18,28 @@ import { ctaLink } from "./navdata";
  * This is a server component itself; usePathname() and open/close state
  * are isolated inside the client children (NavLink, MobileNav).
  */
-export default function Navbar() {
+export default function Navbars() {
   return (
-    <header className="fixed inset-x-0 top-0 z-50 h-20 bg-transparent">
-      <div className="mx-auto flex h-full max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        <Logo />
+    <header className={styles.navbar}>
+      <div className={styles.container}>
+        <div className={styles.logo}>
+              <Logo />
+        </div>
+      
+        <div className={styles.navigation}>
+          <DesktopNav />
+        </div>
+        
 
-        <DesktopNav />
-
-        <div className="hidden md:block">
+        <div className={styles.cta}>
           <Button asChild>
             <Link href={ctaLink.href}>{ctaLink.label}</Link>
           </Button>
         </div>
-
-        <MobileNav />
+        <div className={styles.mobile}>
+           <MobileNav />
+        </div>
+       
       </div>
     </header>
   );
