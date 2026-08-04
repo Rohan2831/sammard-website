@@ -8,12 +8,13 @@ export function Hero() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
   useEffect(() => {
-  heroAnimation(sectionRef, videoRef, titleRef);
-}, []);
+  const cleanup = heroAnimation({ root: sectionRef, video: videoRef, heading: titleRef });
+    return cleanup;
+  }, []);
   return (
     <section ref={sectionRef} className={styles.hero}>
       <video ref={videoRef} className={styles.video} autoPlay muted loop playsInline>
-        <source src="/videos/inflight.mp4" type="video/mp4" />
+        <source src="/videos/launch.mp4" type="video/mp4" />
       </video>
 
       <div className={styles.overlay} />

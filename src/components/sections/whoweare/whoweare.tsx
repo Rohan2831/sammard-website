@@ -65,6 +65,7 @@ export default function WhoWeAre({
         src={imageSrc}
         alt={imageAlt}
         fill
+        sizes="100vw"
         className={styles.image}
       />
     </div>
