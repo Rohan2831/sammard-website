@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 
 import { cn } from "@/lib/utils";
 import type { NavLink as NavLinkData } from "./navdata";
+import styles from "./navlink.module.css";
 
 interface NavLinkProps {
   link: NavLinkData;
@@ -28,8 +29,8 @@ function isActiveRoute(pathname: string, href: string) {
 export function NavLink({
   link,
   className,
-  activeClassName = "text-foreground",
-  inactiveClassName = "text-muted-foreground hover:text-foreground",
+  activeClassName = styles.active,
+  inactiveClassName = styles.inactive,
   onNavigate,
 }: NavLinkProps) {
   const pathname = usePathname();
@@ -41,7 +42,7 @@ export function NavLink({
       onClick={onNavigate}
       aria-current={active ? "page" : undefined}
       className={cn(
-        "text-sm font-medium",
+        styles.link,
         active ? activeClassName : inactiveClassName,
         className
       )}

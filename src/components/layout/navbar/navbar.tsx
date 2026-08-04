@@ -6,6 +6,8 @@ import { Logo }  from "./logo";
 import { DesktopNav } from "./desktopnav";
 import { MobileNav } from "./mobilenav";
 import { ctaLink } from "./navdata";
+import {  Mail } from "lucide-react";
+import { FaInstagram } from "react-icons/fa";
 
 /**
  * Site-wide navbar.
@@ -31,11 +33,27 @@ export default function Navbars() {
         </div>
         
 
-        <div className={styles.cta}>
-          <Button asChild>
-            <Link href={ctaLink.href}>{ctaLink.label}</Link>
-          </Button>
-        </div>
+        <div className={styles.rightSection}>
+    <a
+        href="https://www.instagram.com/team_sammard/"
+        target="_blank"
+        rel="noopener noreferrer"
+        className={styles.icon}
+    >
+        <FaInstagram size={24} />
+    </a>
+
+    <a
+        href="mailto:teamsammard@gmail.com"
+        className={styles.icon}
+    >
+        <Mail size={24} />
+    </a>
+
+    <Button asChild>
+        <Link href={ctaLink.href}>{ctaLink.label}</Link>
+    </Button>
+</div>
         <div className={styles.mobile}>
            <MobileNav />
         </div>

@@ -14,7 +14,6 @@ export function Logo() {
         height={60} 
         className="object-contain" />
       </span>
-      <span className="hidden sm:inline">Team SAMMARD</span>
     </Link>
   );
 }

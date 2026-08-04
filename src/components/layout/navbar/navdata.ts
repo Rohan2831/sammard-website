@@ -12,7 +12,6 @@ export const navLinks: NavLink[] = [
   { label: "Events", href: "/events" },
   { label: "Timeline", href: "/timeline" },
   { label: "Gallery", href: "/gallery" },
-  { label: "Documentation", href: "/documentation" },
   { label: "Sponsors", href: "/sponsors" },
 ];
 export const ctaLink = {

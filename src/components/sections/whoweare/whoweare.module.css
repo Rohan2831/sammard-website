@@ -1,0 +1,212 @@
+/* ==========================================================================
+   Design tokens (scoped to this file — no global leakage)
+   Background photography + dark overlay is the signature element, echoing
+   the Hero. Slate-blue accent instead of the default warm-terracotta so the
+   section reads as its own thing rather than a template.
+   ========================================================================== */
+
+.section {
+    width: 100%;
+    min-height: 100vh;
+
+    background: #070707;
+
+    display: flex;
+    align-items: center;
+
+    padding: 120px 80px;
+}
+
+@media (min-width: 1024px) {
+  .section {
+    min-height: 100vh;
+    padding-block: 8rem;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Background media
+   -------------------------------------------------------------------------- */
+
+
+
+.image {
+  object-fit: cover;
+  
+}
+
+
+
+/* --------------------------------------------------------------------------
+   Content
+   -------------------------------------------------------------------------- */
+
+.content {
+  flex: 1;
+  max-width: 700px;
+}
+.container {
+    width: 100%;
+    max-width: 1500px;
+
+    margin: auto;
+
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    align-items: center;
+
+    gap: 80px;
+}
+.imageContainer {
+    position: relative;
+
+    width: 100%;
+    height: 650px;
+
+    border-radius: 18px;
+
+    overflow: hidden;
+}
+
+.eyebrow {
+  margin: 0 0 1.25rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--sammard-accent);
+}
+
+.heading {
+  margin: 0 0 1.5rem;
+  font-size: clamp(2.25rem, 5vw + 1rem, 4rem);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+}
+
+.intro {
+  margin: 0 auto 3.5rem;
+  max-width: 38rem;
+  font-size: clamp(1rem, 1.2vw + 0.6rem, 1.1875rem);
+  font-weight: 660;
+  color:  #f5f5f5;
+}
+
+/* --------------------------------------------------------------------------
+   Mission / Vision pillars
+   -------------------------------------------------------------------------- */
+
+.pillars {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2.5rem;
+  margin: 0 0 3.5rem;
+  padding-top: 2.75rem;
+  border-top: 1px solid var(--sammard-hairline);
+  text-align: left;
+}
+
+@media (min-width: 640px) {
+  .pillars {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 3rem;
+  }
+}
+
+.pillar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.pillarTitle {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--sammard-accent);
+}
+
+.pillarText {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--sammard-ink-muted);
+}
+
+/* --------------------------------------------------------------------------
+   CTA — transitions only, no keyframe animation. Ready for a future GSAP
+   timeline via the data-gsap hook on the element itself.
+   -------------------------------------------------------------------------- */
+
+.cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+
+  padding: 0.9rem 2.25rem;
+  border: 1px solid var(--sammard-ink);
+  border-radius: 4px;
+
+  font-size: 0.9375rem;
+  font-weight: 670;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--sammard-ink);
+
+  background-color: transparent;
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease,
+    border-color 0.25s ease,
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.cta:hover,
+.cta:focus-visible {
+  background-color: rgba(255, 255, 255, 0.12);;
+  color: #ffffff;
+  border-color: #ffffff;
+  transform : translateY(-2px);
+  box-shadow: 0 10px 25px rgba(255, 255, 255, 0.12);
+}
+
+.cta:focus-visible {
+  outline: 2px solid var(--sammard-accent);
+  outline-offset: 3px;
+}
+
+/* --------------------------------------------------------------------------
+   Motion preference
+   -------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .cta {
+    transition: none;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Small-mobile refinement
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 420px) {
+  .section {
+    padding-block: 4.5rem;
+  }
+
+  .pillars {
+    text-align: center;
+  }
+
+  .pillar {
+    align-items: center;
+  }
+}

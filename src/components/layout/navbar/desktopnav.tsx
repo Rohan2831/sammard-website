@@ -1,5 +1,6 @@
 import { navLinks } from "./navdata";
 import { NavLink } from "./navlinks";
+import styles from "./desktopnav.module.css";
 
 /**
  * Centered link row, visible from md breakpoint up.
@@ -9,15 +10,15 @@ export function DesktopNav() {
   return (
     <nav
       aria-label="Primary"
-      className="hidden md:flex md:items-center md:gap-8"
+      className={styles.desktopNav}
     >
       {navLinks.map((link) => (
         <NavLink
           key={link.href}
           link={link}
-          className="relative py-1 after:absolute after:-bottom-1 after:left-0 after:h-[2px] after:w-full after:bg-foreground after:content-['']"
-          activeClassName="text-foreground after:opacity-100"
-          inactiveClassName="text-muted-foreground hover:text-foreground after:opacity-0"
+          className={styles.link}
+          activeClassName={styles.active}
+          inactiveClassName={styles.inactive}
         />
       ))}
     </nav>
