@@ -62,7 +62,7 @@ export default function Footer({
       <div ref={logoRef} className={styles.top} data-gsap="footer-logo">
   <Link href="/" className={styles.logo}>
     <Image
-      src="/assets/logos/Logo.png"
+      src="/assets/shared/logo.png"
       alt="Team SAMMARD Logo"
       width={70}
       height={70}

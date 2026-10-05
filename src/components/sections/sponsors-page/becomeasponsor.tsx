@@ -13,7 +13,7 @@ export function BecomeASponsor() {
       />
 
       <div className={styles.brochure}>
-        <DownloadButton label="Sponsorship Brochure" href="/assets/documents/team-sammard-brochure.pdf" />
+        <DownloadButton label="Sponsorship Brochure" href="/assets/sponsors/team-sammard-brochure.pdf" />
       </div>
 
       <ContactForm

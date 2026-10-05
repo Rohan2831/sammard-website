@@ -24,7 +24,7 @@ const SUBSYSTEM_TEMPLATE = (): Rocket["components"] => [
 // to the PTR's fuller active BHAGAT-C system. averageThrust is still TBD
 // (only a peak/structural-test figure was found, not a published average).
 //
-// 2026-10: the team's sponsorship brochure (public/assets/documents/
+// 2026-10: the team's sponsorship brochure (public/assets/sponsors/
 // team-sammard-brochure.pdf) confirms Udbhava flew at IREC 2026 — launched
 // and recovered, 3rd in Asia in the 10K SRAD category — and names its motor
 // "Project Rudra". Status moved from in-development to flown accordingly.
@@ -65,6 +65,9 @@ export const rockets: Rocket[] = [
       averageThrust: "TBD (peak ~3,700 N per structural test data)",
       designedApogee: "10,000 ft",
     },
+    // Nose to tail, as on the vehicle (PTR structural layout + CAD positions):
+    // the drogue tube sits above the avionics bay, the airbrake coupler below it,
+    // then the lower body tube housing the motor, the fin can and the nozzle.
     components: [
       {
         id: "nose-cone",
@@ -77,19 +80,24 @@ export const rockets: Rocket[] = [
         description: "A compact, autonomous 3D micro bioprinter that performs controlled extrusion-based printing during flight, studying bioink flow and print fidelity under transient acceleration and reduced-gravity conditions for future aerospace and biomanufacturing applications.",
       },
       {
-        id: "avionics-bay",
-        name: "Avionics Bay",
-        description: "A modular bay pairing COTS hardware (RRC3+, Blue Raven, Featherweight GPS on a 5-cell 21700 battery pack) with two custom SRAD flight computers — Arceus and the STM32-based Sirius — and a dedicated Power Distribution Board on a 10-cell 21700 Li-ion pack, for redundant recovery actuation, telemetry, and data acquisition.",
-      },
-      {
         id: "recovery",
         name: "Recovery",
         description: "Dual-deployment using 5/8-inch Kevlar shock cords (4,500 lb test strength) and two redundant 5g black-powder charge wells per separation event; both parachutes are packed in two-layer stitched fiberglass bags for ember protection.",
       },
       {
+        id: "avionics-bay",
+        name: "Avionics Bay",
+        description: "A modular bay pairing COTS hardware (RRC3+, Blue Raven, Featherweight GPS on a 5-cell 21700 battery pack) with two custom SRAD flight computers — Arceus and the STM32-based Sirius — and a dedicated Power Distribution Board on a 10-cell 21700 Li-ion pack, for redundant recovery actuation, telemetry, and data acquisition.",
+      },
+      {
         id: "airbrakes",
         name: "Airbrakes",
         description: "A custom SRAD servo-driven 4-leaf airbrake, controlled by BHAGAT-C, an ESP32-based PCB. A cam plate with four symmetric spiral slots deploys the four flush-mounted leaves radially for active drag control, validated by CFD from Mach 0.875 down to Mach 0.3 across the coasting phase.",
+      },
+      {
+        id: "airframe",
+        name: "Airframe",
+        description: "Two filament-wound fiberglass body tubes forming the primary load-bearing structure, compression-tested to 21,539 N (≈5.8× the expected motor thrust) before buckling failure.",
       },
       {
         id: "motor",
@@ -102,9 +110,9 @@ export const rockets: Rocket[] = [
         description: "Four fins in a hybrid forged-carbon-fiber/fiberglass composite, compression-molded and mounted via a CNC-machined 6061-T6 aluminium fin-can for precise, repeatable alignment.",
       },
       {
-        id: "airframe",
-        name: "Airframe",
-        description: "Two filament-wound fiberglass body tubes forming the primary load-bearing structure, compression-tested to 21,539 N (≈5.8× the expected motor thrust) before buckling failure.",
+        id: "nozzle",
+        name: "Nozzle",
+        description: "A converging–diverging nozzle machined from SS304 for high-temperature strength, oxidation resistance and reusability, with a 28.5 mm throat. An O-ring groove on its shoulder seals against the motor's thermal liner, and a bolted retention ring secures it at the aft end.",
       },
     ],
     flightHistory: [
@@ -115,25 +123,34 @@ export const rockets: Rocket[] = [
       {
         id: "udbhava-1",
         type: "image",
-        src: "/assets/images/rockets/udbhava-poster.jpg",
+        src: "/assets/projects/udbhava-poster.jpg",
         alt: "Udbhava rocket and technical poster at Bangalore Space Expo 2026",
         category: "Competitions",
       },
     ],
-    heroImage: "/assets/images/rockets/udbhava-poster.jpg",
+    heroImage: "/assets/projects/udbhava-poster.jpg",
     render: {
-      vertical: "/assets/images/rockets/renders/udbhava.webp",
-      horizontal: "/assets/images/rockets/renders/udbhava-horizontal.webp",
+      vertical: "/assets/shared/rockets/udbhava.webp",
+      horizontal: "/assets/shared/rockets/udbhava-horizontal.webp",
     },
     model: {
-      src: "/assets/models/udbhava.glb",
+      src: "/assets/shared/models/udbhava.glb",
+      // The CAD has no motor casing or grains (so no "motor" group), no payload and
+      // no airbrake parts. Base-bleed segments, the airframe/fin-can couplers and the
+      // motor retainer belong to no listed subsystem and stay neutral.
       partGroups: {
         "nose-cone": ["nose tip", "nose cone", "nosecone"],
         "avionics-bay": ["avionics bay"],
+        // The drogue/main parachute tubes plus the charge-well couplers either side of the avionics bay.
         recovery: ["recovery"],
-        motor: ["nozzle", "graphite insert", "retaining ring", "lower retainer"],
+        nozzle: ["nozzle assembly", "graphite insert", "retaining ring"],
+        // "5 deg bevel" plates are the fins; "fincan" the four aluminium plates holding them.
         fins: ["fincan", "5 deg bevel"],
         airframe: ["lowerbodytube"],
+      },
+      decal: {
+        src: "/assets/shared/models/udbhava-decal.webp",
+        parts: ["nose tip", "nose cone", "recovery tube", "avionics bay", "lowerbodytube"],
       },
     },
   },
@@ -162,10 +179,10 @@ export const rockets: Rocket[] = [
     ],
     videoUrls: [],
     gallery: [],
-    heroImage: "/assets/images/teampic1.JPG",
+    heroImage: "/assets/shared/rockets/airavata.webp",
     render: {
-      vertical: "/assets/images/rockets/renders/airavata.webp",
-      horizontal: "/assets/images/rockets/renders/airavata-horizontal.webp",
+      vertical: "/assets/shared/rockets/airavata.webp",
+      horizontal: "/assets/shared/rockets/airavata-horizontal.webp",
     },
   },
   {
@@ -188,10 +205,10 @@ export const rockets: Rocket[] = [
     flightHistory: [{ date: "2024", event: "IREC 2024", outcome: "Flown" }],
     videoUrls: [],
     gallery: [],
-    heroImage: "/assets/images/teampic1.JPG",
+    heroImage: "/assets/shared/rockets/agneya.webp",
     render: {
-      vertical: "/assets/images/rockets/renders/agneya.webp",
-      horizontal: "/assets/images/rockets/renders/agneya-horizontal.webp",
+      vertical: "/assets/shared/rockets/agneya.webp",
+      horizontal: "/assets/shared/rockets/agneya-horizontal.webp",
     },
   },
   {
@@ -214,10 +231,10 @@ export const rockets: Rocket[] = [
     flightHistory: [{ date: "2023", event: "IREC 2023 / Spaceport America Cup 2023", outcome: "Flown" }],
     videoUrls: [],
     gallery: [],
-    heroImage: "/assets/images/teampic1.JPG",
+    heroImage: "/assets/shared/rockets/vajra.webp",
     render: {
-      vertical: "/assets/images/rockets/renders/vajra.webp",
-      horizontal: "/assets/images/rockets/renders/vajra-horizontal.webp",
+      vertical: "/assets/shared/rockets/vajra.webp",
+      horizontal: "/assets/shared/rockets/vajra-horizontal.webp",
     },
   },
   {
@@ -240,6 +257,6 @@ export const rockets: Rocket[] = [
     flightHistory: [{ date: "2021", event: "First indigenous sounding rocket", outcome: "Flown" }],
     videoUrls: [],
     gallery: [],
-    heroImage: "/assets/images/teampic1.JPG",
+    heroImage: "/assets/projects/pinaka.jpg",
   },
 ];

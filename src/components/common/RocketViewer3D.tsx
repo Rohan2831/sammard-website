@@ -4,7 +4,7 @@ import dynamic from "next/dynamic";
 import { useCallback, useState } from "react";
 import { useInView } from "react-intersection-observer";
 import type { Rocket } from "@/types";
-import type { ExplodeSource } from "./RocketModelCanvas";
+import type { ExplodeSource, Shift } from "./RocketModelCanvas";
 import styles from "./RocketViewer3D.module.css";
 
 const RocketModelCanvas = dynamic(() => import("./RocketModelCanvas").then((m) => m.RocketModelCanvas), {
@@ -19,6 +19,9 @@ export interface RocketViewer3DProps {
   /** 0 = assembled, 1 = fully exploded. A ref is read every frame (for scroll-driven values). */
   explode?: ExplodeSource;
   interactive?: boolean;
+  /** Zoom the camera in on the active subsystem. */
+  focus?: boolean;
+  shift?: Shift;
 }
 
 /**
@@ -33,6 +36,8 @@ export function RocketViewer3D({
   activeSubsystemId = null,
   explode = 0,
   interactive = false,
+  focus = false,
+  shift,
 }: RocketViewer3DProps) {
   // Mount the canvas the first time the viewer nears the viewport, then keep it mounted
   // (`inView` alone only pauses rendering, so scrolling back doesn't reload the model).
@@ -65,6 +70,8 @@ export function RocketViewer3D({
             activeSubsystemId={activeSubsystemId}
             explode={explode}
             interactive={interactive}
+            focus={focus}
+            shift={shift}
             active={inView}
             onReady={handleReady}
           />

@@ -5,23 +5,25 @@
    immutability model doesn't account for. */
 
 import { Suspense, useEffect, useMemo, useRef, type RefObject } from "react";
-import { createPortal } from "react-dom";
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { Environment, Lightformer, OrbitControls, PerspectiveCamera, View, useGLTF } from "@react-three/drei";
+import { Canvas, useFrame, useLoader, useThree } from "@react-three/fiber";
+import { Environment, Lightformer, OrbitControls, PerspectiveCamera, useGLTF } from "@react-three/drei";
 import * as THREE from "three";
 import { prefersReducedMotion } from "@/animations/gsap";
 import type { RocketModel } from "@/types";
 
-const DRACO_DECODER_PATH = "/assets/draco/";
+const DRACO_DECODER_PATH = "/vendor/draco/";
 // At full explode each part moves this fraction of its axial distance from
 // the assembly's centre, and this multiple of its radial distance (spreads the fins).
 const AXIAL_SPREAD = 0.55;
 const RADIAL_SPREAD = 2.5;
-const DIM_OPACITY = 0.12;
+// Low enough that ghosted neighbours behind the showcase's text don't fight it.
+const DIM_OPACITY = 0.07;
 // Soft white self-illumination on the emphasised subsystem, so dark parts
 // (carbon nose cone, fins) read as highlighted too, not just un-dimmed.
 const ACTIVE_GLOW = 0.3;
 const SPIN_SPEED = 0.25;
+// Exponential ease rate for camera moves (higher = snappier).
+const CAMERA_EASE = 2.5;
 
 export type ExplodeSource = number | RefObject<number>;
 type Orientation = "vertical" | "horizontal";
@@ -54,11 +56,96 @@ interface Framing {
 const normalizeName = (s: string) => s.toLowerCase().replace(/[_\s]+/g, " ").trim();
 
 function matchGroup(name: string, partGroups: RocketModel["partGroups"]): string | null {
-  const normalized = normalizeName(name);
   for (const [group, needles] of Object.entries(partGroups)) {
-    if (needles.some((needle) => normalized.includes(normalizeName(needle)))) return group;
+    if (matchesAny(name, needles)) return group;
   }
   return null;
+}
+
+const matchesAny = (name: string, needles: string[]) =>
+  needles.some((needle) => normalizeName(name).includes(normalizeName(needle)));
+
+// Scenes already wrapped. useGLTF caches one scene per URL and every viewer clones
+// it, so the decal is applied to that shared original exactly once.
+const decalled = new WeakSet<THREE.Object3D>();
+
+/**
+ * Wraps the flat livery artwork around the outer-skin parts with a cylindrical
+ * projection about the long (+Y) axis: across the artwork = once around the
+ * body, down the artwork = nose tip to the bottom of the last skin part. Each
+ * part gets its own crop of the artwork as a texture, so no single texture
+ * exceeds GPU size limits however tall the artwork is.
+ */
+function applyDecal(scene: THREE.Object3D, decal: NonNullable<RocketModel["decal"]>, image: HTMLImageElement) {
+  if (decalled.has(scene)) return;
+  decalled.add(scene);
+  scene.updateMatrixWorld(true);
+
+  const meshes: THREE.Mesh[] = [];
+  scene.traverse((o) => {
+    const mesh = o as THREE.Mesh;
+    if (!mesh.isMesh) return;
+    for (let node: THREE.Object3D | null = mesh; node; node = node.parent) {
+      if (matchesAny(node.name, decal.parts)) {
+        meshes.push(mesh);
+        return;
+      }
+    }
+  });
+  if (meshes.length === 0) return;
+
+  const skin = new THREE.Box3();
+  meshes.forEach((m) => skin.expandByObject(m));
+  const axis = skin.getCenter(new THREE.Vector3());
+  const length = skin.max.y - skin.min.y;
+  const p = new THREE.Vector3();
+
+  for (const mesh of meshes) {
+    // Non-indexed so triangles straddling the seam can take their own wrapped coordinates.
+    const geometry = mesh.geometry.index ? mesh.geometry.toNonIndexed() : mesh.geometry.clone();
+    const position = geometry.getAttribute("position");
+    const u = new Float32Array(position.count);
+    const v = new Float32Array(position.count);
+    for (let i = 0; i < position.count; i++) {
+      p.fromBufferAttribute(position, i).applyMatrix4(mesh.matrixWorld);
+      // Seen from outside, the artwork runs left → right with increasing angle (not mirrored).
+      u[i] = Math.atan2(p.x - axis.x, p.z - axis.z) / (2 * Math.PI) + 0.5;
+      v[i] = (skin.max.y - p.y) / length;
+    }
+    // A triangle crossing the seam would otherwise smear the whole artwork across itself.
+    for (let i = 0; i < position.count; i += 3) {
+      const hi = Math.max(u[i], u[i + 1], u[i + 2]);
+      for (let k = i; k < i + 3; k++) if (hi - u[k] > 0.5) u[k] += 1;
+    }
+
+    let top = 1;
+    let bottom = 0;
+    for (let i = 0; i < v.length; i++) {
+      top = Math.min(top, v[i]);
+      bottom = Math.max(bottom, v[i]);
+    }
+    const uv = new Float32Array(position.count * 2);
+    for (let i = 0; i < position.count; i++) {
+      uv[i * 2] = u[i];
+      // Textures are flipped on upload, so 1 is the crop's top edge.
+      uv[i * 2 + 1] = 1 - (v[i] - top) / Math.max(bottom - top, 1e-6);
+    }
+    geometry.setAttribute("uv", new THREE.BufferAttribute(uv, 2));
+    mesh.geometry.dispose();
+    mesh.geometry = geometry;
+
+    const canvas = document.createElement("canvas");
+    const sy = top * image.naturalHeight;
+    canvas.width = image.naturalWidth;
+    canvas.height = Math.max(1, Math.round((bottom - top) * image.naturalHeight));
+    canvas.getContext("2d")?.drawImage(image, 0, sy, canvas.width, canvas.height, 0, 0, canvas.width, canvas.height);
+    const map = new THREE.CanvasTexture(canvas);
+    map.colorSpace = THREE.SRGBColorSpace;
+    map.wrapS = THREE.RepeatWrapping;
+    map.anisotropy = 8;
+    // emissiveMap: the highlight glow brightens the artwork instead of washing it out to grey.
+    mesh.material = new THREE.MeshStandardMaterial({ map, emissiveMap: map, roughness: 0.45, metalness: 0 });
+  }
 }
 
 /** First group matched by the part or any of its descendants (e.g. "Nozzle Assembly" → its children). */
@@ -97,6 +184,7 @@ function prepare(scene: THREE.Object3D, partGroups: RocketModel["partGroups"]) {
   const box = new THREE.Box3().setFromObject(root);
   const center = box.getCenter(new THREE.Vector3());
   const toAssemblyLocal = assembly.matrixWorld.clone().invert();
+  const assembled: Framing = { min: 0, max: 0, radial: 0 };
   const whole: Framing = { min: 0, max: 0, radial: 0 };
   const groups: Record<string, Framing> = {};
 
@@ -129,15 +217,19 @@ function prepare(scene: THREE.Object3D, partGroups: RocketModel["partGroups"]) {
 
     if (!partBox.isEmpty()) {
       const { min, max } = partBox;
+      const restRadial = Math.max(
+        Math.abs(min.x - center.x),
+        Math.abs(max.x - center.x),
+        Math.abs(min.z - center.z),
+        Math.abs(max.z - center.z)
+      );
+      assembled.min = Math.min(assembled.min, min.y - center.y);
+      assembled.max = Math.max(assembled.max, max.y - center.y);
+      assembled.radial = Math.max(assembled.radial, restRadial);
+
       const lo = min.y - center.y + worldOffset.y;
       const hi = max.y - center.y + worldOffset.y;
-      const radial =
-        Math.max(
-          Math.abs(min.x - center.x),
-          Math.abs(max.x - center.x),
-          Math.abs(min.z - center.z),
-          Math.abs(max.z - center.z)
-        ) + Math.hypot(worldOffset.x, worldOffset.z);
+      const radial = restRadial + Math.hypot(worldOffset.x, worldOffset.z);
       for (const framing of group ? [whole, (groups[group] ??= { min: Infinity, max: -Infinity, radial: 0 })] : [whole]) {
         framing.min = Math.min(framing.min, lo);
         framing.max = Math.max(framing.max, hi);
@@ -148,12 +240,14 @@ function prepare(scene: THREE.Object3D, partGroups: RocketModel["partGroups"]) {
     return { object, base: object.position.clone(), offset: to.sub(from), group, materials };
   });
 
-  // Keep the whole-assembly framing centred on the origin, which OrbitControls orbits around.
-  const reach = Math.max(-whole.min, whole.max);
-  whole.min = -reach;
-  whole.max = reach;
+  // Keep the whole-rocket framings centred on the origin, which OrbitControls orbits around.
+  for (const framing of [assembled, whole]) {
+    const reach = Math.max(-framing.min, framing.max);
+    framing.min = -reach;
+    framing.max = reach;
+  }
 
-  return { root, parts, center, whole, groups };
+  return { root, parts, center, assembled, whole, groups };
 }
 
 interface RocketPartsProps {
@@ -163,21 +257,43 @@ interface RocketPartsProps {
   explode: ExplodeSource;
   /** Frame the camera on the active subsystem instead of the whole rocket. */
   focus: boolean;
+  shift: Shift;
   interacting: RefObject<boolean>;
   onReady?: () => void;
+  decalImage?: HTMLImageElement;
 }
 
-function RocketParts({ model, orientation, activeSubsystemId, explode, focus, interacting, onReady }: RocketPartsProps) {
+/** Loads the livery artwork alongside the model, so the rocket never appears unpainted. */
+function DecalledRocketParts({ decalSrc, ...props }: RocketPartsProps & { decalSrc: string }) {
+  const decalImage = useLoader(THREE.ImageLoader, decalSrc);
+  return <RocketParts {...props} decalImage={decalImage} />;
+}
+
+function RocketParts({
+  model,
+  orientation,
+  activeSubsystemId,
+  explode,
+  focus,
+  shift,
+  interacting,
+  onReady,
+  decalImage,
+}: RocketPartsProps) {
   const { scene } = useGLTF(model.src, DRACO_DECODER_PATH);
-  const { root, parts, center, whole, groups } = useMemo(
-    () => prepare(scene, model.partGroups),
-    [scene, model.partGroups]
-  );
+  const { root, parts, center, assembled, whole, groups } = useMemo(() => {
+    if (model.decal && decalImage) applyDecal(scene, model.decal, decalImage);
+    return prepare(scene, model.partGroups);
+  }, [scene, model.partGroups, model.decal, decalImage]);
   const spinRef = useRef<THREE.Group>(null);
   const explodeCurrent = useRef(typeof explode === "number" ? explode : 0);
   const reducedMotion = useMemo(() => prefersReducedMotion(), []);
   const activeHasParts = activeSubsystemId !== null && parts.some((p) => p.group === activeSubsystemId);
-  const framing = (focus && activeSubsystemId && groups[activeSubsystemId]) || whole;
+  const focused = (focus && activeSubsystemId && groups[activeSubsystemId]) || null;
+  const camera = useThree((s) => s.camera) as THREE.PerspectiveCamera;
+  const size = useThree((s) => s.size);
+  const shot = useRef<Shot | null>(null);
+  const framing = useRef<Framing>({ ...assembled });
 
   useEffect(() => {
     onReady?.();
@@ -216,63 +332,104 @@ function RocketParts({ model, orientation, activeSubsystemId, explode, focus, in
     if (spinRef.current && !reducedMotion && !interacting.current) {
       spinRef.current.rotation.y += delta * SPIN_SPEED;
     }
+
+    // Whole-rocket framing follows the explode (tight when assembled, wide when
+    // exploded); a focused subsystem uses its own exploded extents.
+    const f = framing.current;
+    if (focused) Object.assign(f, focused);
+    else {
+      const t = explodeCurrent.current;
+      f.min = THREE.MathUtils.lerp(assembled.min, whole.min, t);
+      f.max = THREE.MathUtils.lerp(assembled.max, whole.max, t);
+      f.radial = THREE.MathUtils.lerp(assembled.radial, whole.radial, t);
+    }
+    const goal = frameShot(camera, size.width / Math.max(size.height, 1), f, orientation, focused ? 1.6 : 1.1, shift);
+    shot.current = aimCamera(camera, shot.current, goal, reducedMotion ? Infinity : CAMERA_EASE, delta);
   });
 
   return (
-    <>
-      <FitCamera
-        min={framing.min}
-        max={framing.max}
-        radial={framing.radial}
-        orientation={orientation}
-        // Focused views leave room along the axis so ghosted neighbours show where the part sits.
-        alongMargin={framing === whole ? 1.1 : 1.6}
-      />
-      <group rotation={orientation === "horizontal" ? [0, 0, Math.PI / 2] : [0, 0, 0]}>
-        <group ref={spinRef}>
-          <primitive object={root} position={[-center.x, -center.y, -center.z]} />
-        </group>
+    <group rotation={orientation === "horizontal" ? [0, 0, Math.PI / 2] : [0, 0, 0]}>
+      <group ref={spinRef}>
+        <primitive object={root} position={[-center.x, -center.y, -center.z]} />
       </group>
-    </>
+    </group>
   );
 }
 
+/** Where the camera looks, and how far back from that point it sits. */
+interface Shot {
+  look: THREE.Vector3;
+  distance: number;
+}
+
 /**
- * Frames an exploded region (the whole rocket, or one subsystem) so nothing
- * clips. Fits both along the rocket's axis and across it; adding the radial
- * reach to the distance keeps flared parts in frame even when the spin swings
- * them toward the camera (perspective would otherwise push them past the edge).
+ * Slides the framed subject off-centre, as a fraction of the half-viewport:
+ * [0.4, 0] puts it right of centre (room for text on the left), [0, 0.3] above.
  */
-function FitCamera({
-  min,
-  max,
-  radial,
-  orientation,
-  alongMargin,
-}: Framing & { orientation: Orientation; alongMargin: number }) {
-  const camera = useThree((s) => s.camera) as THREE.PerspectiveCamera;
-  const { width, height } = useThree((s) => s.size);
+export type Shift = readonly [number, number];
 
-  useEffect(() => {
-    const aspect = width > 0 && height > 0 ? width / height : 1;
-    const tan = Math.tan(THREE.MathUtils.degToRad(camera.fov) / 2);
-    const mid = (min + max) / 2;
-    const along = ((max - min) / 2) * alongMargin;
-    const across = radial * 1.15;
-    const vertical = orientation === "vertical";
-    const fitAlong = vertical ? along / tan : along / (tan * aspect);
-    const fitAcross = vertical ? across / (tan * aspect) : across / tan;
-    const distance = Math.max(fitAlong, fitAcross) + radial;
-    // Horizontal mode rotates the model +90° about Z, so its +Y axis points to -X.
-    const target = vertical ? new THREE.Vector3(0, mid, 0) : new THREE.Vector3(-mid, 0, 0);
-    camera.position.set(target.x, target.y, distance);
-    camera.lookAt(target);
-    camera.near = distance / 100;
-    camera.far = distance * 10;
-    camera.updateProjectionMatrix();
-  }, [camera, min, max, radial, orientation, alongMargin, width, height]);
+const NO_SHIFT: Shift = [0, 0];
 
-  return null;
+/**
+ * The shot that frames a region (the whole rocket, or one subsystem) so
+ * nothing clips. Fits both along the rocket's axis and across it, within
+ * whatever share of the frame the shift leaves; adding the radial reach to the
+ * distance keeps flared parts in frame even when the spin swings them toward
+ * the camera (perspective would otherwise push them past the edge).
+ */
+function frameShot(
+  camera: THREE.PerspectiveCamera,
+  aspect: number,
+  { min, max, radial }: Framing,
+  orientation: Orientation,
+  alongMargin: number,
+  [sx, sy]: Shift
+): Shot {
+  const tan = Math.tan(THREE.MathUtils.degToRad(camera.fov) / 2);
+  const kx = 1 - Math.abs(sx);
+  const ky = 1 - Math.abs(sy);
+  const mid = (min + max) / 2;
+  const along = ((max - min) / 2) * alongMargin;
+  const across = radial * 1.15;
+  const vertical = orientation === "vertical";
+  const fitAlong = vertical ? along / (tan * ky) : along / (tan * aspect * kx);
+  const fitAcross = vertical ? across / (tan * aspect * kx) : across / (tan * ky);
+  const distance = Math.max(fitAlong, fitAcross) + radial;
+  // Horizontal mode rotates the model +90° about Z, so its +Y axis points to -X.
+  const look = vertical ? new THREE.Vector3(0, mid, 0) : new THREE.Vector3(-mid, 0, 0);
+  // Looking away from the subject is what moves it across the frame.
+  look.x -= sx * distance * tan * aspect;
+  look.y -= sy * distance * tan;
+  return { look, distance };
+}
+
+/**
+ * Eases the camera toward a shot (snaps on the first frame). It keeps its
+ * current viewing direction rather than resetting to straight-on, so an
+ * OrbitControls drag survives the framing changing underneath it.
+ */
+function aimCamera(
+  camera: THREE.PerspectiveCamera,
+  current: Shot | null,
+  goal: Shot,
+  ease: number,
+  delta: number
+): Shot {
+  const direction = current
+    ? camera.position.clone().sub(current.look).normalize()
+    : new THREE.Vector3(0, 0, 1);
+  const next = current ?? { look: goal.look.clone(), distance: goal.distance };
+  if (current) {
+    const t = ease === Infinity ? 1 : 1 - Math.exp(-ease * delta);
+    next.look.lerp(goal.look, t);
+    next.distance = THREE.MathUtils.lerp(next.distance, goal.distance, t);
+  }
+  camera.position.copy(next.look).addScaledVector(direction, next.distance);
+  camera.lookAt(next.look);
+  camera.near = next.distance / 100;
+  camera.far = next.distance * 10;
+  camera.updateProjectionMatrix();
+  return next;
 }
 
 interface RocketSceneProps {
@@ -281,21 +438,24 @@ interface RocketSceneProps {
   activeSubsystemId: string | null;
   explode: ExplodeSource;
   focus?: boolean;
+  shift?: Shift;
   interactive?: boolean;
   onReady?: () => void;
 }
 
-/** Camera, lights and model — shared by the standalone canvas and the multi-view layout. */
+/** Camera, lights and model. */
 function RocketScene({
   model,
   orientation,
   activeSubsystemId,
   explode,
   focus = false,
+  shift = NO_SHIFT,
   interactive = false,
   onReady,
 }: RocketSceneProps) {
   const interacting = useRef(false);
+  const partsProps = { model, orientation, activeSubsystemId, explode, focus, shift, interacting, onReady };
 
   return (
     <>
@@ -312,15 +472,11 @@ function RocketScene({
       </Environment>
 
       <Suspense fallback={null}>
-        <RocketParts
-          model={model}
-          orientation={orientation}
-          activeSubsystemId={activeSubsystemId}
-          explode={explode}
-          focus={focus}
-          interacting={interacting}
-          onReady={onReady}
-        />
+        {model.decal ? (
+          <DecalledRocketParts decalSrc={model.decal.src} {...partsProps} />
+        ) : (
+          <RocketParts {...partsProps} />
+        )}
       </Suspense>
 
       {interactive && (
@@ -346,55 +502,19 @@ export interface RocketModelCanvasProps {
   activeSubsystemId: string | null;
   explode: ExplodeSource;
   interactive: boolean;
+  /** Frame the camera on the active subsystem instead of the whole rocket. */
+  focus?: boolean;
+  shift?: Shift;
   /** Pauses rendering while off-screen. */
   active: boolean;
   onReady?: () => void;
 }
 
-/** A single standalone viewer with its own WebGL canvas. */
+/** A standalone viewer with its own WebGL canvas. */
 export function RocketModelCanvas({ active, ...scene }: RocketModelCanvasProps) {
   return (
     <Canvas dpr={[1, 1.75]} gl={{ antialias: true, alpha: true }} frameloop={active ? "always" : "never"} aria-hidden="true">
       <RocketScene {...scene} />
     </Canvas>
-  );
-}
-
-/**
- * One shared, viewport-sized WebGL canvas that draws every `RocketPartView`
- * on the page into its own DOM box (drei `View`, scissored). One context
- * instead of one per subsystem. Portalled to <body> so no transformed
- * ancestor can break its `position: fixed`; it never takes pointer events,
- * and sits under the fixed navbar.
- */
-export function RocketViewsCanvas({ active }: { active: boolean }) {
-  return createPortal(
-    <Canvas
-      dpr={[1, 1.75]}
-      gl={{ antialias: true, alpha: true }}
-      frameloop={active ? "always" : "never"}
-      aria-hidden="true"
-      style={{ position: "fixed", inset: 0, zIndex: 1, pointerEvents: "none" }}
-    >
-      <View.Port />
-    </Canvas>,
-    document.body
-  );
-}
-
-/** The rocket fully exploded, framed on one subsystem (lit) with its neighbours ghosted for context. */
-export function RocketPartView({
-  model,
-  subsystemId,
-  className,
-}: {
-  model: RocketModel;
-  subsystemId: string;
-  className?: string;
-}) {
-  return (
-    <View className={className}>
-      <RocketScene model={model} orientation="vertical" activeSubsystemId={subsystemId} explode={1} focus />
-    </View>
   );
 }

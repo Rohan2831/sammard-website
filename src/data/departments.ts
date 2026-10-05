@@ -16,7 +16,7 @@ export const departments: Department[] = [
   id: `department-${slug}`,
   slug,
   name,
-  coverImage: "/assets/images/teampic1.JPG",
+  coverImage: `/assets/departments/${slug}.jpg`,
   overview: "Overview — TBD",
   responsibilities: ["Responsibility — TBD"],
   skills: ["Skill — TBD"],

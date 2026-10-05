@@ -10,7 +10,7 @@ export const sponsors: Sponsor[] = [
   {
     id: "converge",
     name: "Converge",
-    logoSrc: "/assets/images/sponsors/converge.png",
+    logoSrc: "/assets/shared/sponsors/converge.png",
     logoAlt: "Converge company logo",
     tier: "platinum",
     description: "Leading aerospace manufacturing company providing materials and technical expertise.",
@@ -19,7 +19,7 @@ export const sponsors: Sponsor[] = [
   {
     id: "solidworks",
     name: "SolidWorks",
-    logoSrc: "/assets/images/sponsors/solidworks.png",
+    logoSrc: "/assets/shared/sponsors/solidworks.png",
     logoAlt: "SolidWorks company logo",
     description: "Innovative space technology company supporting our propulsion systems development.",
     website: "https://www.solidworks.com/",
@@ -27,7 +27,7 @@ export const sponsors: Sponsor[] = [
   {
     id: "altium",
     name: "Altium Designer",
-    logoSrc: "/assets/images/sponsors/altium.png",
+    logoSrc: "/assets/shared/sponsors/altium.png",
     logoAlt: "Altium Designer company logo",
     description: "Electronics manufacturer providing components for our avionics systems.",
     website: "https://www.altium.com/",
@@ -35,7 +35,7 @@ export const sponsors: Sponsor[] = [
   {
     id: "altair",
     name: "Altair",
-    logoSrc: "/assets/images/sponsors/altair.png",
+    logoSrc: "/assets/shared/sponsors/altair.png",
     logoAlt: "Altair company logo",
     description: "Advanced materials supplier for our rocket airframes and structural components.",
     website: "https://altair.com/",
@@ -43,7 +43,7 @@ export const sponsors: Sponsor[] = [
   {
     id: "vit",
     name: "VIT University",
-    logoSrc: "/assets/images/sponsors/vit.png",
+    logoSrc: "/assets/shared/sponsors/vit.png",
     logoAlt: "VIT University logo",
     description: "Our home institution providing facilities, mentorship, and academic support.",
     website: "https://vit.ac.in/",
@@ -51,7 +51,7 @@ export const sponsors: Sponsor[] = [
   {
     id: "aerospace-association-of-india",
     name: "Aerospace Association of India",
-    logoSrc: "/assets/images/sponsors/sponsor-six.png",
+    logoSrc: "/assets/shared/sponsors/sponsor-six.png",
     logoAlt: "Aerospace Association of India logo",
     description: "National organization supporting collegiate aerospace initiatives.",
   },

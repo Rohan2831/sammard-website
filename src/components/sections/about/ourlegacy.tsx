@@ -11,10 +11,10 @@ export function OurLegacy() {
       />
       <div className={styles.gallery}>
         <div className={styles.imageWrap}>
-          <Image src="/assets/images/teampic1.JPG" alt="Team SAMMARD" fill sizes="50vw" className={styles.image} />
+          <Image src="/assets/about/legacy-1.jpg" alt="Team SAMMARD" fill sizes="50vw" className={styles.image} />
         </div>
         <div className={styles.imageWrap}>
-          <Image src="/assets/images/teampic2.JPG" alt="Team SAMMARD at work" fill sizes="50vw" className={styles.image} />
+          <Image src="/assets/about/legacy-2.jpg" alt="Team SAMMARD at work" fill sizes="50vw" className={styles.image} />
         </div>
       </div>
     </section>

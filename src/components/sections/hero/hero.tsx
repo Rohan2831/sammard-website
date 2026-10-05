@@ -27,7 +27,7 @@ export function Hero() {
   return (
     <section ref={sectionRef} className={styles.hero} data-hero>
       <video ref={videoRef} className={styles.video} autoPlay muted loop playsInline>
-        <source src="/assets/videos/launch.mp4" type="video/mp4" />
+        <source src="/assets/shared/videos/launch.mp4" type="video/mp4" />
       </video>
 
       <div className={styles.overlay} />

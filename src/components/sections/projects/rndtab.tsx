@@ -1,15 +1,12 @@
 import { rndProjects } from "@/data/rnd";
-import styles from "./tabs.module.css";
+import { RndCard } from "./rndcard";
+import styles from "./rndtab.module.css";
 
 export function RndTab() {
   return (
-    <div className={styles.list}>
+    <div className={styles.grid}>
       {rndProjects.map((project) => (
-        <div className={styles.card} key={project.id}>
-          <p className={styles.eyebrow}>{project.category}</p>
-          <h3 className={styles.title}>{project.title}</h3>
-          <p className={styles.description}>{project.description}</p>
-        </div>
+        <RndCard key={project.id} project={project} />
       ))}
     </div>
   );

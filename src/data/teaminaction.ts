@@ -5,32 +5,32 @@ export interface ActionCardData {
   imageAlt: string;
 }
 
-// "Manufacturing" reuses the existing unused teaminaction/image2.png as a
-// stopgap — it is not a dedicated manufacturing photo. "Team Culture" now
+// "Manufacturing" (home/team-in-action/manufacturing.png) reuses an older
+// team photo as a stopgap — it is not a dedicated manufacturing photo. "Team Culture" now
 // uses a real lab photo supplied by the user (2026-09) — see ASSETS_NEEDED.md.
 export const actionCards: ActionCardData[] = [
   {
     title: "Launches",
     mediaType: "video",
-    mediaSrc: "/assets/videos/inflight.mp4",
+    mediaSrc: "/assets/shared/videos/inflight.mp4",
     imageAlt: "Rocket Launch",
   },
   {
     title: "Manufacturing",
     mediaType: "image",
-    mediaSrc: "/assets/images/teaminaction/image2.png",
+    mediaSrc: "/assets/home/team-in-action/manufacturing.png",
     imageAlt: "Manufacturing",
   },
   {
     title: "Testing",
     mediaType: "video",
-    mediaSrc: "/assets/videos/testing_Rudra.mp4",
+    mediaSrc: "/assets/shared/videos/testing_Rudra.mp4",
     imageAlt: "Rocket Testing",
   },
   {
     title: "Team Culture",
     mediaType: "image",
-    mediaSrc: "/assets/images/teaminaction/team-culture.jpg",
+    mediaSrc: "/assets/home/team-in-action/team-culture.jpg",
     imageAlt: "Team Culture",
   },
 ];

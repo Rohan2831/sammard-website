@@ -60,13 +60,24 @@ export interface RocketRender {
 }
 
 export interface RocketModel {
-  /** Draco-compressed .glb, decoded via the self-hosted decoder in public/assets/draco/. */
+  /** Draco-compressed .glb, decoded via the self-hosted decoder in public/vendor/draco/. */
   src: string;
   /**
    * Subsystem (RocketComponent id) → case-insensitive substrings of the model's
    * part names. First matching group wins; unmatched parts stay neutral.
    */
   partGroups: Record<string, string[]>;
+  decal?: RocketDecal;
+}
+
+export interface RocketDecal {
+  /** Flat livery artwork: width = one full turn around the body, top edge = nose tip. */
+  src: string;
+  /**
+   * Case-insensitive substrings of the outer-skin part names it wraps. The
+   * artwork's height spans these parts' combined length, nose tip to tail.
+   */
+  parts: string[];
 }
 
 export interface Rocket {
@@ -109,6 +120,8 @@ export interface RndProject {
     | "Future Research";
   title: string;
   description: string;
+  image?: string;
+  imageAlt?: string;
 }
 
 export interface Competition {
