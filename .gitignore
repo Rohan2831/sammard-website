@@ -39,3 +39,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Raw source material (PTR PDF is 162MB, over GitHub's 100MB limit) — originals
+# the site's assets were derived from; never served. See ARCHITECTURE.md "Static assets".
+/reference-material/

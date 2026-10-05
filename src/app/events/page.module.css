@@ -1,0 +1,10 @@
+.section {
+  padding: var(--space-15) var(--space-4);
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+}

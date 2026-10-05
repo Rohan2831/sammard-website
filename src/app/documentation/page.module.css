@@ -1,0 +1,24 @@
+.section {
+  padding: var(--space-15) var(--space-4);
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.heading {
+  margin: 0 0 var(--space-2);
+  font-family: var(--font-space), sans-serif;
+  font-size: 1.125rem;
+  color: var(--foreground);
+}
+
+.downloads {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}

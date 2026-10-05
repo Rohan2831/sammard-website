@@ -1,0 +1,17 @@
+.section {
+  padding: var(--space-15) var(--space-4);
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+}
+
+@media (min-width: 768px) {
+  .list {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

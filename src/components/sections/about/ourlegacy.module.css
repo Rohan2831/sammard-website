@@ -1,0 +1,23 @@
+.section {
+  padding: 0 var(--space-4) var(--space-15);
+  max-width: 1440px;
+  margin: 0 auto;
+}
+
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--space-3);
+}
+
+.imageWrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.image {
+  object-fit: cover;
+}

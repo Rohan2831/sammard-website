@@ -1,6 +1,6 @@
 .section {
   width: 100%;
-  padding: 5rem 1.5rem;
+  padding:3rem 1.5rem;
   background-color: #0a0a0a;
 }
 
@@ -11,16 +11,18 @@
 }
 
 .heading {
+  font-family: var(--font-space), sans-serif;
   margin: 0 0 1rem;
   color: #ffffff;
   font-size: clamp(2rem, 4vw + 1rem, 3.5rem);
-  font-weight: 800;
+  font-weight: 700;
   letter-spacing: 0.04em;
-  line-height: 1.1;
+  line-height: 0.5;
 }
 
 .description {
   margin: 0;
+  font-family: var(--font-space), sans-serif;
   color: #b5b5b5;
   font-size: clamp(0.95rem, 0.5vw + 0.85rem, 1.125rem);
   line-height: 1.6;
@@ -38,6 +40,6 @@
 @media (min-width: 768px) {
   .grid {
     grid-template-columns: repeat(2, 1fr);
-    gap: 2rem;
+    gap: 1.5rem;
   }
 }

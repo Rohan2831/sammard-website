@@ -1,5 +1,6 @@
 import { Hero } from "@/components/sections/hero";
 import { WhoWeAre } from "@/components/sections/whoweare";
+import { EvolutionOfFlight } from "@/components/sections/evolutionofflight";
 import { TeamInAction } from "@/components/sections/teaminaction";
 import { Competitions } from "@/components/sections/competitions";
 import { Sponsors } from "@/components/sections/sponsors";
@@ -9,6 +10,7 @@ export default function HomePage() {
     <>
     <Hero />
     <WhoWeAre />
+    <EvolutionOfFlight />
     <TeamInAction />
     <Competitions />
     <Sponsors />

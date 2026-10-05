@@ -1,0 +1,131 @@
+# Architecture
+
+## Stack
+
+Next.js 16.2.12 (App Router) · React 19.2.4 · TypeScript 5 · Tailwind CSS v4 (`@tailwindcss/postcss`) · GSAP 3.15 + `@gsap/react` · Lenis 1.3.25 (smooth scroll) · `split-type` (text splitting) · `class-variance-authority` + `clsx` + `tailwind-merge` (shadcn-style UI) · `@radix-ui/react-dialog`, `@radix-ui/react-slot` · `lucide-react`, `react-icons` · `three` 0.185 + `@react-three/fiber` 9 + `@react-three/drei` 10 (Udbhava's 3D model — see "3D rocket model") · `react-intersection-observer` (lazy-mounts the 3D canvas). Installed but unused: `framer-motion`.
+
+Path alias: `@/*` → `./src/*`.
+
+## Directory structure
+
+```
+src/
+  app/                  # routes (App Router). layout.tsx mounts fonts + SmoothScrollProvider + Navbar.
+  animations/           # gsap.ts (mandatory import point), primitives.ts, types.ts, lenis.ts, + one file per section
+  components/
+    layout/navbar/      # Navbar, DesktopNav, MobileNav, Logo, navdata.ts
+    sections/           # one folder per home-page section: hero, whoweare, teaminaction, competitions, sponsors, footer
+    common/             # shared cross-page components (SmoothScrollProvider, SectionHeader, etc.)
+    ui/                 # shadcn-style CVA primitives (button.tsx, sheet.tsx)
+  data/                 # typed data arrays consumed by components (see below)
+  types/                # shared TS interfaces
+  lib/utils.ts          # cn() helper (clsx + tailwind-merge)
+public/
+  assets/
+    images/             # competitions/, events/{apsa,bsx,srishti}/, gallery/, rockets/ (+ renders/), sponsors/, teaminaction/, + teampic1/2
+    videos/             # launch.mp4, inflight.mp4, testing_Rudra.mp4, L-Class.mov
+    logos/              # Logo.png
+    models/             # udbhava.glb (Draco-compressed)
+    draco/              # self-hosted Draco decoder, copied from three/examples/jsm/libs/draco (lint-ignored)
+    documents/          # team-sammard-brochure.pdf, AALAP_ASSESSMENT.pdf (unreferenced)
+reference-material/      # repo root, NOT under public/ — originals the site's assets were derived from
+                         # (PTR PDF, raw photo dumps, blueprint .docx, original Skeleton.GLB,
+                         # ALL ROCKETS SVG/, brochure/). Never served; excluded from the Vercel upload.
+```
+
+## Static assets
+
+All site-served media lives under `public/assets/{images,videos,logos,documents}/` — Next.js only serves files from `public/` at their URL path, so nothing the app actually renders can live outside it. Every `src`/`href` in `src/data/*.ts` and components uses `/assets/...` paths accordingly.
+
+`reference-material/` (root-level, renamed from a typo'd `assests/`) holds the originals that site assets were derived from — the PTR PDF, raw un-cropped photo dumps (`APSA/`, `SRISHTI_IMAGES/`, `TEAM AT WORK/`), the blueprint `.docx`, Udbhava's original `Skeleton.GLB`, the team's `ALL ROCKETS SVG/` exports, and the two-part `brochure/`. It is never read by the app and is excluded from the Vercel deploy upload (`.vercelignore`) — that exclusion is also why the first Vercel deploy attempt stalled (it was uploading this folder's ~305MB before the exclusion existed). When the team drops new raw files into `public/assets/`, process them into the structure above and move the originals here.
+
+**Derived assets (2026-10)**:
+- **Rocket renders** (`images/rockets/renders/{id}.webp` + `{id}-horizontal.webp`): the team's Figma SVG exports are just base64 PNGs in an SVG wrapper (400–860 KB each). Rendered via `sharp` at 2× density, trimmed, saved as transparent WebP at 1600px tall (~25–45 KB each). Horizontal versions are rotated **270°** (nose left) — 90° turns every rocket's livery lettering upside-down. Wired via `Rocket.render`.
+- **Brochure** (`documents/team-sammard-brochure.pdf`): the team's outside + inside spreads merged into one 2-page PDF (pypdf), linked from the Sponsors page's brochure button.
+- **Udbhava model**: see "3D rocket model".
+
+## 3D rocket model
+
+`Rocket.model = { src, partGroups }` (`src/data/rockets.ts`; only Udbhava has one). Everything 3D lives in `src/components/common/RocketModelCanvas.tsx`, always loaded via `next/dynamic` (`ssr: false`) so three.js only downloads when needed. `RocketScene` (own `PerspectiveCamera`, lights, model) is shared by two renderers:
+
+- **`RocketModelCanvas`** — one standalone canvas. Used through `RocketViewer3D`, which shows the render/photo, mounts the canvas within 300px of the viewport and cross-fades to it when ready. Used by the expanded Udbhava card on Projects (horizontal, drag-to-rotate via `OrbitControls`, "Exploded view" toggle).
+- **`RocketViewsCanvas` + `RocketPartView`** — the homepage "Exploded View" (`RocketSubsystemShowcase`): one row per subsystem, its description beside a `RocketPartView` showing the rocket fully exploded and framed on that subsystem (lit, neighbours ghosted for context), rows zig-zagging left/right. Every row draws into **one** viewport-sized `position: fixed` canvas via drei's `View` (scissored into each row's DOM box), instead of one WebGL context per row. The canvas is portalled to `<body>` (a transformed ancestor would break `fixed`), never takes pointer events, sits at `z-index: 1` under the navbar, and only mounts once the section is within 400px; `frameloop` pauses when the section is off-screen. Each `View` needs its own `makeDefault` camera — they'd otherwise share and fight over the root camera. Subsystems with no modelled parts render text-only with a "Not shown in the 3D model" note (hidden on mobile).
+
+Off-screen canvases pass `frameloop="never"`.
+
+- **The GLB is a SolidWorks export**, Draco-compressed. The decoder is **self-hosted** at `/assets/draco/` (passed to drei's `useGLTF`) rather than drei's default gstatic CDN. SolidWorks embedded three DDS normal maps mislabelled `image/png`; browsers can't decode DDS, so they threw texture-load errors and were 4.2 MB of the 4.8 MB file. They were stripped (they sat at the tail of the binary buffer, so no indices shifted) — model is now 605 KB (446 KB gzipped on the wire). The exporter's own lights/cameras are removed at load; lighting is ambient + two directional lights + a drei `<Environment>` built from local `<Lightformer>` panels (gives the metallic parts something to reflect without fetching an HDRI).
+- **Exploded view**: each direct child of the assembly node (found generically as the node with the most children) moves along the long axis by `AXIAL_SPREAD` × its distance from centre and outward by `RADIAL_SPREAD` × its radial offset (so the fins flare). Assumes the model's long axis is +Y (SolidWorks' default). `prepare()` records the exploded extents (axial range + radial reach) of the whole assembly and of each subsystem group; `FitCamera` frames either one (fitting along and across the axis, whichever binds). The radial reach is added to the camera distance because the slow spin swings flared parts toward the camera and perspective otherwise pushes them out of frame (the fins clipped before this). Focused views use a looser margin along the axis so ghosted neighbours show where the part sits.
+- **Subsystem emphasis**: `partGroups` maps `RocketComponent` ids to case-insensitive substrings of SolidWorks part names. The emphasised group stays opaque with a soft emissive lift; everything else fades to 12% opacity. **GLTFLoader sanitises node names — spaces become underscores** (`"5 deg bevel 2-4"` → `"5_deg_bevel_2-4"`), so `matchGroup` normalises underscores/whitespace on both sides; before that fix, every multi-word pattern ("nose cone", "avionics bay", "5 deg bevel", "lower retainer"…) silently never matched. Only names that clearly identify a subsystem are mapped — verified against computed part bounds where unclear (the four "5 deg bevel" parts reach 0.226 m from the axis vs. the 0.076 m body, i.e. they're the fin blades). BaseBleed/generic couplers stay neutral; Payload and Airbrakes have no separately modelled parts.
+- **Homepage rows** reveal with a per-row `fadeUp` (`rocketsubsystemshowcase.ts`); the views track their row's box every frame, so they follow the transform. Reduced motion: no reveal, no spin.
+- `RocketModelCanvas.tsx` carries a file-scoped `eslint-disable react-hooks/immutability`: mutating three.js objects per frame is the standard R3F pattern and the React Compiler rule doesn't model it.
+- **Testing gotcha**: the built-in browser pane, when hidden, doesn't paint — no `requestAnimationFrame`, no IntersectionObserver callbacks — so the canvas never mounts and nothing animates. That's the test environment, not a bug: taking a screenshot forces frames. Scroll with `document.documentElement.style.scrollBehavior = 'auto'` first or `scrollTo` just queues a smooth scroll that never progresses.
+
+## Animation system
+
+`src/animations/gsap.ts` is the single required import point: registers `ScrollTrigger`, sets shared ease defaults (power-based only, no bounce/elastic anywhere), exports `prefersReducedMotion()`. Every animation module imports gsap from here.
+
+`src/animations/primitives.ts` — reusable building blocks, all respect `prefersReducedMotion()`, all run inside the caller's own `gsap.context()`:
+- `fadeUp`, `fadeIn`, `staggerReveal` — entrance animations.
+- `splitTextReveal` — returns `{ split, tween, revert }`; caller must call `.revert()` in cleanup (SplitType DOM mutations aren't auto-reverted by `gsap.context()`).
+- `parallax` — background media only, never text/interactive elements.
+- `pinSection` — use sparingly.
+
+**Wiring pattern** (see `hero.ts`+`hero.tsx`, `navbar.ts`+`navbar.tsx` — the two working examples): component creates refs via `useRef`, one `useEffect(() => { const cleanup = xAnimation({...refs}); return cleanup; }, [])`. Animation function: `if (!root.current) return () => {}`, then `gsap.context(() => {...}, root.current)` — pass `root.current` (the DOM node), not the ref object. Return `() => ctx.revert()`.
+
+## CSS / design tokens
+
+Every section is styled via a co-located `*.module.css` — no Tailwind in section components. Tokens live in `src/app/globals.css` as plain `:root` CSS custom properties, plus a Tailwind v4 `@theme inline` block mapping shadcn-style class names (`bg-primary`, `text-primary-foreground`, etc., used by `button.tsx`/`sheet.tsx`) to the real tokens. Color system, spacing scale, and radius tokens follow the blueprint doc's Design System spec (dark background `#050505`, primary accent `#00E5FF`, secondary `#2979FF`, Space Grotesk headings / Inter body, 8-point spacing).
+
+## Data layer
+
+`src/types/index.ts` — shared interfaces (`Rocket`, `Competition`, `Sponsor`, `SponsorTier`, `SponsorshipPackage`, `Department`, `BoardMember`, `GalleryItem`, `EventRecord`, `Project`, `DocumentResource`, `TimelineMilestone`, `ContactInfo`). `src/data/*.ts` — one typed array per entity; components render from these, not hardcoded arrays. Most files now hold real content cross-referenced against `teamsammard.com` (the team's live production site — see `src/data/timeline.ts`, `rockets.ts`, `cansats.ts`, `rnd.ts`, `sponsors.ts`, `board-members.ts`, `about.ts`, `navigation.ts`'s `contactInfo`); remaining gaps (department names, per-rocket subsystem breakdowns, real photos) are clearly marked `"— TBD"` — tracked in `ASSETS_NEEDED.md`. Each real-data file's header comment says what it was cross-referenced against and when — check there before assuming a value is stale.
+
+**Real event photos (2026-09)**: the user supplied real event photos in three folders (`APSA/`, `SRISHTI_IMAGES/`, `TEAM AT WORK/`, outside `public/`). These were resized (max 1920px, JPEG q80 via `sharp`) and placed under `public/assets/images/events/{apsa,srishti,bsx}/`, `public/assets/images/rockets/`, `public/assets/images/teaminaction/`, and `public/assets/images/gallery/`. Several source photos had a "GPS Map Camera" app watermark burned into the bottom of the frame — these were cropped out before publishing (see any `git log` around this date for the exact crop approach if needed again). Two of the photos contained the team's own technical posters, which were a primary source for: confirming "Srishti" and adding "APSA" as real events (`events.ts`), bumping BSX to its 2026 appearance, and discovering a new not-yet-flown rocket "Udbhava" (`rockets.ts`, `status: "in-development"`). `TEAM AT WORK` photos are generic lab/workshop shots (per the user, not tied to any event even where GPS/date metadata coincidentally overlapped with Srishti) — used for the homepage "Team Culture" card and Gallery page (13 photos, tagged by category).
+
+**Udbhava's Project Technical Report (2026-09)**: the user also supplied "Team 316 Project Technical Report to the 2026 IREC" (a 314-page PDF, too large for direct text extraction — read via `PyPDF2` page-by-page dump to a scratch text file, then `Grep`/`Read` on that). This is the primary source for all of Udbhava's specs and 8 subsystem descriptions in `rockets.ts`, superseding the BSX-poster's simpler "passive airbrakes" description with the PTR's fuller active BHAGAT-C system. The PTR also confirmed Udbhava's motor is an unnamed in-house Class N SRAD motor, distinct from "Ignis" (an earlier J-class motor in `rnd.ts`) — resolves a previously-flagged naming question.
+
+**Full site re-crawl (2026-09)**: per explicit instruction to ensure every real detail from teamsammard.com is present, re-crawled every live-site page (not just previously-touched ones). The live `/projects` page turned out to be a flat grid with many more named sub-projects than a 2-category R&D summary — `rnd.ts` was rewritten to name them individually (Ignis, Tejas, Sparc 4, Sirius, Bessie 1.0/2.0, Shrota, Shrota 2.0, ViziNav) rather than staying generic. A new event ("Gravitas", VIT's tech fest) and a new 2026 timeline entry were also added. Sponsors, socials, contact info, mission/vision, and 2024-25 board members were re-verified and already matched exactly.
+
+**Second re-check (2026-09)**: user asked to double-check the above pass. Two things were missed: (1) `/about`'s board-member section has a "Select Mission Year" dropdown, collapsed by default — it holds 7 years total, not the 2 originally scraped; clicked through all of it and added 2022-2023 through 2017-2018 to `board-members.ts`. (2) the dedicated `/events` page lists 2 upcoming events ("IREC 2026", "CanSat Competition 2026") not shown on the homepage's smaller widget — added to `events.ts`. Lesson for future crawls of this site: check for collapsed dropdowns/tabs, not just what's visible on page load.
+
+**User feedback pass (2026-09)**: user pointed out `rockets.ts`/`events.ts` mirrored the live site's/photo-import's insertion order rather than actual recency — Udbhava (current flagship) was last, BSX 2026 (most recent real event) was 7th. Both arrays are now ordered latest-first by actual date; comments in each file explain why. User also pointed to Udbhava's PTR for content the R&D page and Departments page were still missing: `rnd.ts` gained Payloads/Antennas/Recovery Systems entries plus a new Airbrakes category (`RndProject`'s category union in `types/index.ts` extended to include it) for BHAGAT-C; `departments.ts` gained the team's 5 real division names (Mechanical/Propulsion/Electrical/CS/Management, confirmed by the team from the PTR) in place of "Department 1-5 — TBD". Board members' `department` field was filled where their existing position text names or implies one of these 5 (e.g. "Avionics Lead" → Electrical) — team-wide titles (Captain, Head of Operations, competition leads) stayed TBD since they aren't division-specific.
+
+**Contact info conflict, resolved**: the navbar originally hardcoded `instagram.com/team_sammard` + `teamsammard@gmail.com`; the footer hardcoded `instagram.com/teamsammard` + `contact@teamsammard.com`. An earlier pass incorrectly unified on the footer's (wrong) values. Cross-referencing the live site confirmed the navbar's original values were correct — `src/data/navigation.ts` now uses those, plus real phone/address/LinkedIn/Twitter-X pulled from the same source.
+
+## Design references
+
+**Cornell Rocketry (cornellrocketryteam.com), 2026-09**: referenced per request for two things.
+- **Sponsors page**: adopted their tiered-logo layout with a plain uppercase eyebrow label per tier (`ExistingSponsors` groups by `sponsors.ts`'s real `tier` field — "Platinum Sponsor" vs generic "Partners", since that's the only real distinction the live site makes, not Gold/Silver/Bronze). Each tier renders via the shared `SponsorList` component (`src/components/common/SponsorList.tsx`) — a responsive 2/3/4-column grid, logo chip with the name stacked below per cell; also used by the homepage Sponsors teaser so both stay identical. Did **not** adopt Cornell's solid-fill CTA button — conflicts with this site's pill-outline-only button rule, kept as-is per user confirmation.
+- **Homepage CAD/3D view**: their homepage pins a real, rotating 3D rocket model behind scroll-revealed subsystem text. `RocketSubsystemShowcase` (`src/components/sections/evolutionofflight/`) went through a 2D scaffold, then a sticky model that exploded on scroll, and — per user direction ("the exploded view … with each next to its description") — is now an exploded breakdown: each subsystem's description beside a 3D view of the exploded flagship rocket (`rockets[0]`, currently Udbhava) framed on that subsystem (see "3D rocket model"). Below it, `FleetLineup` shows the fleet's livery renders oldest → newest (replaced the old `RocketFleet3D` placeholder strip); each rocket links to `/projects?rocket=<id>`.
+
+**Deep-linking a rocket card**: `/projects?rocket=<id>` opens that card. `RocketsTab` wraps `RocketsGridFromUrl` (reads `useSearchParams`) in a `<Suspense>` whose fallback is the same grid unexpanded — `useSearchParams` on a statically rendered page needs the boundary, and this fallback keeps every rocket in the prerendered HTML. The opened card scrolls itself under the navbar on mount; the fleet `Link` uses `scroll={false}` so Next doesn't fight it, and the card calls `lenis.resize()` first because Lenis still holds the previous page's dimensions right after navigation (it otherwise landed ~140px off).
+  - Build note: the panel entrance was originally a separate `fadeUp` GSAP tween *plus* the `ScrollTrigger` toggle-class, and the two fighting over inline `opacity` left panels stuck invisible under React's dev-mode double-effect-invoke. Fixed by dropping the GSAP opacity tween entirely and letting the toggled class's CSS transition do all of it — one state-changing mechanism per element, not two.
+
+## Timeline's pinned scroll — why sticky, not GSAP `pin`
+
+`Timeline`'s horizontal scrub (`src/animations/timeline.ts`) uses a `position: sticky` wrapper (`.sticky` in `timeline.module.css`) with the section's height set to `100vh + trackDistance` in JS, rather than ScrollTrigger's `pin: true`. Originally used `pin: true`; switched after a reported crash navigating away from Timeline via the header (`Uncaught NotFoundError: Failed to execute 'removeChild'`). Investigation found:
+- The crash reproduces from **any** page, not just Timeline, and **only** in `npm run dev` — a full `npm run build && npm run start` test (including scrolling mid-Timeline before navigating away) had zero errors. It's a React Strict Mode double-effect-invoke + Turbopack Fast Refresh dev artifact, not a real production bug.
+- Switched Timeline off `pin: true` anyway as a hardening measure: pinning makes GSAP insert a "pin-spacer" wrapper div outside React's control, which is a real (if here unconfirmed) source of exactly this class of bug on route changes. Sticky positioning gets the same held-in-place effect with zero DOM restructuring, so there's nothing for GSAP to leave lying around for React to trip over. If a similar crash ever recurs, check for `pin: true` first — currently nothing in the codebase uses it (the `pinSection` primitive in `primitives.ts` still exists for future use, but nothing calls it).
+
+## Design language
+
+Source of truth: the original homepage sections (`hero`, `whoweare`, `competitions`, `sponsors`, `footer` — predate this build-out, authored by the team). Every new page must match this, not a generic component-library look:
+
+- **No colored eyebrow tags.** Headings are plain: heading + description, centered or left-aligned, no small-caps accent-colored label above them (`SectionHeader`'s `eyebrow` prop exists but is rarely used — only where it carries real info, e.g. an event's year/location).
+- **No bordered/rounded box for every content block.** Real imagery uses the `CompetitionCard`/`ActionCard` pattern: full-bleed image, `border-radius: 1rem`, bottom gradient overlay (`linear-gradient(to top, rgba(0,0,0,.85) 0%, ... 0% at top)`), title bottom-left, subtle zoom on hover. Text-only content (sponsorship tiers, R&D/CanSat entries, timeline milestones, mission/vision) uses editorial rule-divided lists (`border-top`/`border-bottom: 1px solid rgba(255,255,255,.08)`) or numbered rows, not `background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-lg)` boxes repeated in a grid.
+- **No solid-fill buttons.** `src/components/ui/button.tsx` is pill-shaped (`rounded-full`) and transparent with a border, lightening on hover (`hover:bg-white/10` etc.) — matches the homepage's `.cta`/`.ctaButton` anchor pattern exactly. Never add a solid-background button variant.
+- **Colors**: prefer the exact hex values the homepage CSS modules use (`#ffffff`, `#b5b5b5` body text, `#7b7b7b` muted/meta text, `#0a0a0a`/`#050505` backgrounds) over the newer `var(--foreground-muted)` etc. tokens when styling something meant to sit visually flush with the original sections — both resolve to nearly the same values, but exact hex avoids drift.
+- **Real photography over icons/illustrations** wherever an asset exists (`teampic1/2.JPG`, department cover images). Grayscale-by-default + color-on-hover (see `BoardMembers`) is an acceptable restrained treatment for people photos.
+- Research references: Cornell Rocketry's "At a Glance" page uses oversized numeral stat callouts and flowing vertical sections with minimal card styling — favor that over dashboard-style stat tiles.
+- **Expandable image cards** (Projects → Rockets tab, `rocketcard.tsx`): a `CompetitionCard`-style full-bleed image card with a circular "+" button (top-right, rotates to "×" via CSS when open) that reveals extra detail (specs, subsystem list) below the image in place. Rockets with a livery render show it tilted 18° into a climb on a flat `--surface` card instead of a photo; when expanded, a rocket with a `model` swaps in the interactive 3D viewer. Used where a grid of items each has real imagery plus secondary detail too long to show by default — per explicit user request for "grid style... with an expand + button", after two earlier iterations (chevron accordion, then always-visible block) on the same content.
+
+## CSS layers gotcha
+
+`globals.css`'s reset (`* { margin:0; padding:0; box-sizing:border-box }` etc.) must stay inside `@layer base { ... }`. Tailwind v4's utilities live in named layers (`theme, base, components, utilities`); an *unlayered* rule always beats a *layered* one regardless of specificity. An unlayered reset silently defeated every Tailwind spacing utility (`p-*`, `m-*`) on `src/components/ui/*` (Button, Tabs, Dialog, Sheet) until this was fixed — if `ui/*` components ever look unstyled/unpadded again, check this first.
+
+## Key decisions
+
+- **Next.js kept**, not migrated to the blueprint doc's Vite/React Router stack — the existing App Router foundation (routing, fonts, layout) is functional and a rewrite would be pure churn.
+- **No backend yet** — contact/sponsor/join forms validate client-side (react-hook-form + zod) and submit via `mailto:` fallback until a real endpoint exists.
+- **No fabricated content** — anything requiring real-world facts about the team ships as labeled placeholder data plus an `ASSETS_NEEDED.md` entry, never invented specifics.
+- **3D deferred** — `RocketViewer3D`/`RocketFleet3D` are documented stub components; three.js/R3F stay installed but unwired until real `.glb` models exist.

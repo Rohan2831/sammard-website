@@ -1,0 +1,125 @@
+.card[data-expanded="true"] {
+  grid-column: 1 / -1;
+}
+
+.trigger {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.coverWrap {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border-radius: 1rem;
+  aspect-ratio: 16 / 10;
+  width: 100%;
+}
+
+.cover {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1);
+  transition: transform 0.6s ease;
+}
+
+.trigger:hover .cover {
+  transform: scale(1.05);
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.35) 50%, rgba(0, 0, 0, 0.05) 100%);
+}
+
+.index {
+  position: absolute;
+  top: 1.25rem;
+  left: 1.25rem;
+  z-index: 1;
+  font-family: var(--font-space), sans-serif;
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.title {
+  position: absolute;
+  left: 1.25rem;
+  bottom: 1.25rem;
+  right: 3rem;
+  z-index: 1;
+  margin: 0;
+  color: #ffffff;
+  font-family: var(--font-space), sans-serif;
+  font-size: clamp(1.25rem, 1.5vw + 1rem, 1.75rem);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-align: left;
+}
+
+.icon {
+  position: absolute;
+  right: 1.25rem;
+  bottom: 1.25rem;
+  z-index: 1;
+  color: #ffffff;
+  transition: transform 0.2s ease;
+}
+
+.icon[data-expanded="true"] {
+  transform: rotate(45deg);
+}
+
+.details {
+  padding: var(--space-4) 0.25rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.overview {
+  margin: 0;
+  color: #b5b5b5;
+  line-height: 1.6;
+  max-width: 640px;
+}
+
+.lists {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--space-3);
+}
+
+.lists h4 {
+  margin: 0 0 0.5rem;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #7b7b7b;
+}
+
+.lists ul {
+  margin: 0;
+  padding-left: 1.1rem;
+  color: #b5b5b5;
+  font-size: 0.9375rem;
+  line-height: 1.6;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cover,
+  .icon {
+    transition: none;
+  }
+  .trigger:hover .cover {
+    transform: none;
+  }
+}

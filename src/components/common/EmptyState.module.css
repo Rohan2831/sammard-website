@@ -1,0 +1,16 @@
+.empty {
+  padding: var(--space-3) 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.title {
+  margin: 0;
+  font-style: italic;
+  color: #7b7b7b;
+}
+
+.description {
+  margin: 0.25rem 0 0;
+  font-size: 0.9375rem;
+  color: #7b7b7b;
+}

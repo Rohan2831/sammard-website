@@ -1,63 +1,59 @@
-import Link from "next/link";
+"use client";
+
+import { useEffect, useRef } from "react";
 
 import styles from "./navbar.module.css";
-import { Button } from "@/components/ui/button";
-import { Logo }  from "./logo";
+import { Logo } from "./logo";
 import { DesktopNav } from "./desktopnav";
 import { MobileNav } from "./mobilenav";
-import { ctaLink } from "./navdata";
-import {  Mail } from "lucide-react";
+import { CopyableMailLink } from "@/components/common/CopyableMailLink";
+import { Mail } from "lucide-react";
 import { FaInstagram } from "react-icons/fa";
+import { navbarAnimation } from "@/animations/navbar";
+import { socialLinks, CONTACT_EMAIL } from "@/data/navigation";
 
-/**
- * Site-wide navbar.
- * - Fixed to the top of the viewport, transparent background (no blur/backdrop
- *   so it stays truly see-through over hero content).
- * - Exactly 80px tall at every breakpoint.
- * - Desktop (md+): logo left, links centered, CTA right.
- * - Mobile (<md): logo left, hamburger right, links live in a slide-over Sheet.
- *
- * This is a server component itself; usePathname() and open/close state
- * are isolated inside the client children (NavLink, MobileNav).
- */
+const instagramHref = socialLinks.find((s) => s.label === "Instagram")?.href ?? "#";
+
 export default function Navbars() {
+  const navbarRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const cleanup = navbarAnimation({
+      root: navbarRef,
+    });
+
+    return cleanup;
+  }, []);
+
   return (
-    <header className={styles.navbar}>
+    <header ref={navbarRef} className={styles.navbar}>
       <div className={styles.container}>
         <div className={styles.logo}>
-              <Logo />
+          <Logo />
         </div>
-      
+
         <div className={styles.navigation}>
           <DesktopNav />
         </div>
-        
 
         <div className={styles.rightSection}>
-    <a
-        href="https://www.instagram.com/team_sammard/"
-        target="_blank"
-        rel="noopener noreferrer"
-        className={styles.icon}
-    >
-        <FaInstagram size={24} />
-    </a>
+          <a
+            href={instagramHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={styles.icon}
+          >
+            <FaInstagram size={24} />
+          </a>
 
-    <a
-        href="mailto:teamsammard@gmail.com"
-        className={styles.icon}
-    >
-        <Mail size={24} />
-    </a>
-
-    <Button asChild>
-        <Link href={ctaLink.href}>{ctaLink.label}</Link>
-    </Button>
-</div>
-        <div className={styles.mobile}>
-           <MobileNav />
+          <CopyableMailLink email={CONTACT_EMAIL} className={styles.icon}>
+            <Mail size={24} />
+          </CopyableMailLink>
         </div>
-       
+
+        <div className={styles.mobile}>
+          <MobileNav />
+        </div>
       </div>
     </header>
   );

@@ -1,0 +1,222 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  scroll-margin-top: 110px;
+}
+
+.imageWrap {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border-radius: 1rem;
+  aspect-ratio: 4 / 3;
+  width: 100%;
+}
+
+/* Expanded cards span the full grid row (see rocketstab.module.css) — widen
+   the image to a banner ratio instead of letting a square-ish 4:3 grow
+   excessively tall at full page width. */
+.card[data-expanded="true"] .imageWrap {
+  aspect-ratio: 21 / 9;
+}
+
+.card[data-expanded="true"] .title {
+  font-size: clamp(1.75rem, 1.5vw + 1.25rem, 2.5rem);
+}
+
+.imageWrap[data-kind="render"] {
+  background-color: var(--surface);
+}
+
+.image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Livery render (transparent, nose left) tilted into a climb across the card. */
+.render {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 92%;
+  height: auto;
+  transform: translate(-50%, -62%) rotate(18deg);
+}
+
+.card[data-expanded="true"] .render {
+  width: 84%;
+  transform: translate(-50%, -50%);
+}
+
+.overlay {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.85) 0%,
+    rgba(0, 0, 0, 0.45) 45%,
+    rgba(0, 0, 0, 0.1) 75%,
+    rgba(0, 0, 0, 0) 100%
+  );
+}
+
+.title {
+  pointer-events: none;
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  z-index: 1;
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  margin: 0;
+  padding: 1.25rem;
+  color: #ffffff;
+  font-family: var(--font-space), sans-serif;
+  font-size: clamp(1.25rem, 1.2vw + 1rem, 1.5rem);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.year {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #b5b5b5;
+}
+
+.explodeToggle {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 2;
+  padding: 0.4rem 0.95rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  background: rgba(0, 0, 0, 0.4);
+  color: #ffffff;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.explodeToggle:hover,
+.explodeToggle:focus-visible {
+  background: rgba(0, 0, 0, 0.6);
+  border-color: rgba(255, 255, 255, 0.7);
+}
+
+.hint {
+  pointer-events: none;
+  position: absolute;
+  right: 1.25rem;
+  bottom: 1.25rem;
+  z-index: 1;
+  font-size: 0.75rem;
+  color: #7b7b7b;
+}
+
+.tagline {
+  margin: 0;
+  color: #d9d9d9;
+  line-height: 1.6;
+}
+
+.expandButton {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 2;
+  width: 2.25rem;
+  height: 2.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  background: rgba(0, 0, 0, 0.4);
+  color: #ffffff;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.expandButton:hover,
+.expandButton:focus-visible {
+  background: rgba(0, 0, 0, 0.6);
+  border-color: rgba(255, 255, 255, 0.7);
+}
+
+.plusIcon {
+  transition: transform 0.25s ease;
+}
+
+.plusIcon[data-expanded="true"] {
+  transform: rotate(45deg);
+}
+
+.details {
+  margin-top: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.specs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: var(--space-3) var(--space-4);
+  margin: 0;
+  padding: var(--space-3) 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.specRow {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.specRow dt {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #7b7b7b;
+}
+
+.specRow dd {
+  margin: 0;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.subsystems {
+  margin: 0;
+  padding-left: 1.25rem;
+  color: #b5b5b5;
+  font-size: 0.9375rem;
+  line-height: 1.8;
+}
+
+/* Full-width expanded card: let the subsystem list flow into columns
+   instead of one long narrow strip. */
+@media (min-width: 768px) {
+  .card[data-expanded="true"] .subsystems {
+    columns: 2;
+    column-gap: var(--space-6);
+  }
+
+  .card[data-expanded="true"] .subsystems li {
+    break-inside: avoid;
+    margin-bottom: var(--space-2);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .plusIcon {
+    transition: none;
+  }
+}

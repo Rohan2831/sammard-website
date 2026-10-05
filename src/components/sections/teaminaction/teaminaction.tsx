@@ -1,46 +1,11 @@
+"use client";
+
+import { useEffect, useRef } from "react";
 import styles from "./teaminaction.module.css";
-import ActionCard, { ActionCardProps } from "./actioncard";
+import ActionCard from "./actioncard";
+import { actionCards as ACTION_CARDS, type ActionCardData } from "@/data/teaminaction";
+import { teamInActionAnimation } from "@/animations/teaminaction";
 
-type ActionCardData = Omit<ActionCardProps, "index">;
-
-const ACTION_CARDS: ActionCardData[] = [
-  {
-    title: "Launches",
-    mediaType: "video",
-    mediaSrc: "/videos/launch.mp4",
-    imageAlt: "Rocket Launch",
-  },
-  {
-    title: "Manufacturing",
-    mediaType: "image",
-    mediaSrc: "/images/team-in-action/manufacturing.jpg",
-    imageAlt: "Manufacturing",
-  },
-  {
-    title: "Testing",
-    mediaType: "video",
-    mediaSrc: "/videos/testing_Rudra.mp4",
-    imageAlt: "Rocket Testing",
-  },
-  {
-    title: "Recovery",
-    mediaType: "image",
-    mediaSrc: "/images/team-in-action/recovery.jpg",
-    imageAlt: "Recovery",
-  },
-  {
-    title: "Competitions",
-    mediaType: "image",
-    mediaSrc: "/images/team-in-action/competitions.jpg",
-    imageAlt: "Competitions",
-  },
-  {
-    title: "Team Culture",
-    mediaType: "image",
-    mediaSrc: "/images/team-in-action/team-culture.jpg",
-    imageAlt: "Team Culture",
-  },
-];
 export interface TeamInActionProps {
   heading?: string;
   description?: string;
@@ -50,24 +15,40 @@ export interface TeamInActionProps {
 /**
  * TeamInAction
  * Marketing section showcasing the team's activities as an image grid.
- * CSS Modules only — no Tailwind, no inline styles, no GSAP logic yet.
+ * CSS Modules only — no Tailwind, no inline styles.
  *
  * GSAP-ready: data-gsap hooks are placed on the section, heading,
- * description, grid, and each card so a future timeline can be wired
- * in without any markup changes.
+ * description, grid, and each card for QA/inspection; actual animation
+ * targeting is via refs, see teamInActionAnimation.
  */
 export default function TeamInAction({
   heading = "TEAM IN ACTION",
   description = "From the shop floor to the launch pad, this is what drives us — a look at the people, the process, and the moments that define the team.",
   cards = ACTION_CARDS,
 }: TeamInActionProps) {
+  const sectionRef = useRef<HTMLElement>(null);
+  const headingRef = useRef<HTMLHeadingElement>(null);
+  const descriptionRef = useRef<HTMLParagraphElement>(null);
+  const gridRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const cleanup = teamInActionAnimation({
+      root: sectionRef,
+      heading: headingRef,
+      description: descriptionRef,
+      grid: gridRef,
+    });
+    return cleanup;
+  }, []);
+
   return (
-    <section className={styles.section} data-gsap="team-in-action-section">
+    <section ref={sectionRef} className={styles.section} data-gsap="team-in-action-section">
       <div className={styles.header}>
-        <h2 className={styles.heading} data-gsap="team-in-action-heading">
+        <h2 ref={headingRef} className={styles.heading} data-gsap="team-in-action-heading">
           {heading}
         </h2>
         <p
+          ref={descriptionRef}
           className={styles.description}
           data-gsap="team-in-action-description"
         >
@@ -75,7 +56,7 @@ export default function TeamInAction({
         </p>
       </div>
 
-      <div className={styles.grid} data-gsap="team-in-action-grid">
+      <div ref={gridRef} className={styles.grid} data-gsap="team-in-action-grid">
         {cards.map((card, index) => (
           <ActionCard key={card.title} index={index} {...card} />
         ))}

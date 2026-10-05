@@ -1,77 +1,141 @@
 "use client";
 
 import type { RefObject } from "react";
-import { gsap } from "./gsap";
-import type { AnimationCleanup, SectionAnimationRefs } from "./types";
+import SplitType from "split-type";
 
-/**
- * This file is the reference pattern every other module in
- * `src/animations/` follows. It is intentionally left without a
- * concrete timeline for now — this task is about the architecture,
- * not the Hero's creative direction. Wire the real animation up later
- * using the primitives in `primitives.ts` (fadeUp / splitTextReveal /
- * parallax, etc.) inside the `gsap.context()` block below.
- *
- * The shape (refs in, `gsap.context` scoped to `root`, cleanup out)
- * should NOT change — that's the contract every component relies on.
- */
+import { gsap, prefersReducedMotion } from "./gsap";
+import { fadeUp } from "./primitives";
+import type {
+  AnimationCleanup,
+  SectionAnimationRefs,
+} from "./types";
+
 export interface HeroAnimationRefs extends SectionAnimationRefs {
   video: RefObject<HTMLVideoElement | null>;
   heading: RefObject<HTMLHeadingElement | null>;
-  
+  ctaGroup: RefObject<HTMLDivElement | null>;
+  scrollIndicator: RefObject<HTMLDivElement | null>;
 }
 
-/**
- * Component usage:
- *
- *   const root = useRef<HTMLElement>(null);
- *   const heading = useRef<HTMLHeadingElement>(null);
- *   const subtext = useRef<HTMLElement>(null);
- *   const cta = useRef<HTMLElement>(null);
- *
- */
-export function heroAnimation(refs: HeroAnimationRefs): AnimationCleanup {
-  console.log("refs", refs);
-  const { root, video, heading } = refs;
-  if (!root.current) return () => {};
+export function heroAnimation(
+  refs: HeroAnimationRefs
+): AnimationCleanup {
+  const { root, video, heading, ctaGroup, scrollIndicator } = refs;
+
+  if (!root.current) {
+    return () => {};
+  }
+
+  let split: SplitType | null = null;
 
   const ctx = gsap.context(() => {
-      gsap.from(video.current, {
+    /*
+     * ---------------------------------------------------------------
+     * VIDEO ENTRANCE
+     * ---------------------------------------------------------------
+     */
+
+    gsap.from(video.current, {
       opacity: 0,
-      scale: 1.15,
-      duration: 2,
+      scale: 1.08,
+      duration: 1.8,
       ease: "power3.out",
     });
 
-    gsap.from(heading.current, {
-      opacity: 0,
-      y: 80,
-      duration: 1.4,
-      delay: 0.8,
-      ease: "power4.out",
-    });
-    gsap.timeline({
-  scrollTrigger: {
-    trigger: root.current,
-    start: "top top",
-    end: "bottom top",
-    scrub: 1,
-  },
-})
-.to(video.current, {
-  scale: 1.2,
-  ease: "none",
-}, 0)
-.to(heading.current, {
-  opacity: 0,
-  y: -100,
-  ease: "none",
-}, 0);
-    // TODO: entrance timeline goes here, built from primitives, e.g.
-    //   const { revert } = splitTextReveal(refs.heading.current, { type: "lines" });
-    //   fadeUp([refs.subtext.current, refs.cta.current], { stagger: 0.15, delay: 0.3 });
-    //   return () => revert();
-  }, root.current );
+    /*
+     * ---------------------------------------------------------------
+     * HERO TITLE — LETTER BY LETTER
+     * ---------------------------------------------------------------
+     */
 
-  return () => ctx.revert();
+    if (heading.current) {
+      if (prefersReducedMotion()) {
+        gsap.set(heading.current, {
+          opacity: 1,
+        });
+      } else {
+        split = new SplitType(heading.current, {
+          types: "chars",
+        });
+
+        const chars = split.chars;
+
+        gsap.set(chars, {
+          opacity: 0,
+        });
+
+        gsap.to(chars, {
+          opacity: 1,
+          duration: 0.035,
+          stagger: 0.085,
+          ease: "none",
+          delay: 0.4,
+        });
+      }
+    }
+
+    /*
+     * ---------------------------------------------------------------
+     * CTA GROUP + SCROLL INDICATOR — fade in after the letter-reveal
+     * ---------------------------------------------------------------
+     */
+
+    if (ctaGroup.current) {
+      fadeUp(ctaGroup.current, { delay: 1.2, duration: 0.9 });
+    }
+    if (scrollIndicator.current) {
+      fadeUp(scrollIndicator.current, { delay: 1.4, duration: 0.9, y: 16 });
+
+      if (!prefersReducedMotion()) {
+        gsap.to(scrollIndicator.current, {
+          y: 10,
+          duration: 1.4,
+          ease: "power1.inOut",
+          repeat: -1,
+          yoyo: true,
+          delay: 1.8,
+        });
+      }
+    }
+
+    /*
+     * ---------------------------------------------------------------
+     * HERO SCROLL TRANSITION
+     * ---------------------------------------------------------------
+     */
+
+    if (!prefersReducedMotion()) {
+      gsap
+        .timeline({
+          scrollTrigger: {
+            trigger: root.current,
+            start: "top top",
+            end: "bottom top",
+            scrub: 1,
+          },
+        })
+        .to(
+          video.current,
+          {
+            scale: 1.15,
+            ease: "none",
+          },
+          0
+        )
+        .to(
+          [heading.current, ctaGroup.current, scrollIndicator.current].filter(Boolean),
+          {
+            opacity: 0,
+            y: -80,
+            ease: "none",
+          },
+          0
+        );
+    }
+  }, root.current);
+
+  return () => {
+    ctx.revert();
+    split?.revert();
+  };
 }

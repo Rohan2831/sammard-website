@@ -11,10 +11,11 @@
 }
 
 .heading {
+  font-family: var(--font-space), sans-serif;
   margin: 0 0 1rem;
   color: #ffffff;
   font-size: clamp(2rem, 4vw + 1rem, 3.5rem);
-  font-weight: 800;
+  font-weight: 700;
   letter-spacing: 0.04em;
   line-height: 1.1;
 }
@@ -57,6 +58,7 @@
 }
 
 .cta {
+  font-family: var(--font-space), sans-serif;
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;

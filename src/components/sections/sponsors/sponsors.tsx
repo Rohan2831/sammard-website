@@ -1,47 +1,17 @@
+"use client";
+
+import { useEffect, useRef } from "react";
 import Link from "next/link";
 import styles from "./sponsors.module.css";
-import SponsorCard, { SponsorCardProps } from "./sponsorcard";
-
-type SponsorData = Omit<SponsorCardProps, "index">;
-
-const SPONSORS: SponsorData[] = [
-  {
-    name: "Converge",
-    logoSrc: "/images/sponsors/converge.png",
-    logoAlt: "Sponsor One logo",
-  },
-  {
-    name: "SolidWorks",
-    logoSrc: "/images/sponsors/solidworks.png",
-    logoAlt: "Sponsor Two logo",
-  },
-  {
-    name: "Altium Designer",
-    logoSrc: "/images/sponsors/altium.png",
-    logoAlt: "Sponsor Three logo",
-  },
-  {
-    name: "Altair",
-    logoSrc: "/images/sponsors/altair.png",
-    logoAlt: "Sponsor Four logo",
-  },
-  {
-    name: "VIT University",
-    logoSrc: "/images/sponsors/vit.png",
-    logoAlt: "Sponsor Five logo",
-  },
-  {
-    name: "Aerospace Association of India",
-    logoSrc: "/images/sponsors/sponsor-six.png",
-    logoAlt: "Sponsor Six logo",
-  },
-];
+import { SponsorList } from "@/components/common/SponsorList";
+import { sponsors as SPONSORS } from "@/data/sponsors";
+import type { Sponsor } from "@/types";
+import { sponsorsAnimation } from "@/animations/sponsors";
 
 export interface SponsorsProps {
   heading?: string;
   description?: string;
-  sponsors?: SponsorData[];
-  showSponsorNames?: boolean;
+  sponsors?: Sponsor[];
   ctaHeading?: string;
   ctaDescription?: string;
   ctaLabel?: string;
@@ -52,45 +22,54 @@ export interface SponsorsProps {
  * Sponsors
  * Marketing section showcasing sponsor logos plus a CTA block inviting
  * new sponsors to partner with the team.
- * CSS Modules only — no Tailwind, no inline styles, no GSAP logic yet.
+ * CSS Modules only — no Tailwind, no inline styles.
  *
  * GSAP-ready: data-gsap hooks are placed on the section, heading,
- * description, grid, each card, the CTA block, and the CTA button so a
- * future timeline can be wired in without any markup changes.
+ * description, grid, each card, the CTA block, and the CTA button for
+ * QA/inspection; actual animation targeting is via refs, see sponsorsAnimation.
  */
 export default function Sponsors({
   heading = "OUR SPONSORS",
   description = "Team SAMMARD is proud to be backed by organizations that believe in student-led innovation and push our missions further, together.",
   sponsors = SPONSORS,
-  showSponsorNames = true,
   ctaHeading = "Become a Sponsor",
   ctaDescription = "Partner with Team SAMMARD and help power the next generation of student engineers, launches, and breakthroughs.",
   ctaLabel = "Partner With Us",
   ctaHref = "/sponsors",
 }: SponsorsProps) {
+  const sectionRef = useRef<HTMLElement>(null);
+  const headingRef = useRef<HTMLHeadingElement>(null);
+  const descriptionRef = useRef<HTMLParagraphElement>(null);
+  const gridRef = useRef<HTMLUListElement>(null);
+  const ctaBlockRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const cleanup = sponsorsAnimation({
+      root: sectionRef,
+      heading: headingRef,
+      description: descriptionRef,
+      grid: gridRef,
+      ctaBlock: ctaBlockRef,
+    });
+    return cleanup;
+  }, []);
+
   return (
-    <section className={styles.section} data-gsap="sponsors-section">
+    <section ref={sectionRef} className={styles.section} data-gsap="sponsors-section">
       <div className={styles.header}>
-        <h2 className={styles.heading} data-gsap="sponsors-heading">
+        <h2 ref={headingRef} className={styles.heading} data-gsap="sponsors-heading">
           {heading}
         </h2>
-        <p className={styles.description} data-gsap="sponsors-description">
+        <p ref={descriptionRef} className={styles.description} data-gsap="sponsors-description">
           {description}
         </p>
       </div>
 
-      <div className={styles.grid} data-gsap="sponsors-grid">
-        {sponsors.map((sponsor, index) => (
-          <SponsorCard
-            key={sponsor.name}
-            index={index}
-            showName={showSponsorNames}
-            {...sponsor}
-          />
-        ))}
+      <div className={styles.listWrap} data-gsap="sponsors-grid">
+        <SponsorList ref={gridRef} sponsors={sponsors} />
       </div>
 
-      <div className={styles.ctaBlock} data-gsap="sponsors-cta-block">
+      <div ref={ctaBlockRef} className={styles.ctaBlock} data-gsap="sponsors-cta-block">
         <h3 className={styles.ctaHeading} data-gsap="sponsors-cta-heading">
           {ctaHeading}
         </h3>

@@ -1,0 +1,8 @@
+# Source reference material (PTR PDF, raw photo dumps, blueprint doc) —
+# already mined into src/data/*.ts and public/assets/. Not read by the app
+# at runtime, so it shouldn't be part of the deployment upload.
+reference-material/
+TEAM SAMMARD OFFICIAL WEBSITE.docx
+
+# Local dev/tooling, not needed on Vercel
+.claude/

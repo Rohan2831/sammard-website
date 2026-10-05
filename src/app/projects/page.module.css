@@ -1,0 +1,5 @@
+.section {
+  padding: var(--space-15) var(--space-4);
+  max-width: 1440px;
+  margin: 0 auto;
+}

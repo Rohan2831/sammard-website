@@ -1,41 +1,17 @@
+"use client";
+
+import { useEffect, useRef } from "react";
 import Link from "next/link";
 import styles from "./competitions.module.css";
-import CompetitionCard, { CompetitionCardProps } from "./competitioncard";
-
-type CompetitionCardData = Omit<CompetitionCardProps, "index">;
-
-const COMPETITION_CARDS: CompetitionCardData[] = [
-  {
-    title: "IREC",
-    imageSrc: "/images/competitions/irec.jpg",
-    imageAlt: "Team at the Intercollegiate Rocket Engineering Competition",
-  },
-  {
-    title: "CanSat",
-    imageSrc: "/images/competitions/cansat.jpg",
-    imageAlt: "Team working on a CanSat competition entry",
-  },
-  {
-    title: "IN-SPACe",
-    imageSrc: "/images/competitions/in-space.jpg",
-    imageAlt: "Team presenting at an IN-SPACe event",
-  },
-  {
-    title: "BSX",
-    imageSrc: "/images/competitions/bsx.jpg",
-    imageAlt: "Team competing at BSX",
-  },
-  {
-    title: "Srishti",
-    imageSrc: "/images/competitions/srishti.jpg",
-    imageAlt: "Team competing at Srishti",
-  },
-];
+import CompetitionCard from "./competitioncard";
+import { competitions as COMPETITION_CARDS } from "@/data/competitions";
+import type { Competition } from "@/types";
+import { competitionsAnimation } from "@/animations/competitions";
 
 export interface CompetitionsProps {
   heading?: string;
   description?: string;
-  cards?: CompetitionCardData[];
+  cards?: Competition[];
   ctaLabel?: string;
   ctaHref?: string;
 }
@@ -43,11 +19,11 @@ export interface CompetitionsProps {
 /**
  * Competitions
  * Marketing section showcasing the competitions the team takes part in.
- * CSS Modules only — no Tailwind, no inline styles, no GSAP logic yet.
+ * CSS Modules only — no Tailwind, no inline styles.
  *
  * GSAP-ready: data-gsap hooks are placed on the section, heading,
- * description, grid, each card, and the CTA button so a future timeline
- * can be wired in without any markup changes.
+ * description, grid, each card, and the CTA button for QA/inspection;
+ * actual animation targeting is via refs, see competitionsAnimation.
  */
 export default function Competitions({
   heading = "COMPETITIONS",
@@ -56,13 +32,31 @@ export default function Competitions({
   ctaLabel = "Explore All Events →",
   ctaHref = "/events",
 }: CompetitionsProps) {
+  const sectionRef = useRef<HTMLElement>(null);
+  const headingRef = useRef<HTMLHeadingElement>(null);
+  const descriptionRef = useRef<HTMLParagraphElement>(null);
+  const gridRef = useRef<HTMLDivElement>(null);
+  const ctaRef = useRef<HTMLAnchorElement>(null);
+
+  useEffect(() => {
+    const cleanup = competitionsAnimation({
+      root: sectionRef,
+      heading: headingRef,
+      description: descriptionRef,
+      grid: gridRef,
+      cta: ctaRef,
+    });
+    return cleanup;
+  }, []);
+
   return (
-    <section className={styles.section} data-gsap="competitions-section">
+    <section ref={sectionRef} className={styles.section} data-gsap="competitions-section">
       <div className={styles.header}>
-        <h2 className={styles.heading} data-gsap="competitions-heading">
+        <h2 ref={headingRef} className={styles.heading} data-gsap="competitions-heading">
           {heading}
         </h2>
         <p
+          ref={descriptionRef}
           className={styles.description}
           data-gsap="competitions-description"
         >
@@ -70,7 +64,7 @@ export default function Competitions({
         </p>
       </div>
 
-      <div className={styles.grid} data-gsap="competitions-grid">
+      <div ref={gridRef} className={styles.grid} data-gsap="competitions-grid">
         {cards.map((card, index) => (
           <CompetitionCard key={card.title} index={index} {...card} />
         ))}
@@ -78,6 +72,7 @@ export default function Competitions({
 
       <div className={styles.ctaWrapper}>
         <Link
+          ref={ctaRef}
           href={ctaHref}
           className={styles.cta}
           data-gsap="competitions-cta"

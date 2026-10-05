@@ -1,0 +1,31 @@
+.card {
+  position: relative;
+  display: block;
+  width: 100%;
+  border: none;
+  padding: 0;
+  margin: 0;
+  background: var(--card);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  cursor: default;
+  text-align: left;
+}
+
+button.card {
+  cursor: pointer;
+}
+
+.media {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+.caption {
+  margin: 0;
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  color: var(--foreground-muted);
+}

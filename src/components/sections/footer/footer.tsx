@@ -1,57 +1,19 @@
-import type { ComponentType } from "react";
+"use client";
+
+import { useEffect, useRef } from "react";
 import Link from "next/link";
-import { Mail } from "lucide-react";
-import {
-  FaInstagram,
-  FaLinkedin,
-  FaYoutube,
-} from "react-icons/fa";
+import { Mail, Phone, MapPin } from "lucide-react";
 import Image from "next/image";
 import styles from "./footer.module.css";
-
-interface QuickLink {
-  label: string;
-  href: string;
-}
-
-interface SocialLink {
-  label: string;
-  href: string;
-  icon: ComponentType<{ size?: number; className?: string }>;
-}
-
-const QUICK_LINKS: QuickLink[] = [
-  { label: "Home", href: "/" },
-  { label: "About", href: "/about" },
-  { label: "Projects", href: "/projects" },
-  { label: "Departments", href: "/departments" },
-  { label: "Events", href: "/events" },
-  { label: "Timeline", href: "/timeline" },
-  { label: "Gallery", href: "/gallery" },
-  { label: "Documentation", href: "/documentation" },
-  { label: "Sponsors", href: "/sponsors" },
-  { label: "Contact", href: "/contact" },
-];
-
-const SOCIAL_LINKS: SocialLink[] = [
-  {
-    label: "Instagram",
-    href: "https://www.instagram.com/teamsammard",
-    icon: FaInstagram,
-  },
-  {
-    label: "LinkedIn",
-    href: "https://www.linkedin.com/company/teamsammard",
-    icon: FaLinkedin,
-  },
-  {
-    label: "YouTube",
-    href: "https://www.youtube.com/@teamsammard",
-    icon: FaYoutube,
-  },
-];
-
-const CONTACT_EMAIL = "contact@teamsammard.com";
+import { CopyableMailLink } from "@/components/common/CopyableMailLink";
+import type { NavLink as QuickLink, SocialLink } from "@/types";
+import {
+  quickLinks as QUICK_LINKS,
+  socialLinks as SOCIAL_LINKS,
+  CONTACT_EMAIL,
+  contactInfo,
+} from "@/data/navigation";
+import { footerAnimation } from "@/animations/footer";
 
 export interface FooterProps {
   logoText?: string;
@@ -80,12 +42,27 @@ export default function Footer({
   contactEmail = CONTACT_EMAIL,
   year = new Date().getFullYear(),
 }: FooterProps) {
+  const footerRef = useRef<HTMLElement>(null);
+  const logoRef = useRef<HTMLDivElement>(null);
+  const quickLinksRef = useRef<HTMLElement>(null);
+  const socialsRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const cleanup = footerAnimation({
+      root: footerRef,
+      logo: logoRef,
+      quickLinks: quickLinksRef,
+      socials: socialsRef,
+    });
+    return cleanup;
+  }, []);
+
   return (
-    <footer className={styles.footer} data-gsap="footer">
-      <div className={styles.top} data-gsap="footer-logo">
+    <footer ref={footerRef} className={styles.footer} data-gsap="footer">
+      <div ref={logoRef} className={styles.top} data-gsap="footer-logo">
   <Link href="/" className={styles.logo}>
     <Image
-      src="/logos/Logo.png"
+      src="/assets/logos/Logo.png"
       alt="Team SAMMARD Logo"
       width={70}
       height={70}
@@ -101,6 +78,7 @@ export default function Footer({
 
       <div className={styles.middle}>
         <nav
+          ref={quickLinksRef}
           className={styles.quickLinks}
           data-gsap="footer-quick-links"
           aria-label="Quick links"
@@ -119,16 +97,21 @@ export default function Footer({
 
         <div className={styles.contact} data-gsap="footer-contact">
           <h3 className={styles.columnHeading}>Contact</h3>
-          <a
-            href={`mailto:${contactEmail}`}
-            className={styles.link}
-          >
+          <CopyableMailLink email={contactEmail} className={styles.link}>
             <Mail size={16} className={styles.icon} aria-hidden="true" />
             {contactEmail}
+          </CopyableMailLink>
+          <a href={`tel:${contactInfo.phone}`} className={styles.link}>
+            <Phone size={16} className={styles.icon} aria-hidden="true" />
+            {contactInfo.phone}
           </a>
+          <span className={styles.link}>
+            <MapPin size={16} className={styles.icon} aria-hidden="true" />
+            {contactInfo.addressLines.join(", ")}
+          </span>
         </div>
 
-        <div className={styles.socials} data-gsap="footer-socials">
+        <div ref={socialsRef} className={styles.socials} data-gsap="footer-socials">
           <h3 className={styles.columnHeading}>Follow Us</h3>
           <ul className={styles.socialList}>
             {socialLinks.map(({ label, href, icon: Icon }) => (

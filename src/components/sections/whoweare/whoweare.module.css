@@ -76,10 +76,11 @@
   font-weight: 600;
   letter-spacing: 0.32em;
   text-transform: uppercase;
-  color: var(--sammard-accent);
+  color: var(--primary);
 }
 
 .heading {
+  font-family: var(--font-space), sans-serif;
   margin: 0 0 1.5rem;
   font-size: clamp(2.25rem, 5vw + 1rem, 4rem);
   font-weight: 700;
@@ -105,7 +106,7 @@
   gap: 2.5rem;
   margin: 0 0 3.5rem;
   padding-top: 2.75rem;
-  border-top: 1px solid var(--sammard-hairline);
+  border-top: 1px solid var(--border);
   text-align: left;
 }
 
@@ -128,14 +129,14 @@
   font-weight: 600;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: var(--sammard-accent);
+  color: var(--primary);
 }
 
 .pillarText {
   margin: 0;
   font-size: 1rem;
   line-height: 1.6;
-  color: var(--sammard-ink-muted);
+  color: var(--foreground-muted);
 }
 
 /* --------------------------------------------------------------------------
@@ -150,7 +151,7 @@
   gap: 0.5rem;
 
   padding: 0.9rem 2.25rem;
-  border: 1px solid var(--sammard-ink);
+  border: 1px solid var(--foreground);
   border-radius: 4px;
 
   font-size: 0.9375rem;
@@ -158,7 +159,7 @@
   letter-spacing: 0.06em;
   text-transform: uppercase;
   text-decoration: none;
-  color: var(--sammard-ink);
+  color: var(--foreground);
 
   background-color: transparent;
   transition:
@@ -179,7 +180,7 @@
 }
 
 .cta:focus-visible {
-  outline: 2px solid var(--sammard-accent);
+  outline: 2px solid var(--primary);
   outline-offset: 3px;
 }
 

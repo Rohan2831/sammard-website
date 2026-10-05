@@ -14,7 +14,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 
-import { navLinks, ctaLink } from "./navdata";
+import { navLinks } from "./navdata";
 import { NavLink } from "./navlinks";
 import { Logo } from "./logo";
 
@@ -57,16 +57,6 @@ export function MobileNav() {
               />
             ))}
           </nav>
-
-          <div className={styles.footer}>
-            <Button
-              asChild
-              className={styles.joinButton}
-              onClick={() => setOpen(false)}
-            >
-              <a href={ctaLink.href}>{ctaLink.label}</a>
-            </Button>
-          </div>
         </SheetContent>
       </Sheet>
     </div>

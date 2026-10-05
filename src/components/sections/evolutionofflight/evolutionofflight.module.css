@@ -1,0 +1,24 @@
+.section {
+  padding: var(--space-15) var(--space-4);
+  max-width: 1440px;
+  margin: 0 auto;
+  background: var(--background-secondary);
+}
+
+.header {
+  max-width: 640px;
+  margin: 0 auto var(--space-6);
+  text-align: center;
+}
+
+.heading {
+  margin: 0 0 0.75rem;
+  font-family: var(--font-space), sans-serif;
+  font-size: clamp(2rem, 4vw + 1rem, 3rem);
+  color: var(--foreground);
+}
+
+.description {
+  margin: 0;
+  color: var(--foreground-muted);
+}

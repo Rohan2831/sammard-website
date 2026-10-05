@@ -1,0 +1,97 @@
+.section {
+  position: relative;
+}
+
+.sticky {
+  position: relative;
+  padding: var(--space-15) 0;
+  overflow: hidden;
+}
+
+.markerLine {
+  display: none;
+}
+
+.wrapper {
+  overflow: hidden;
+}
+
+.track {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: 0 var(--space-4);
+}
+
+.card {
+  flex: 0 0 auto;
+  width: 100%;
+  padding: var(--space-4) 0 0;
+  border-top: 2px solid rgba(255, 255, 255, 0.15);
+}
+
+.year {
+  margin: 0 0 0.75rem;
+  font-family: var(--font-space), sans-serif;
+  font-size: clamp(2rem, 2vw + 1.5rem, 2.75rem);
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.title {
+  margin: 0 0 0.5rem;
+  font-size: 1.0625rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #7b7b7b;
+}
+
+.description {
+  margin: 0;
+  color: #b5b5b5;
+  line-height: 1.6;
+}
+
+@media (min-width: 768px) {
+  .sticky {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .markerLine {
+    display: block;
+    position: relative;
+    height: 2px;
+    background: var(--border);
+    margin: 0 10vw var(--space-8);
+  }
+
+  .marker {
+    position: absolute;
+    top: -9px;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    color: var(--primary);
+    transform: translateX(-50%);
+  }
+
+  .track {
+    flex-direction: row;
+    width: max-content;
+    gap: var(--space-10);
+    padding: 0 10vw;
+  }
+
+  .card {
+    width: min(360px, 60vw);
+  }
+}

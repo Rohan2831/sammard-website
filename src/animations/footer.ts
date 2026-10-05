@@ -2,6 +2,7 @@
 
 import type { RefObject } from "react";
 import { gsap } from "./gsap";
+import { fadeIn } from "./primitives";
 import type { AnimationCleanup, SectionAnimationRefs } from "./types";
 
 /** See `hero.ts` for the full pattern explanation. */
@@ -20,13 +21,17 @@ export interface FooterAnimationRefs extends SectionAnimationRefs {
  *   }, []);
  */
 export function footerAnimation(refs: FooterAnimationRefs): AnimationCleanup {
-  const { root } = refs;
+  const { root, logo, quickLinks, socials } = refs;
   if (!root.current) return () => {};
 
   const ctx = gsap.context(() => {
-    // TODO: fade-in-on-scroll timeline goes here, built from
-    // primitives.ts. Left empty — architecture phase only.
-  }, root as unknown as HTMLElement);
+    const targets = [logo.current, quickLinks.current, socials.current].filter(
+      (el): el is HTMLElement => Boolean(el)
+    );
+    if (targets.length) {
+      fadeIn(targets, { stagger: 0.15, scroll: { trigger: root.current, start: "top 90%" } });
+    }
+  }, root.current);
 
   return () => ctx.revert();
 }
