@@ -27,6 +27,9 @@ const SPIN_SPEED = 0.25;
 const CUTAWAY_TURN = 0.45;
 // Exponential ease rate for camera moves (higher = snappier).
 const CAMERA_EASE = 2.5;
+// Moving between two subsystems, the camera first pulls back to the whole
+// exploded rocket for this long (seconds), then zooms into the next one.
+const ZOOM_OUT_TIME = 0.8;
 
 export type ExplodeSource = number | RefObject<number>;
 type Orientation = "vertical" | "horizontal";
@@ -454,14 +457,15 @@ function RocketParts({
   const spinRef = useRef<THREE.Group>(null);
   const explodeCurrent = useRef(typeof explode === "number" ? explode : 0);
   const reducedMotion = useMemo(() => prefersReducedMotion(), []);
-  const activeHasParts = activeSubsystemId !== null && parts.some((p) => p.group === activeSubsystemId);
-  const focused = (focus && activeSubsystemId && groups[activeSubsystemId]) || null;
   const camera = useThree((s) => s.camera) as THREE.PerspectiveCamera;
   const size = useThree((s) => s.size);
   const shot = useRef<Shot | null>(null);
   const framing = useRef<Framing>({ ...assembled });
   // Explode amount when the visitor took the camera; scrolling well past it hands it back.
   const manualSince = useRef<number | null>(null);
+  // The subsystem last seen, and until when (clock time) to stay pulled back after a change.
+  const lastActive = useRef(activeSubsystemId);
+  const zoomedOutUntil = useRef(0);
 
   // A new step always reframes automatically.
   useEffect(() => {
@@ -485,11 +489,24 @@ function RocketParts({
     else if (manualSince.current === null) manualSince.current = target;
     else if (Math.abs(target - manualSince.current) > 0.15) manual.current = false;
 
+    // Subsystem → subsystem: pull back to the whole rocket first (everything un-ghosted),
+    // then go in. Each further change restarts the pull-back, so fast scrolling stays wide.
+    const now = state.clock.elapsedTime;
+    if (lastActive.current !== activeSubsystemId) {
+      if (lastActive.current !== null && activeSubsystemId !== null && !reducedMotion) {
+        zoomedOutUntil.current = now + ZOOM_OUT_TIME;
+      }
+      lastActive.current = activeSubsystemId;
+    }
+    const current = now < zoomedOutUntil.current ? null : activeSubsystemId;
+    const activeHasParts = current !== null && parts.some((p) => p.group === current);
+    const focused = (focus && current && groups[current]) || null;
+
     for (const part of parts) {
       part.object.position.copy(part.base).addScaledVector(part.offset, explodeCurrent.current);
-      const isActive = activeHasParts && part.group === activeSubsystemId;
+      const isActive = activeHasParts && part.group === current;
       // Attachment variants crossfade: a "focus" cutaway replaces the full part while its subsystem is active.
-      const shown = !part.show || (part.show === "focus") === (part.group === activeSubsystemId);
+      const shown = !part.show || (part.show === "focus") === (part.group === current);
       const emphasis = (shown ? 1 : 0) * (!activeHasParts || isActive ? 1 : DIM_OPACITY);
       let visible = shown;
       for (const entry of part.materials) {
@@ -512,7 +529,7 @@ function RocketParts({
     }
 
     const spin = spinRef.current;
-    const cutaway = parts.find((p) => p.faceCameraAt !== undefined && p.group === activeSubsystemId);
+    const cutaway = parts.find((p) => p.faceCameraAt !== undefined && p.group === current);
     if (spin && cutaway?.faceCameraAt !== undefined) {
       // Settle on the nearest equivalent angle rather than unwinding whole turns.
       const turns = Math.round((spin.rotation.y - cutaway.faceCameraAt) / (2 * Math.PI));

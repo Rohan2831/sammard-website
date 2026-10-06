@@ -279,5 +279,9 @@ export const rockets: Rocket[] = [
     videoUrls: [],
     gallery: [],
     heroImage: "/assets/projects/pinaka.jpg",
+    render: {
+      vertical: "/assets/shared/rockets/pinaka.webp",
+      horizontal: "/assets/shared/rockets/pinaka-horizontal.webp",
+    },
   },
 ];

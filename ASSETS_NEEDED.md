@@ -105,7 +105,7 @@ Re-crawled every page on teamsammard.com (not just the ones touched in earlier p
 
 - [ ] **Required** — Department photos: drop one per department into `public/assets/departments/` as `mechanical.jpg`, `propulsion.jpg`, `electrical.jpg`, `cs.jpg`, `management.jpg` (all currently the same team photo).
 - [ ] Optional — A photo for the R&D **Future Research (ViziNav)** card — it's the only R&D project not in the PTR, so its card has no image. Needs a small code change to wire in (send it over).
-- [ ] **Required** — A livery render (like the four in `ALL ROCKETS SVG`) or photo for **Pinaka** — photo: replace `projects/pinaka.jpg`; a render needs a small code change to join the homepage fleet lineup.
+- [x] Resolved (2026-10) — Pinaka's livery render (`PINAKA.svg`) is in: homepage fleet lineup and its Projects card. Its photo stays as `projects/pinaka.jpg` (gallery/hero).
 - [ ] **Required** — Board member headshots (7 years, 2017–2025, ~46 people total) — everyone currently shows `about/board-placeholder.jpg`. Per-person photos need wiring per member (send them over). We won't scrape real people's photos from the live site without your OK.
 - [ ] **Required** — 4 remaining homepage competition images — drop them into `public/assets/home/competitions/` named exactly `irec.jpg`, `cansat.jpg`, `in-space.jpg`, `bsx.jpg` (those cards show blank until then). Srishti already has `srishti.jpg`.
 - [ ] **Required** — Aerospace Association of India logo — drop it in as `public/assets/shared/sponsors/sponsor-six.png` (shows on the homepage and Sponsors page; currently blank).
@@ -115,6 +115,7 @@ Re-crawled every page on teamsammard.com (not just the ones touched in earlier p
 ### Content
 - [ ] Optional — Department field for older board members with team-wide titles only (Captain, Vice Captain, Head of Operations, competition leads) — not deducible from their position text alone; the 5 real department names are now known (Mechanical/Propulsion/Electrical/CS/Management), just not which of these leadership roles maps to one.
 - [ ] **Required** — Per-department overview/responsibilities/skills/technologies/major projects (the 5 department names themselves are now filled from the PTR — see `departments.ts` — but the live site and PTR don't go into this level of per-department detail; team must supply).
+- [ ] Optional — Management's **skills** and **technologies** (its overview and five areas are in, from the team's copy; it intentionally has no Major Projects section).
 - [ ] **Required** — Team field (who attended) for each event; results for CanSat 2023, IN-SPACe CanSat, BSX years other than 2024, Srishti, APSA, Gravitas.
 - [ ] **Required** — Per-rocket subsystem breakdown for Vajra/Pinaka/Agneya/Airavata (nose cone/payload/avionics bay/recovery/airbrakes/fins/airframe descriptions) — live site doesn't break rockets down this way. Udbhava now has all 8 sections filled from its PTR (plus a 9th, Nozzle).
 - [ ] **Required** — Sponsorship tier benefits for Platinum/Gold/Silver/Bronze (forward-looking packages for new sponsors — distinct from the 6 existing sponsors, which don't use this tier system). Not in the brochure either.

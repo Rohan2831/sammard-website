@@ -14,7 +14,7 @@ export default function DepartmentsPage() {
     <section className={styles.section}>
       <SectionHeader
         heading="Departments"
-        description="Five technical divisions that build, test, and fly everything Team SAMMARD makes."
+        description="Five divisions — four engineering, and the Management team that funds, organises and moves it all — behind everything Team SAMMARD flies."
       />
       <div className={styles.list}>
         {departments.map((department, index) => (

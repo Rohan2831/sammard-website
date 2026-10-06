@@ -5,7 +5,7 @@ import styles from "./fleetlineup.module.css";
 
 /**
  * The fleet's livery renders standing side by side, oldest to newest. Only
- * rockets with a render appear (Pinaka has none yet — see ASSETS_NEEDED.md).
+ * rockets with a render appear.
  * Renders are drawn at equal height: real lengths aren't known for every
  * rocket, so scaling them would imply proportions we can't back up.
  * Each links to its card on /projects, opened (`?rocket=<id>`). `scroll={false}`

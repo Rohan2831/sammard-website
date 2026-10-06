@@ -189,7 +189,8 @@ export interface Department {
   responsibilities: string[];
   skills: string[];
   technologies: string[];
-  majorProjects: string[];
+  /** Omitted for divisions without projects of their own (Management). */
+  majorProjects?: string[];
 }
 
 export interface BoardMember {

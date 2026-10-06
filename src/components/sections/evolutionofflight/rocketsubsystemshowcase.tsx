@@ -15,9 +15,9 @@ export interface RocketSubsystemShowcaseProps {
 // 0–0.5 the assembled rocket, 0.5–1.5 it explodes, then one unit per subsystem.
 const EXPLODE_START = 0.5;
 const FIRST_SUBSYSTEM = 1.5;
-// The rocket stands nose-up, shifted clear of the text: right of centre beside
-// it on desktop, above it on mobile.
-const SHIFT_DESKTOP: Shift = [0.38, 0];
+// The rocket stands nose-up, centred on desktop (per the team); on mobile it's
+// lifted above the text, which sits at the bottom of the screen there.
+const SHIFT_DESKTOP: Shift = [0, 0];
 const SHIFT_MOBILE: Shift = [0, 0.4];
 
 const DESKTOP_QUERY = "(min-width: 900px)";

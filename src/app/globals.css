@@ -88,6 +88,13 @@
 
   html {
     scroll-behavior: smooth;
+    /* No visible page scrollbar (scrolling still works: wheel, touch, keys, Lenis). */
+    scrollbar-width: none;
+  }
+
+  html::-webkit-scrollbar,
+  body::-webkit-scrollbar {
+    display: none;
   }
 
   body {
