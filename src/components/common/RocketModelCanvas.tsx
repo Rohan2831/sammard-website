@@ -9,7 +9,7 @@ import { Canvas, useFrame, useLoader, useThree } from "@react-three/fiber";
 import { Environment, Lightformer, OrbitControls, PerspectiveCamera, useGLTF } from "@react-three/drei";
 import * as THREE from "three";
 import { prefersReducedMotion } from "@/animations/gsap";
-import type { RocketModel } from "@/types";
+import type { RocketFinish, RocketModel } from "@/types";
 
 const DRACO_DECODER_PATH = "/vendor/draco/";
 // At full explode each part moves this fraction of its axial distance from
@@ -22,6 +22,9 @@ const DIM_OPACITY = 0.07;
 // (carbon nose cone, fins) read as highlighted too, not just un-dimmed.
 const ACTIVE_GLOW = 0.3;
 const SPIN_SPEED = 0.25;
+// While a cutaway is in focus the spin settles with its cut face toward the
+// camera, turned this far (radians) so the section's depth still reads.
+const CUTAWAY_TURN = 0.45;
 // Exponential ease rate for camera moves (higher = snappier).
 const CAMERA_EASE = 2.5;
 
@@ -41,6 +44,10 @@ interface Part {
   base: THREE.Vector3;
   offset: THREE.Vector3;
   group: string | null;
+  /** Attachment variant (see `RocketModelAttachment.show`); undefined for the main model's own parts. */
+  show?: "default" | "focus";
+  /** Spin angle that turns this part's cut face toward the camera (cutaway attachments only). */
+  faceCameraAt?: number;
   materials: PartMaterial[];
 }
 
@@ -65,6 +72,112 @@ function matchGroup(name: string, partGroups: RocketModel["partGroups"]): string
 const matchesAny = (name: string, needles: string[]) =>
   needles.some((needle) => normalizeName(name).includes(normalizeName(needle)));
 
+/** Meshes whose own name, or any ancestor's, contains one of the needles. */
+function meshesMatching(scene: THREE.Object3D, needles: string[]): THREE.Mesh[] {
+  const meshes: THREE.Mesh[] = [];
+  scene.traverse((o) => {
+    const mesh = o as THREE.Mesh;
+    if (!mesh.isMesh) return;
+    for (let node: THREE.Object3D | null = mesh; node; node = node.parent) {
+      if (matchesAny(node.name, needles)) {
+        meshes.push(mesh);
+        return;
+      }
+    }
+  });
+  return meshes;
+}
+
+// Size (m) of one repeat of the carbon-fibre weave on a part's surface.
+const WEAVE_REPEAT = 0.04;
+
+/**
+ * A 2x2 twill carbon-fibre weave, drawn once: each tow is a dark band with a
+ * soft sheen across it, alternating direction in the staggered twill pattern.
+ */
+function carbonWeaveTexture() {
+  const size = 256;
+  const cells = 8;
+  const cell = size / cells;
+  const canvas = document.createElement("canvas");
+  canvas.width = canvas.height = size;
+  const ctx = canvas.getContext("2d");
+  if (ctx) {
+    for (let y = 0; y < cells; y++) {
+      for (let x = 0; x < cells; x++) {
+        const horizontal = (x + y) % 4 < 2;
+        const g = horizontal
+          ? ctx.createLinearGradient(0, y * cell, 0, (y + 1) * cell)
+          : ctx.createLinearGradient(x * cell, 0, (x + 1) * cell, 0);
+        g.addColorStop(0, "#0b0b0c");
+        g.addColorStop(0.5, horizontal ? "#3a3b3e" : "#2a2b2e");
+        g.addColorStop(1, "#0b0b0c");
+        ctx.fillStyle = g;
+        ctx.fillRect(x * cell, y * cell, cell, cell);
+      }
+    }
+  }
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.colorSpace = THREE.SRGBColorSpace;
+  texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+  texture.anisotropy = 8;
+  return texture;
+}
+
+function finishMaterial(finish: RocketFinish): THREE.Material {
+  switch (finish) {
+    case "aluminium":
+      return new THREE.MeshStandardMaterial({ color: 0xc8cbd0, metalness: 1, roughness: 0.32 });
+    case "stainless-steel":
+      return new THREE.MeshStandardMaterial({ color: 0xa9a8a4, metalness: 1, roughness: 0.18 });
+    case "propellant":
+      // Cast KNSB (sugar-based) grains: a matte off-white tan.
+      return new THREE.MeshStandardMaterial({ color: 0xc9b48e, metalness: 0, roughness: 0.85 });
+    case "carbon-fiber": {
+      const weave = carbonWeaveTexture();
+      // emissiveMap: the highlight glow brightens the weave rather than greying it.
+      return new THREE.MeshPhysicalMaterial({
+        map: weave,
+        emissiveMap: weave,
+        metalness: 0.2,
+        roughness: 0.45,
+        clearcoat: 1,
+        clearcoatRoughness: 0.08,
+      });
+    }
+  }
+}
+
+/** Flat UVs in metres across a part's two largest dimensions, so a tiled texture keeps true scale. */
+function planarUVs(geometry: THREE.BufferGeometry, metresPerRepeat: number) {
+  const box = new THREE.Box3().setFromBufferAttribute(geometry.getAttribute("position") as THREE.BufferAttribute);
+  const extent = box.getSize(new THREE.Vector3()).toArray();
+  const [a, b] = [0, 1, 2].sort((i, j) => extent[j] - extent[i]);
+  const position = geometry.getAttribute("position");
+  const uv = new Float32Array(position.count * 2);
+  for (let i = 0; i < position.count; i++) {
+    uv[i * 2] = position.getComponent(i, a) / metresPerRepeat;
+    uv[i * 2 + 1] = position.getComponent(i, b) / metresPerRepeat;
+  }
+  geometry.setAttribute("uv", new THREE.BufferAttribute(uv, 2));
+}
+
+// Scenes already given their finishes (applied once to the cached original, like the decal).
+const finished = new WeakSet<THREE.Object3D>();
+
+/** Swaps the CAD's materials for real finishes on the named parts. */
+function applyFinishes(scene: THREE.Object3D, finishes: NonNullable<RocketModel["finishes"]>) {
+  if (finished.has(scene)) return;
+  finished.add(scene);
+  for (const [finish, needles] of Object.entries(finishes) as [RocketFinish, string[]][]) {
+    const material = finishMaterial(finish);
+    for (const mesh of meshesMatching(scene, needles)) {
+      if (finish === "carbon-fiber") planarUVs(mesh.geometry, WEAVE_REPEAT);
+      mesh.material = material;
+    }
+  }
+}
+
 // Scenes already wrapped. useGLTF caches one scene per URL and every viewer clones
 // it, so the decal is applied to that shared original exactly once.
 const decalled = new WeakSet<THREE.Object3D>();
@@ -81,21 +194,11 @@ function applyDecal(scene: THREE.Object3D, decal: NonNullable<RocketModel["decal
   decalled.add(scene);
   scene.updateMatrixWorld(true);
 
-  const meshes: THREE.Mesh[] = [];
-  scene.traverse((o) => {
-    const mesh = o as THREE.Mesh;
-    if (!mesh.isMesh) return;
-    for (let node: THREE.Object3D | null = mesh; node; node = node.parent) {
-      if (matchesAny(node.name, decal.parts)) {
-        meshes.push(mesh);
-        return;
-      }
-    }
-  });
+  const meshes = meshesMatching(scene, decal.parts);
   if (meshes.length === 0) return;
 
   const skin = new THREE.Box3();
-  meshes.forEach((m) => skin.expandByObject(m));
+  meshesMatching(scene, decal.span ?? decal.parts).forEach((m) => skin.expandByObject(m));
   const axis = skin.getCenter(new THREE.Vector3());
   const length = skin.max.y - skin.min.y;
   const p = new THREE.Vector3();
@@ -159,14 +262,8 @@ function findGroup(object: THREE.Object3D, partGroups: RocketModel["partGroups"]
   return null;
 }
 
-/**
- * Clones the cached glTF scene so per-instance material changes don't leak
- * between viewers, strips the exporter's own lights/cameras, and records each
- * part's resting position plus its exploded-view displacement, and the
- * exploded extents of the whole assembly and of each subsystem group.
- * Assumes the model's long axis is +Y (nose up), SolidWorks' default export.
- */
-function prepare(scene: THREE.Object3D, partGroups: RocketModel["partGroups"]) {
+/** Clones a cached glTF scene without the exporter's own lights and cameras. */
+function cloneWithoutExtras(scene: THREE.Object3D) {
   const root = scene.clone(true);
   const strip: THREE.Object3D[] = [];
   root.traverse((o) => {
@@ -174,12 +271,63 @@ function prepare(scene: THREE.Object3D, partGroups: RocketModel["partGroups"]) {
   });
   strip.forEach((o) => o.removeFromParent());
   root.updateMatrixWorld(true);
+  return root;
+}
+
+function findNode(root: THREE.Object3D, needle: string): THREE.Object3D | null {
+  let found: THREE.Object3D | null = null;
+  root.traverse((o) => {
+    if (!found && matchesAny(o.name, [needle])) found = o;
+  });
+  return found;
+}
+
+interface LoadedAttachment {
+  spec: NonNullable<RocketModel["attachments"]>[number];
+  scene: THREE.Object3D;
+}
+
+/**
+ * Fits each attachment into the assembly as one rigid part: the transform that
+ * carries its copy of the anchor part onto the main model's copy places all of
+ * it, then that duplicate anchor is dropped.
+ */
+function fitAttachments(root: THREE.Object3D, assembly: THREE.Object3D, attachments: LoadedAttachment[]) {
+  for (const { spec, scene } of attachments) {
+    const attachment = cloneWithoutExtras(scene);
+    const own = findNode(attachment, spec.anchor);
+    const target = findNode(root, spec.anchor);
+    if (!own || !target) continue;
+    const toMain = target.matrixWorld.clone().multiply(own.matrixWorld.clone().invert());
+    own.removeFromParent();
+
+    const wrapper = new THREE.Group();
+    wrapper.name = spec.src;
+    wrapper.userData = { group: spec.group, show: spec.show ?? "default" };
+    wrapper.add(attachment);
+    assembly.matrixWorld.clone().invert().multiply(toMain).decompose(wrapper.position, wrapper.quaternion, wrapper.scale);
+    assembly.add(wrapper);
+  }
+  root.updateMatrixWorld(true);
+}
+
+/**
+ * Clones the cached glTF scene so per-instance material changes don't leak
+ * between viewers, strips the exporter's own lights/cameras, fits in any
+ * attachments, and records each part's resting position plus its exploded-view
+ * displacement, and the exploded extents of the whole assembly and of each
+ * subsystem group. Assumes the model's long axis is +Y (nose up), SolidWorks'
+ * default export.
+ */
+function prepare(scene: THREE.Object3D, partGroups: RocketModel["partGroups"], attachments: LoadedAttachment[]) {
+  const root = cloneWithoutExtras(scene);
 
   // CAD exporters put every part under one assembly node — the object with the most direct children.
   let assembly: THREE.Object3D = root;
   root.traverse((o) => {
     if (o.children.length > assembly.children.length) assembly = o;
   });
+  fitAttachments(root, assembly, attachments);
 
   const box = new THREE.Box3().setFromObject(root);
   const center = box.getCenter(new THREE.Vector3());
@@ -196,7 +344,7 @@ function prepare(scene: THREE.Object3D, partGroups: RocketModel["partGroups"]) {
     const from = partCenter.clone().applyMatrix4(toAssemblyLocal);
     const to = partCenter.clone().add(worldOffset).applyMatrix4(toAssemblyLocal);
 
-    const group = findGroup(object, partGroups);
+    const group: string | null = object.userData.group ?? findGroup(object, partGroups);
     const materials: PartMaterial[] = [];
     object.traverse((child) => {
       const mesh = child as THREE.Mesh;
@@ -206,7 +354,10 @@ function prepare(scene: THREE.Object3D, partGroups: RocketModel["partGroups"]) {
       for (const material of Array.isArray(cloned) ? cloned : [cloned]) {
         const standard = material as THREE.MeshStandardMaterial;
         let glowable: THREE.MeshStandardMaterial | null = null;
-        if (standard.isMeshStandardMaterial && standard.emissive.getHex() === 0) {
+        // No glow on metals or cutaways: flat white light would wash out their reflections/section
+        // shading, and everything else is ghosted anyway, so they still stand out.
+        const glows = standard.metalness < 0.5 && object.userData.show !== "focus";
+        if (standard.isMeshStandardMaterial && standard.emissive.getHex() === 0 && glows) {
           standard.emissive.set(0xffffff);
           standard.emissiveIntensity = 0;
           glowable = standard;
@@ -237,7 +388,11 @@ function prepare(scene: THREE.Object3D, partGroups: RocketModel["partGroups"]) {
       }
     }
 
-    return { object, base: object.position.clone(), offset: to.sub(from), group, materials };
+    // A half-section's material sits on one side of the axis; its cut face looks the other way.
+    // Spinning by π − (angle of that side) points the cut face at the camera (+Z).
+    const faceCameraAt = object.userData.show === "focus" ? Math.PI - Math.atan2(d.x, d.z) + CUTAWAY_TURN : undefined;
+
+    return { object, base: object.position.clone(), offset: to.sub(from), group, show: object.userData.show, faceCameraAt, materials };
   });
 
   // Keep the whole-rocket framings centred on the origin, which OrbitControls orbits around.
@@ -259,6 +414,11 @@ interface RocketPartsProps {
   focus: boolean;
   shift: Shift;
   interacting: RefObject<boolean>;
+  /**
+   * True while the visitor has taken the camera (navigable mode). The automatic
+   * shot and spin pause; moving on to another step (or a double-click) hands it back.
+   */
+  manual: RefObject<boolean>;
   onReady?: () => void;
   decalImage?: HTMLImageElement;
 }
@@ -277,14 +437,20 @@ function RocketParts({
   focus,
   shift,
   interacting,
+  manual,
   onReady,
   decalImage,
 }: RocketPartsProps) {
-  const { scene } = useGLTF(model.src, DRACO_DECODER_PATH);
+  // One call for the model and its attachments (always a non-empty list, so the hook is unconditional).
+  const gltfs = useGLTF([model.src, ...(model.attachments ?? []).map((a) => a.src)], DRACO_DECODER_PATH);
   const { root, parts, center, assembled, whole, groups } = useMemo(() => {
-    if (model.decal && decalImage) applyDecal(scene, model.decal, decalImage);
-    return prepare(scene, model.partGroups);
-  }, [scene, model.partGroups, model.decal, decalImage]);
+    const [main, ...rest] = gltfs;
+    if (model.finishes) applyFinishes(main.scene, model.finishes);
+    if (model.decal && decalImage) applyDecal(main.scene, model.decal, decalImage);
+    const attachments = (model.attachments ?? []).map((spec, i) => ({ spec, scene: rest[i].scene }));
+    if (model.finishes) attachments.forEach(({ scene }) => applyFinishes(scene, model.finishes!));
+    return prepare(main.scene, model.partGroups, attachments);
+  }, [gltfs, model.partGroups, model.attachments, model.finishes, model.decal, decalImage]);
   const spinRef = useRef<THREE.Group>(null);
   const explodeCurrent = useRef(typeof explode === "number" ? explode : 0);
   const reducedMotion = useMemo(() => prefersReducedMotion(), []);
@@ -294,6 +460,13 @@ function RocketParts({
   const size = useThree((s) => s.size);
   const shot = useRef<Shot | null>(null);
   const framing = useRef<Framing>({ ...assembled });
+  // Explode amount when the visitor took the camera; scrolling well past it hands it back.
+  const manualSince = useRef<number | null>(null);
+
+  // A new step always reframes automatically.
+  useEffect(() => {
+    manual.current = false;
+  }, [activeSubsystemId, manual]);
 
   useEffect(() => {
     onReady?.();
@@ -304,14 +477,21 @@ function RocketParts({
     [parts]
   );
 
-  useFrame((_, delta) => {
+  useFrame((state, delta) => {
     const target = typeof explode === "number" ? explode : (explode.current ?? 0);
     explodeCurrent.current = reducedMotion ? target : THREE.MathUtils.damp(explodeCurrent.current, target, 5, delta);
+
+    if (!manual.current) manualSince.current = null;
+    else if (manualSince.current === null) manualSince.current = target;
+    else if (Math.abs(target - manualSince.current) > 0.15) manual.current = false;
 
     for (const part of parts) {
       part.object.position.copy(part.base).addScaledVector(part.offset, explodeCurrent.current);
       const isActive = activeHasParts && part.group === activeSubsystemId;
-      const emphasis = !activeHasParts || isActive ? 1 : DIM_OPACITY;
+      // Attachment variants crossfade: a "focus" cutaway replaces the full part while its subsystem is active.
+      const shown = !part.show || (part.show === "focus") === (part.group === activeSubsystemId);
+      const emphasis = (shown ? 1 : 0) * (!activeHasParts || isActive ? 1 : DIM_OPACITY);
+      let visible = shown;
       for (const entry of part.materials) {
         const goal = entry.baseOpacity * emphasis;
         const { material, glowable } = entry;
@@ -326,11 +506,20 @@ function RocketParts({
           material.needsUpdate = true;
         }
         material.depthWrite = !dimmed || entry.baseTransparent;
+        if (material.opacity > 0.01) visible = true;
       }
+      part.object.visible = visible;
     }
 
-    if (spinRef.current && !reducedMotion && !interacting.current) {
-      spinRef.current.rotation.y += delta * SPIN_SPEED;
+    const spin = spinRef.current;
+    const cutaway = parts.find((p) => p.faceCameraAt !== undefined && p.group === activeSubsystemId);
+    if (spin && cutaway?.faceCameraAt !== undefined) {
+      // Settle on the nearest equivalent angle rather than unwinding whole turns.
+      const turns = Math.round((spin.rotation.y - cutaway.faceCameraAt) / (2 * Math.PI));
+      const goal = cutaway.faceCameraAt + turns * 2 * Math.PI;
+      spin.rotation.y = reducedMotion ? goal : THREE.MathUtils.damp(spin.rotation.y, goal, 3, delta);
+    } else if (spin && !reducedMotion && !interacting.current && !manual.current) {
+      spin.rotation.y += delta * SPIN_SPEED;
     }
 
     // Whole-rocket framing follows the explode (tight when assembled, wide when
@@ -343,8 +532,16 @@ function RocketParts({
       f.max = THREE.MathUtils.lerp(assembled.max, whole.max, t);
       f.radial = THREE.MathUtils.lerp(assembled.radial, whole.radial, t);
     }
+    const controls = state.controls as unknown as { target: THREE.Vector3 } | null;
+    if (manual.current) {
+      // The visitor's OrbitControls own the camera; resume from wherever they leave it.
+      shot.current = controls ? { look: controls.target.clone(), distance: camera.position.distanceTo(controls.target) } : null;
+      return;
+    }
     const goal = frameShot(camera, size.width / Math.max(size.height, 1), f, orientation, focused ? 1.6 : 1.1, shift);
-    shot.current = aimCamera(camera, shot.current, goal, reducedMotion ? Infinity : CAMERA_EASE, delta);
+    // Navigable views also swing back to straight-on after a visitor's orbit.
+    shot.current = aimCamera(camera, shot.current, goal, reducedMotion ? Infinity : CAMERA_EASE, delta, manualHome(manual));
+    controls?.target.copy(shot.current.look);
   });
 
   return (
@@ -403,26 +600,34 @@ function frameShot(
   return { look, distance };
 }
 
+const STRAIGHT_ON = new THREE.Vector3(0, 0, 1);
+
+/** Navigable views ease back to straight-on; drag-to-rotate views keep the visitor's angle. */
+const manualHome = (manual: RefObject<boolean>) => (manual === NOT_NAVIGABLE ? undefined : STRAIGHT_ON);
+
 /**
  * Eases the camera toward a shot (snaps on the first frame). It keeps its
  * current viewing direction rather than resetting to straight-on, so an
- * OrbitControls drag survives the framing changing underneath it.
+ * OrbitControls drag survives the framing changing underneath it — unless a
+ * `home` direction is given, which it also eases back to.
  */
 function aimCamera(
   camera: THREE.PerspectiveCamera,
   current: Shot | null,
   goal: Shot,
   ease: number,
-  delta: number
+  delta: number,
+  home?: THREE.Vector3
 ): Shot {
   const direction = current
     ? camera.position.clone().sub(current.look).normalize()
-    : new THREE.Vector3(0, 0, 1);
+    : (home ?? STRAIGHT_ON).clone();
   const next = current ?? { look: goal.look.clone(), distance: goal.distance };
   if (current) {
     const t = ease === Infinity ? 1 : 1 - Math.exp(-ease * delta);
     next.look.lerp(goal.look, t);
     next.distance = THREE.MathUtils.lerp(next.distance, goal.distance, t);
+    if (home) direction.lerp(home, t).normalize();
   }
   camera.position.copy(next.look).addScaledVector(direction, next.distance);
   camera.lookAt(next.look);
@@ -439,8 +644,59 @@ interface RocketSceneProps {
   explode: ExplodeSource;
   focus?: boolean;
   shift?: Shift;
+  /** Drag to rotate (the Projects card). */
   interactive?: boolean;
+  /**
+   * Full navigation without hijacking page scroll (the homepage showcase): drag
+   * to rotate, right-drag/shift-drag to pan, Ctrl/⌘+wheel or pinch to zoom,
+   * double-click to hand the camera back. Plain wheel and one-finger swipes still scroll.
+   */
+  navigable?: boolean;
   onReady?: () => void;
+}
+
+// Shared "never manual" flag for views that aren't navigable.
+const NOT_NAVIGABLE: RefObject<boolean> = { current: false };
+
+/**
+ * Keeps navigation from taking over page scrolling: zoom only answers a
+ * Ctrl/⌘-wheel (also what a trackpad pinch sends) or touch pinch, and a single
+ * finger scrolls the page. Double-click returns the camera to the guided shot.
+ */
+function NavigationGuards({ manual }: { manual: RefObject<boolean> }) {
+  const controls = useThree((s) => s.controls) as unknown as { enableZoom: boolean } | null;
+  const target = useThree((s) => s.events.connected) as HTMLElement | null | undefined;
+  const canvas = useThree((s) => s.gl.domElement);
+
+  useEffect(() => {
+    const element = target ?? canvas;
+    const host = element.parentElement ?? element;
+    if (!controls) return;
+    // OrbitControls sets touch-action: none; allow vertical page panning with one finger.
+    element.style.touchAction = "pan-y";
+    const onWheel = (e: WheelEvent) => {
+      const zoom = e.ctrlKey || e.metaKey;
+      controls.enableZoom = zoom;
+      if (zoom) manual.current = true;
+    };
+    const onPointerDown = () => {
+      controls.enableZoom = true;
+    };
+    const onDoubleClick = () => {
+      manual.current = false;
+    };
+    // Capture on the parent so the flag is set before OrbitControls sees the event.
+    host.addEventListener("wheel", onWheel, { capture: true, passive: true });
+    host.addEventListener("pointerdown", onPointerDown, { capture: true });
+    element.addEventListener("dblclick", onDoubleClick);
+    return () => {
+      host.removeEventListener("wheel", onWheel, { capture: true });
+      host.removeEventListener("pointerdown", onPointerDown, { capture: true });
+      element.removeEventListener("dblclick", onDoubleClick);
+    };
+  }, [controls, target, canvas, manual]);
+
+  return null;
 }
 
 /** Camera, lights and model. */
@@ -452,10 +708,13 @@ function RocketScene({
   focus = false,
   shift = NO_SHIFT,
   interactive = false,
+  navigable = false,
   onReady,
 }: RocketSceneProps) {
   const interacting = useRef(false);
-  const partsProps = { model, orientation, activeSubsystemId, explode, focus, shift, interacting, onReady };
+  const navigation = useRef(false);
+  const manual = navigable ? navigation : NOT_NAVIGABLE;
+  const partsProps = { model, orientation, activeSubsystemId, explode, focus, shift, interacting, manual, onReady };
 
   return (
     <>
@@ -479,19 +738,24 @@ function RocketScene({
         )}
       </Suspense>
 
-      {interactive && (
+      {(interactive || navigable) && (
         <OrbitControls
+          makeDefault
           enableZoom={false}
-          enablePan={false}
+          enablePan={navigable}
           enableDamping
+          // Navigable: one finger is left to the page (-1 = no action); two fingers pinch/pan.
+          touches={navigable ? { ONE: -1 as THREE.TOUCH, TWO: THREE.TOUCH.DOLLY_PAN } : undefined}
           onStart={() => {
             interacting.current = true;
+            if (navigable) navigation.current = true;
           }}
           onEnd={() => {
             interacting.current = false;
           }}
         />
       )}
+      {navigable && <NavigationGuards manual={navigation} />}
     </>
   );
 }
@@ -502,6 +766,8 @@ export interface RocketModelCanvasProps {
   activeSubsystemId: string | null;
   explode: ExplodeSource;
   interactive: boolean;
+  /** See `RocketSceneProps.navigable`. */
+  navigable?: boolean;
   /** Frame the camera on the active subsystem instead of the whole rocket. */
   focus?: boolean;
   shift?: Shift;

@@ -1,7 +1,7 @@
 .card {
   display: flex;
   flex-direction: column;
-  scroll-margin-top: 110px;
+  scroll-margin-top: 170px;
 }
 
 .imageWrap {
@@ -44,6 +44,7 @@
   width: 92%;
   height: auto;
   transform: translate(-50%, -62%) rotate(18deg);
+  filter: var(--render-rim);
 }
 
 .card[data-expanded="true"] .render {
@@ -62,6 +63,11 @@
     rgba(0, 0, 0, 0.1) 75%,
     rgba(0, 0, 0, 0) 100%
   );
+}
+
+/* Renders only need the title legible: keep the shade low so it doesn't swallow the fins. */
+.imageWrap[data-kind="render"] .overlay {
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0) 32%);
 }
 
 .title {

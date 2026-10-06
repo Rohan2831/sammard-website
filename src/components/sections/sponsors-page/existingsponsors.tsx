@@ -4,7 +4,7 @@ import { sponsors } from "@/data/sponsors";
 import styles from "./existingsponsors.module.css";
 
 // Grouped by real tier, not the forward-looking Gold/Silver/Bronze package
-// names — the live site only distinguishes "Platinum" (Converge) from a
+// names — the live site only distinguishes "Platinum" (Convergent) from a
 // generic "Partners" tier for its current sponsors (see sponsors.ts).
 const platinumSponsors = sponsors.filter((s) => s.tier === "platinum");
 const partnerSponsors = sponsors.filter((s) => s.tier !== "platinum");

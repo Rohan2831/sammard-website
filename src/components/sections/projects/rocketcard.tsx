@@ -18,7 +18,8 @@ export function RocketCard({ rocket, initiallyExpanded = false }: { rocket: Rock
     const card = cardRef.current;
     if (!initiallyExpanded || !card) return;
     const frame = requestAnimationFrame(() => {
-      const top = card.getBoundingClientRect().top + window.scrollY - 110;
+      // Clear the fixed navbar (80px) plus the sticky tabs bar beneath it.
+      const top = card.getBoundingClientRect().top + window.scrollY - 170;
       const lenis = getLenis();
       if (lenis) {
         // Lenis caches page dimensions; refresh them after the route change before scrolling.

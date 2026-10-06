@@ -5,6 +5,9 @@
   --background-secondary: #0a0a0a;
   --surface: #121212;
   --card: #171717;
+  /* Soft light rim traced around transparent rocket renders, so black fins and
+     nose cones (Airavata, Udbhava) separate from the near-black page. */
+  --render-rim: drop-shadow(0 0 1px rgba(255, 255, 255, 0.45)) drop-shadow(0 0 12px rgba(255, 255, 255, 0.1));
   --glass: rgba(255,255,255,.05);
 
   --foreground: #ffffff;

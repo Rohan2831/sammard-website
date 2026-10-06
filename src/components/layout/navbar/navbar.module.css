@@ -8,6 +8,14 @@
     z-index: 1000;
 
     background: transparent;
+    border-bottom: 1px solid transparent;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Scrolled: solid page-colour backing (no blur/glass) so content never shows through the links. */
+.navbar[data-scrolled="true"] {
+    background-color: var(--background);
+    border-bottom-color: rgba(255, 255, 255, 0.08);
 }
 
 .container {

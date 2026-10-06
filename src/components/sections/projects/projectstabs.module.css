@@ -2,3 +2,12 @@
   max-width: 960px;
   margin: 0 auto;
 }
+
+/* Pinned just below the 80px fixed navbar; cards scroll underneath it, not over the header. */
+.tabBar {
+  position: sticky;
+  top: 80px;
+  z-index: 20;
+  padding: var(--space-2) 0;
+  background-color: var(--background);
+}

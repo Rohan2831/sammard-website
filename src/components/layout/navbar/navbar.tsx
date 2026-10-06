@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
 
 import styles from "./navbar.module.css";
 import { Logo } from "./logo";
@@ -16,13 +17,29 @@ const instagramHref = socialLinks.find((s) => s.label === "Instagram")?.href ?? 
 
 export default function Navbars() {
   const navbarRef = useRef<HTMLElement>(null);
+  const pathname = usePathname();
 
+  // The navbar lives in the shared layout, so re-evaluate per page: only the
+  // homepage has a hero for it to fade out over.
   useEffect(() => {
     const cleanup = navbarAnimation({
       root: navbarRef,
     });
 
     return cleanup;
+  }, [pathname]);
+
+  // Once the page scrolls, the bar gets a solid backing so content (e.g. the Projects
+  // tabs) doesn't show through it. Set directly on the element: no re-render per scroll.
+  useEffect(() => {
+    const header = navbarRef.current;
+    if (!header) return;
+    const update = () => {
+      header.dataset.scrolled = String(window.scrollY > 8);
+    };
+    update();
+    window.addEventListener("scroll", update, { passive: true });
+    return () => window.removeEventListener("scroll", update);
   }, []);
 
   return (

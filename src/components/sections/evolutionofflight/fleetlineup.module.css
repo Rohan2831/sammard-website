@@ -50,6 +50,7 @@
   max-width: 100%;
   object-fit: contain;
   margin-bottom: var(--space-2);
+  filter: var(--render-rim);
   transition: transform 0.4s ease;
 }
 

@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef, useState, useSyncExternalStore, type CS
 import { RocketViewer3D } from "@/components/common/RocketViewer3D";
 import type { Shift } from "@/components/common/RocketModelCanvas";
 import { rocketSubsystemShowcaseAnimation } from "@/animations/rocketsubsystemshowcase";
-import type { Rocket } from "@/types";
+import type { Rocket, RocketModel } from "@/types";
 import styles from "./rocketsubsystemshowcase.module.css";
 
 export interface RocketSubsystemShowcaseProps {
@@ -28,6 +28,9 @@ const subscribeDesktop = (onChange: () => void) => {
 };
 
 const pad = (n: number) => String(n).padStart(2, "0");
+
+const isModelled = (model: RocketModel, subsystemId: string) =>
+  Boolean(model.partGroups[subsystemId]) || Boolean(model.attachments?.some((a) => a.group === subsystemId));
 
 /**
  * Homepage "closer look" at the flagship rocket (whichever leads `rockets.ts`),
@@ -98,8 +101,14 @@ export function RocketSubsystemShowcase({ rocket }: RocketSubsystemShowcaseProps
             activeSubsystemId={active < 0 ? null : components[active].id}
             focus
             shift={shift}
+            navigable
           />
         </div>
+
+        <p className={styles.controlsHint} aria-hidden="true">
+          <span className={styles.hintDesktop}>Drag to rotate · Right-drag to pan · Ctrl/⌘ + scroll to zoom · Double-click to reset</span>
+          <span className={styles.hintTouch}>Pinch to zoom · Two fingers to pan · Double-tap to reset</span>
+        </p>
 
         <div className={styles.intro} data-active={active < 0}>
           <p className={styles.eyebrow}>{rocket.name} — Exploded View</p>
@@ -114,7 +123,7 @@ export function RocketSubsystemShowcase({ rocket }: RocketSubsystemShowcaseProps
               </p>
               <h3 className={styles.title}>{c.name}</h3>
               <p className={styles.description}>{c.description}</p>
-              {!model.partGroups[c.id] && <p className={styles.note}>Not shown in the 3D model</p>}
+              {!isModelled(model, c.id) && <p className={styles.note}>Not shown in the 3D model</p>}
             </li>
           ))}
         </ol>

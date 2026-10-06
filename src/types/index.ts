@@ -68,16 +68,47 @@ export interface RocketModel {
    */
   partGroups: Record<string, string[]>;
   decal?: RocketDecal;
+  /**
+   * Real-material finishes, by case-insensitive substrings of part names (a part
+   * also matches through any ancestor's name). Overrides the CAD's own material,
+   * in the main model and its attachments alike.
+   */
+  finishes?: Partial<Record<RocketFinish, string[]>>;
+  /** Separately exported sub-assemblies fitted into the main model (e.g. the motor). */
+  attachments?: RocketModelAttachment[];
 }
+
+export interface RocketModelAttachment {
+  /** Draco-compressed .glb, decoded like the main model. */
+  src: string;
+  /**
+   * Case-insensitive substring of a part present in both files (e.g. a shared
+   * nozzle sub-assembly). The attachment is positioned so its copy lands exactly
+   * on the main model's, and that duplicate copy is dropped.
+   */
+  anchor: string;
+  /** Subsystem (RocketComponent id) the whole attachment belongs to. */
+  group: string;
+  /**
+   * "default" (the default): shown except while `group` is the active subsystem.
+   * "focus": shown only then — e.g. a cutaway that replaces the full part when zoomed in.
+   */
+  show?: "default" | "focus";
+}
+
+export type RocketFinish = "aluminium" | "stainless-steel" | "carbon-fiber" | "propellant";
 
 export interface RocketDecal {
   /** Flat livery artwork: width = one full turn around the body, top edge = nose tip. */
   src: string;
-  /**
-   * Case-insensitive substrings of the outer-skin part names it wraps. The
-   * artwork's height spans these parts' combined length, nose tip to tail.
-   */
+  /** Case-insensitive substrings of the outer-skin part names it's painted onto. */
   parts: string[];
+  /**
+   * Parts whose combined length the artwork's height spans, nose tip to tail —
+   * when that's more than the painted parts (e.g. a bare metal nose tip the
+   * artwork's top band was drawn for). Defaults to `parts`.
+   */
+  span?: string[];
 }
 
 export interface Rocket {

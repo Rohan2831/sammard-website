@@ -135,9 +135,9 @@ export const rockets: Rocket[] = [
     },
     model: {
       src: "/assets/shared/models/udbhava.glb",
-      // The CAD has no motor casing or grains (so no "motor" group), no payload and
-      // no airbrake parts. Base-bleed segments, the airframe/fin-can couplers and the
-      // motor retainer belong to no listed subsystem and stay neutral.
+      // The airframe CAD has no motor (it's added below as an attachment), no
+      // payload and no airbrake parts. Base-bleed segments, the airframe/fin-can
+      // couplers and the motor retainer belong to no listed subsystem and stay neutral.
       partGroups: {
         "nose-cone": ["nose tip", "nose cone", "nosecone"],
         "avionics-bay": ["avionics bay"],
@@ -148,9 +148,30 @@ export const rockets: Rocket[] = [
         fins: ["fincan", "5 deg bevel"],
         airframe: ["lowerbodytube"],
       },
+      // Project Rudra's own CAD, fitted inside the lower body tube by matching its
+      // nozzle sub-assembly to Udbhava's (same part in both exports). The
+      // half-section cutaway replaces it while the Motor subsystem is in focus.
+      attachments: [
+        { src: "/assets/shared/models/n_class_motor.glb", anchor: "nozzle assembly", group: "motor" },
+        { src: "/assets/shared/models/n_class_motor_half.glb", anchor: "nozzle assembly", group: "motor", show: "focus" },
+      ],
       decal: {
         src: "/assets/shared/models/udbhava-decal.webp",
-        parts: ["nose tip", "nose cone", "recovery tube", "avionics bay", "lowerbodytube"],
+        parts: ["nose cone", "recovery tube", "avionics bay", "lowerbodytube"],
+        // The artwork's grey top band is drawn for the bare aluminium tip.
+        span: ["nose tip", "nose cone", "recovery tube", "avionics bay", "lowerbodytube"],
+      },
+      // Checked against the CAD's own material tags and the PTR: SS304 nozzle
+      // (tagged "cast stainless steel") and nozzle retaining ring; 6061 aluminium
+      // nose tip (tagged "satin finish aluminum"), couplers (BOM: 6), fin-can plates
+      // and the motor retainer (PTR: 6061-T6, not steel); carbon-composite fins.
+      // Motor (attachments): Al 6061-T6 casing, Al 6063-T6 forward closure,
+      // A4-80 stainless M6 bolts, KNSB propellant grains ("bate" = BATES grain).
+      finishes: {
+        "carbon-fiber": ["5 deg bevel"],
+        "stainless-steel": ["nozzle assembly", "m6x25"],
+        aluminium: ["nose tip", "coupler", "fincan", "lower retainer", "motor casing", "forward closure"],
+        propellant: ["bate"],
       },
     },
   },

@@ -9,11 +9,14 @@ import styles from "./projectstabs.module.css";
 export function ProjectsTabs() {
   return (
     <Tabs defaultValue="rockets" className={styles.wrapper}>
-      <TabsList>
-        <TabsTrigger value="rockets">Rockets</TabsTrigger>
-        <TabsTrigger value="cansats">CanSats</TabsTrigger>
-        <TabsTrigger value="rnd">R&amp;D</TabsTrigger>
-      </TabsList>
+      {/* Sticks just under the fixed navbar instead of scrolling up beneath it. */}
+      <div className={styles.tabBar}>
+        <TabsList>
+          <TabsTrigger value="rockets">Rockets</TabsTrigger>
+          <TabsTrigger value="cansats">CanSats</TabsTrigger>
+          <TabsTrigger value="rnd">R&amp;D</TabsTrigger>
+        </TabsList>
+      </div>
       <TabsContent value="rockets">
         <RocketsTab />
       </TabsContent>

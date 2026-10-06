@@ -9,9 +9,9 @@ import type { Sponsor, SponsorshipPackage } from "@/types";
 export const sponsors: Sponsor[] = [
   {
     id: "converge",
-    name: "Converge",
+    name: "Convergent",
     logoSrc: "/assets/shared/sponsors/converge.png",
-    logoAlt: "Converge company logo",
+    logoAlt: "Convergent company logo",
     tier: "platinum",
     description: "Leading aerospace manufacturing company providing materials and technical expertise.",
     website: "https://www.converge.com/",
@@ -59,7 +59,7 @@ export const sponsors: Sponsor[] = [
 
 // Tier names are spec'd in the project blueprint; benefits are not — TBD,
 // see ASSETS_NEEDED.md (Sponsors Page). Note: the live site labels its actual
-// current sponsors "Platinum" (Converge only) or generic "Partners" — it does
+// current sponsors "Platinum" (Convergent only) or generic "Partners" — it does
 // not use Gold/Silver/Bronze for existing sponsors, so these tiers below are
 // forward-looking packages offered to prospective sponsors, not a re-labeling
 // of current ones.

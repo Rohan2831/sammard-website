@@ -19,6 +19,8 @@ export interface RocketViewer3DProps {
   /** 0 = assembled, 1 = fully exploded. A ref is read every frame (for scroll-driven values). */
   explode?: ExplodeSource;
   interactive?: boolean;
+  /** Rotate, pan and zoom without taking over page scroll (see RocketModelCanvas). */
+  navigable?: boolean;
   /** Zoom the camera in on the active subsystem. */
   focus?: boolean;
   shift?: Shift;
@@ -36,6 +38,7 @@ export function RocketViewer3D({
   activeSubsystemId = null,
   explode = 0,
   interactive = false,
+  navigable = false,
   focus = false,
   shift,
 }: RocketViewer3DProps) {
@@ -70,6 +73,7 @@ export function RocketViewer3D({
             activeSubsystemId={activeSubsystemId}
             explode={explode}
             interactive={interactive}
+            navigable={navigable}
             focus={focus}
             shift={shift}
             active={inView}
