@@ -86,7 +86,15 @@ export interface RocketModelAttachment {
    * nozzle sub-assembly). The attachment is positioned so its copy lands exactly
    * on the main model's, and that duplicate copy is dropped.
    */
-  anchor: string;
+  anchor?: string;
+  /**
+   * For files that share no identical part: move the attachment (translation
+   * only — both exports are nose-up) so the centre of its `own` part lands on the
+   * centre of the main model's `target` part. Names match exactly first, then as substrings.
+   */
+  align?: { own: string; target: string };
+  /** Attachment parts to leave out — e.g. its own copy of airframe the main model already has. */
+  omit?: string[];
   /** Subsystem (RocketComponent id) the whole attachment belongs to. */
   group: string;
   /**

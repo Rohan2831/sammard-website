@@ -277,13 +277,20 @@ function cloneWithoutExtras(scene: THREE.Object3D) {
   return root;
 }
 
+/** First node named exactly `needle` (normalised), else the first whose name contains it. */
 function findNode(root: THREE.Object3D, needle: string): THREE.Object3D | null {
-  let found: THREE.Object3D | null = null;
+  let exact: THREE.Object3D | null = null;
+  let partial: THREE.Object3D | null = null;
+  const wanted = normalizeName(needle);
   root.traverse((o) => {
-    if (!found && matchesAny(o.name, [needle])) found = o;
+    const name = normalizeName(o.name);
+    if (!exact && name === wanted) exact = o;
+    if (!partial && name.includes(wanted)) partial = o;
   });
-  return found;
+  return exact ?? partial;
 }
+
+const centreOf = (o: THREE.Object3D) => new THREE.Box3().setFromObject(o).getCenter(new THREE.Vector3());
 
 interface LoadedAttachment {
   spec: NonNullable<RocketModel["attachments"]>[number];
@@ -298,11 +305,28 @@ interface LoadedAttachment {
 function fitAttachments(root: THREE.Object3D, assembly: THREE.Object3D, attachments: LoadedAttachment[]) {
   for (const { spec, scene } of attachments) {
     const attachment = cloneWithoutExtras(scene);
-    const own = findNode(attachment, spec.anchor);
-    const target = findNode(root, spec.anchor);
-    if (!own || !target) continue;
-    const toMain = target.matrixWorld.clone().multiply(own.matrixWorld.clone().invert());
-    own.removeFromParent();
+    let toMain: THREE.Matrix4;
+    if (spec.anchor) {
+      const own = findNode(attachment, spec.anchor);
+      const target = findNode(root, spec.anchor);
+      if (!own || !target) continue;
+      toMain = target.matrixWorld.clone().multiply(own.matrixWorld.clone().invert());
+      own.removeFromParent();
+    } else if (spec.align) {
+      const own = findNode(attachment, spec.align.own);
+      const target = findNode(root, spec.align.target);
+      if (!own || !target) continue;
+      const shift = centreOf(target).sub(centreOf(own));
+      toMain = new THREE.Matrix4().makeTranslation(shift.x, shift.y, shift.z);
+    } else continue;
+    // Drop the attachment's duplicates of parts the main model already has.
+    for (const needle of spec.omit ?? []) {
+      const doomed: THREE.Object3D[] = [];
+      attachment.traverse((o) => {
+        if (o !== attachment && matchesAny(o.name, [needle])) doomed.push(o);
+      });
+      doomed.forEach((o) => o.removeFromParent());
+    }
 
     const wrapper = new THREE.Group();
     wrapper.name = spec.src;
@@ -403,6 +427,13 @@ function prepare(scene: THREE.Object3D, partGroups: RocketModel["partGroups"], a
     const reach = Math.max(-framing.min, framing.max);
     framing.min = -reach;
     framing.max = reach;
+  }
+
+  // A "default" attachment only makes way when a cutaway of the same subsystem exists
+  // to replace it; otherwise (e.g. the airbrakes) it stays visible, highlighted, when active.
+  const cutawayGroups = new Set(parts.filter((p) => p.show === "focus").map((p) => p.group));
+  for (const part of parts) {
+    if (part.show === "default" && !cutawayGroups.has(part.group)) part.show = undefined;
   }
 
   return { root, parts, center, assembled, whole, groups };

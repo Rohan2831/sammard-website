@@ -144,6 +144,8 @@ export const rockets: Rocket[] = [
         // The drogue/main parachute tubes plus the charge-well couplers either side of the avionics bay.
         recovery: ["recovery"],
         nozzle: ["nozzle assembly", "graphite insert", "retaining ring"],
+        // The coupler between the main parachute tube and the lower body tube carries the airbrake (attachment below).
+        airbrakes: ["coupler-1"],
         // "5 deg bevel" plates are the fins; "fincan" the four aluminium plates holding them.
         fins: ["fincan", "5 deg bevel"],
         airframe: ["lowerbodytube"],
@@ -154,6 +156,19 @@ export const rockets: Rocket[] = [
       attachments: [
         { src: "/assets/shared/models/n_class_motor.glb", anchor: "nozzle assembly", group: "motor" },
         { src: "/assets/shared/models/n_class_motor_half.glb", anchor: "nozzle assembly", group: "motor", show: "focus" },
+        // The team's airbrake module. It shares no identical part with the airframe
+        // CAD, so it's placed by its coupler: the PTR has the mechanism "integrated
+        // into a structural coupler connecting rocket body tubes", and the module
+        // was modelled with the motor tube just below it — i.e. Udbhava's "coupler-1",
+        // between the main parachute tube and the lower (motor) body tube. Its own
+        // coupler/tube pieces are dropped in favour of the airframe's. Threaded rods
+        // and bearings were simplified to plain cylinders for size (5.8 → 1.1 MB).
+        {
+          src: "/assets/shared/models/airbrakes.glb",
+          align: { own: "coupler - copy", target: "coupler-1" },
+          omit: ["coupler - copy", "lowers + upper coupler", "recovery tube", "motor tibe"],
+          group: "airbrakes",
+        },
       ],
       decal: {
         src: "/assets/shared/models/udbhava-decal.webp",
