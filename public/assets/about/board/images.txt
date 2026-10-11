@@ -14,6 +14,16 @@
 # Until a person's photo is added, the placeholder is shown.
 # Headshots imported from the team's previous website (2026-10).
 
+[MISSING] gahan-shekhar.jpg           Gahan Shekhar — Captain (2026–2027)
+[MISSING] aditi-bhore.jpg             Aditi Bhore — Team Manager & CanSat Lead (2026–2027)
+[MISSING] aalap-panda.jpg             Aalap Panda — Operations Lead (2026–2027)
+[MISSING] swaraj-sharma.jpg           Swaraj Sharma — Mechanical Lead (2026–2027)
+[MISSING] yug-solanki.jpg             Yug Solanki — Propulsion Lead (2026–2027)
+[MISSING] vedanjali-gautam.jpg        Vedanjali Gautam — Electronics Lead (2026–2027)
+[MISSING] hansika-naresh.jpg          Hansika Naresh — Design & Management Lead (2026–2027)
+[MISSING] prateek-sreenath.jpg        Prateek Sreenath — Computer Science Lead (2026–2027)
+[MISSING] adit-goyal.jpg              Adit Goyal — Payload Lead (2026–2027)
+[MISSING] advay-kulkarni.jpg          Advay Kulkarni — IREC Lead (2026–2027)
 [have]    prithvi-raj-singh.jpg       Prithvi Raj Singh — Captain (2024–2025)
 [have]    jermy-k-varkey.jpg          Jermy K. Varkey — Head of Operations (2024–2025)
 [have]    ansu-banerjee.jpg           Ansu Banerjee — IREC Lead (2024–2025)

@@ -1,16 +1,5 @@
 import type { Rocket } from "@/types";
 
-const SUBSYSTEM_TEMPLATE = (): Rocket["components"] => [
-  { id: "nose-cone", name: "Nose Cone", description: "Description — TBD" },
-  { id: "payload", name: "Payload", description: "Description — TBD" },
-  { id: "avionics-bay", name: "Avionics Bay", description: "Description — TBD" },
-  { id: "recovery", name: "Recovery", description: "Description — TBD" },
-  { id: "airbrakes", name: "Airbrakes", description: "Description — TBD" },
-  { id: "motor", name: "Motor", description: "Description — TBD" },
-  { id: "fins", name: "Fins", description: "Description — TBD" },
-  { id: "airframe", name: "Airframe", description: "Description — TBD" },
-];
-
 // Names, years, specs and descriptions confirmed against teamsammard.com
 // (homepage rocket fleet + /projects page, live production site,
 // cross-referenced 2026-09). Subsystem breakdowns per rocket aren't published
@@ -61,7 +50,7 @@ export const rockets: Rocket[] = [
       dryWeight: "~26.7kg (total minus 9.54kg propellant)",
       motor: "Project Rudra — in-house SRAD Class N solid motor (KNSB propellant)",
       bodyMaterial: "Filament-wound fiberglass",
-      averageThrust: "TBD (peak ~3,700 N per structural test data)",
+      averageThrust: "2622 N (theoretical, N2622-class)",
       designedApogee: "10,000 ft",
     },
     // Nose to tail, as on the vehicle (PTR structural layout + CAD positions):
@@ -194,24 +183,30 @@ export const rockets: Rocket[] = [
     name: "Airavata",
     status: "flown",
     year: 2025,
-    tagline: "IREC 2025 rocket — structural health monitoring payload, SPARC-III avionics.",
+    tagline: "IREC 2025 rocket (10K COTS) — a 3U CubeSat payload combining ViziNav vision-aided navigation, muon detection and structural health monitoring, with dual Sirius flight computers.",
     specs: {
-      // Length/diameter/weight from the team's IREC 2025 competition poster
-      // (seen at Srishti 2026), per the team (2026-10) — supersedes the old
-      // site's 2.5m / 15cm / 25kg. Dry weight is still the old site's figure.
+      // From Airavata's IREC 2025 Project Technical Report (Team 188), matching
+      // the competition poster the team chose (2026-10). Its weights: 23.7 kg
+      // vehicle + 2 kg payload = 25.7 kg at liftoff.
       height: "2.82m",
       diameter: "14cm",
-      totalWeight: "23.7kg",
-      dryWeight: "18kg",
-      motor: "Aerotech M1845-NT",
-      bodyMaterial: "Fiber Glass",
+      totalWeight: "25.7kg at liftoff",
+      dryWeight: "23.7kg (without payload)",
+      motor: "Aerotech M1845NT-PS",
+      bodyMaterial: "Fiberglass (GFRP) airframe, carbon-fiber nose cone and fins",
       averageThrust: "1875 N",
-      designedApogee: "10,000 ft",
+      designedApogee: "10,000 ft (predicted 9,640 ft)",
     },
-    components: SUBSYSTEM_TEMPLATE(),
-    flightHistory: [
-      { date: "2025-06", event: "IREC 2025", outcome: "1st in India (10K COTS category), Early Bird Award, 28th globally in Design and Build Quality" },
+    components: [
+      { id: "nose-cone", name: "Nose Cone", description: "LD-Haack profile at a 2.5:1 fineness ratio, picked over parabolic, conical and ellipsoidal shapes in OpenRocket and CFD, and made in carbon fiber for its strength-to-weight ratio and tolerance of aerodynamic heating." },
+      { id: "payload", name: "Payload", description: "A 3U CubeSat-format payload under 2 kg, entered in the Space Dynamics Laboratory Payload Challenge: ViziNav (vision-aided inertial navigation on an NVIDIA Jetson Nano with a camera and IMU), a muon detection module comparing an industry-grade and an additively manufactured scintillator, and strain-gauge structural health monitoring." },
+      { id: "avionics-bay", name: "Avionics Bay", description: "Housed in the coupler: a four-layer SRAD stack (Bessie 2.0 tracker, redundant and primary Sirius flight computers, master pull-pin switch) beside a removable sled carrying the COTS electronics, for quick field swaps." },
+      { id: "recovery", name: "Recovery", description: "Black-powder dual deployment — drogue at apogee, main at about 1,500 ft — run by a MissileWorks RRC3 with a Featherweight Raven 4 as backup. Both 12-gore hemispherical parachutes (100 cm drogue, 260 cm main) were sewn in-house from ripstop nylon." },
+      { id: "motor", name: "Motor", description: "Aerotech M1845NT-PS (Blue Thunder) COTS M-class motor: 8,307 N·s total impulse, 1,875 N average and 3,081 N peak thrust over a 4.4 s burn." },
+      { id: "fins", name: "Fins", description: "Four carbon-fiber fins (195 mm root chord, 70 mm tip chord, 4 mm thick) on a fin can that slides into the aft body tube for easy, repeatable alignment." },
+      { id: "airframe", name: "Airframe", description: "Two GFRP body tubes — 1.2 m upper for recovery, 1.1 m lower for the motor and payload — wet-laid and vacuum-bagged in-house, joined by an in-house GFRP coupler, with a fiberglass boat tail to cut base drag." },
     ],
+    flightHistory: [{ date: "2025-06", event: "IREC 2025", outcome: "1st in India (10K COTS category), Early Bird Award, 28th globally in Design and Build Quality" }],
     videoUrls: [],
     gallery: [],
     heroImage: "/assets/shared/rockets/airavata.webp",
@@ -225,19 +220,30 @@ export const rockets: Rocket[] = [
     name: "Agneya",
     status: "flown",
     year: 2024,
-    tagline: "Built for IREC 2024 — SPARC-II avionics, vibration-analysis payload.",
+    tagline: "Built for IREC 2024 (Spaceport America Cup, 10K COTS) — an actively stabilized gimbal payload and the team's SRAD SPARC flight computer.",
     specs: {
-      height: "2.2m",
-      diameter: "TBD",
-      totalWeight: "TBD",
-      dryWeight: "TBD",
-      motor: "Aerotech M1845NT",
-      bodyMaterial: "TBD",
-      averageThrust: "TBD",
-      designedApogee: "10,000 ft",
+      // From Agneya's 2024 Spaceport America Cup Project Technical Report
+      // (Team 145), converted from inches/ounces: 85.2 in, 5.9 in, 947 oz
+      // liftoff, 572 oz vehicle (without motor and payload).
+      height: "2.17m",
+      diameter: "15cm",
+      totalWeight: "26.8kg at liftoff",
+      dryWeight: "16.2kg (without motor and payload)",
+      motor: "Aerotech M1845NT-PS",
+      bodyMaterial: "Fiberglass airframe and fins, carbon-fiber nose cone with aluminium tip",
+      averageThrust: "1822 N",
+      designedApogee: "10,000 ft (predicted 10,154 ft)",
     },
-    components: SUBSYSTEM_TEMPLATE(),
-    flightHistory: [{ date: "2024", event: "IREC 2024", outcome: "Flown" }],
+    components: [
+      { id: "nose-cone", name: "Nose Cone", description: "LD-Haack profile, chosen after OpenRocket and CFD comparisons for the least drag and highest apogee, made in carbon fiber with an aluminium tip." },
+      { id: "payload", name: "Payload", description: "An 8.8 lb Active Control Gimbal Stabilization payload in a 3U CubeSat structure: gimbal BLDC motors and AS5600 magnetic encoders hold a platform steady for shock-sensitive cargo, logging IMU data and gimbal angles — a step up from the team's earlier passive vibration-attenuation (PVAD) payload." },
+      { id: "avionics-bay", name: "Avionics Bay", description: "A 3D-printed bay carrying a MissileWorks RRC3 (primary) and Featherweight Raven 4 (backup), a Featherweight GPS tracker, and the team's own SRAD SPARC flight computer and GPS tracker." },
+      { id: "recovery", name: "Recovery", description: "Rigorously tested black-powder dual deployment: drogue at apogee, main at about 1,490 ft." },
+      { id: "motor", name: "Motor", description: "Aerotech M1845NT-PS COTS M-class motor: 8,093 N·s total impulse, 1,822 N average and 2,434 N peak thrust over a 4.4 s burn." },
+      { id: "fins", name: "Fins", description: "Four swept-back fiberglass (GFRP) fins with a rounded cross-section to cut drag, keeping a static margin of at least 2 calibers, mounted on a fin can that doubles as the motor retainer." },
+      { id: "airframe", name: "Airframe", description: "Two fiberglass composite body tubes forming the primary load-bearing structure, with fiberglass bulkheads." },
+    ],
+    flightHistory: [{ date: "2024", event: "IREC 2024 / Spaceport America Cup 2024", outcome: "Flown" }],
     videoUrls: [],
     gallery: [],
     heroImage: "/assets/shared/rockets/agneya.webp",
@@ -253,16 +259,27 @@ export const rockets: Rocket[] = [
     year: 2023,
     tagline: "Team Sammard's first high-powered rocket, built for IREC 2023.",
     specs: {
-      height: "TBD",
-      diameter: "TBD",
-      totalWeight: "TBD",
-      dryWeight: "TBD",
-      motor: "TBD",
-      bodyMaterial: "Carbon-fiber nosecone",
-      averageThrust: "TBD",
+      // From the previous website (its homepage rocket carousel + Projects
+      // card), per the team (2026-10). No PTR for Vajra yet; that carousel's
+      // Agneya/Airavata figures disagreed with their PTRs, so treat as provisional.
+      height: "1.8m",
+      diameter: "12cm",
+      totalWeight: "18kg",
+      dryWeight: "13kg",
+      motor: "M2050-P",
+      bodyMaterial: "Fiberglass, carbon-fiber nose cone",
+      averageThrust: "2500 N",
       designedApogee: "10,000 ft",
     },
-    components: SUBSYSTEM_TEMPLATE(),
+    components: [
+      { id: "nose-cone", name: "Nose Cone", description: "Carbon fiber." },
+      { id: "payload", name: "Payload", description: "An experimental passive vibration-damping payload (PVAD) — the forerunner of Agneya's actively stabilized gimbal." },
+      { id: "avionics-bay", name: "Avionics Bay", description: "The team's SRAD SPARC flight computer." },
+      { id: "recovery", name: "Recovery", description: "Description — TBD" },
+      { id: "motor", name: "Motor", description: "M2050-P solid motor, about 2,500 N average thrust." },
+      { id: "fins", name: "Fins", description: "Description — TBD" },
+      { id: "airframe", name: "Airframe", description: "Fiberglass." },
+    ],
     flightHistory: [{ date: "2023", event: "IREC 2023 / Spaceport America Cup 2023", outcome: "Flown" }],
     videoUrls: [],
     gallery: [],
@@ -275,21 +292,33 @@ export const rockets: Rocket[] = [
   {
     id: "pinaka",
     name: "Pinaka",
-    status: "flown",
+    status: "retired",
     year: 2021,
-    tagline: "The team's first indigenously developed sounding rocket (2021).",
+    tagline: "The team's first indigenously developed sounding rocket (2021), designed for 30,000 ft.",
     specs: {
-      height: "TBD",
-      diameter: "TBD",
+      // From the previous website (its homepage rocket carousel + Projects
+      // card), per the team (2026-10); the carousel left motor, thrust and
+      // loaded weight blank. It also called Pinaka a "Concept" — nothing we
+      // have says it flew, so it's recorded as built, not flown.
+      height: "3.2m",
+      diameter: "22cm",
       totalWeight: "TBD",
-      dryWeight: "TBD",
+      dryWeight: "22kg",
       motor: "TBD",
-      bodyMaterial: "TBD",
+      bodyMaterial: "Carbon fiber",
       averageThrust: "TBD",
       designedApogee: "30,000 ft",
     },
-    components: SUBSYSTEM_TEMPLATE(),
-    flightHistory: [{ date: "2021", event: "First indigenous sounding rocket", outcome: "Flown" }],
+    components: [
+      { id: "nose-cone", name: "Nose Cone", description: "Description — TBD" },
+      { id: "payload", name: "Payload", description: "Description — TBD" },
+      { id: "avionics-bay", name: "Avionics Bay", description: "Description — TBD" },
+      { id: "recovery", name: "Recovery", description: "Description — TBD" },
+      { id: "motor", name: "Motor", description: "Description — TBD" },
+      { id: "fins", name: "Fins", description: "Description — TBD" },
+      { id: "airframe", name: "Airframe", description: "Carbon fiber." },
+    ],
+    flightHistory: [{ date: "2021", event: "First indigenous sounding rocket", outcome: "Built" }],
     videoUrls: [],
     gallery: [],
     heroImage: "/assets/projects/pinaka.jpg",

@@ -86,7 +86,7 @@ export const events: EventRecord[] = [
     status: "completed",
     rocketId: "airavata",
     videoUrls: [],
-    summary: "Srishti 2026 — the 12th National Level Technical Project Exhibition and Competition (theme: \"Engineering Resilience: Designing for Uncertainty\"), hosted by Saintgits College of Engineering, Kottayam, on 23–24 February 2026. Team Sammard exhibited Airavata and won the Best SolidWorks Project Award, plus what a second stage photo indicates is the Best Computer Applications Project Award (partially obscured in both photos — confirm exact wording).",
+    summary: "Srishti 2026 — the 12th National Level Technical Project Exhibition and Competition (theme: \"Engineering Resilience: Designing for Uncertainty\"), hosted by Saintgits College of Engineering, Kottayam, on 23–24 February 2026. Team Sammard exhibited Airavata and five projects placed: 1st position in two project categories, and 2nd position for Best Analytical & Best ANSYS Project (Integrated CFD), Best SolidWorks Project (CanSat design) and Best Computer Application Project (CyberDeck).",
   },
   {
     id: "apsa",
@@ -131,7 +131,7 @@ export const events: EventRecord[] = [
     website: "https://www.esrarocket.org/",
     status: "completed",
     videoUrls: [],
-    reportUrls: [],
+    reportUrls: ["/assets/documentation/irec-2025-project-technical-report.pdf"],
     summary: "International Rocket Engineering Competition, held 18–22 June 2025 in Midland. Team Sammard flew Airavata: 1st in India (10K COTS category), Early Bird Award, ranked 28th globally in Design and Build Quality.",
   },
   {
@@ -154,6 +154,7 @@ export const events: EventRecord[] = [
     website: "https://www.esrarocket.org/",
     status: "completed",
     videoUrls: [],
+    reportUrls: ["/assets/documentation/sa-cup-2024-project-technical-report.pdf"],
     summary: "The world's largest intercollegiate rocket engineering competition, held 10–12 June 2024. Team Sammard has competed multiple years, including launching Vajra (2023) and Agneya (2024); placed 23rd worldwide in 2022.",
   },
 ];

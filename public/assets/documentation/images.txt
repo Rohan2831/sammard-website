@@ -4,4 +4,6 @@
 # replace the file and keep the same name. Keep PDFs under ~25 MB (compress first).
 # Editing this list does not change the site — it's a checklist. Ask Claude to add new reports.
 
-[have]    irec-2026-project-technical-report.pdf   IREC 2026 page, "Technical Report" button (Udbhava's PTR, compressed from 162 MB)
+[have]    irec-2026-project-technical-report.pdf     Udbhava (IREC 2026) — IREC 2026 event page + Documentation page
+[have]    irec-2025-project-technical-report.pdf     Airavata (IREC 2025) — IREC 2025 event page + Documentation page
+[have]    sa-cup-2024-project-technical-report.pdf   Agneya (Spaceport America Cup 2024) — SA Cup event page + Documentation page

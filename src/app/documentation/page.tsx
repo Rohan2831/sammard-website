@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { SectionHeader } from "@/components/common/SectionHeader";
 import { EmptyState } from "@/components/common/EmptyState";
-import { DownloadButton } from "@/components/common/DownloadButton";
+import { ViewReportButton } from "@/components/common/ViewReportButton";
 import { documents } from "@/data/documents";
 import type { DocumentResource } from "@/types";
 import styles from "./page.module.css";
@@ -34,7 +34,7 @@ export default function DocumentationPage() {
               {items.length > 0 ? (
                 <div className={styles.downloads}>
                   {items.map((doc) => (
-                    <DownloadButton key={doc.id} label={doc.title} href={doc.fileUrl} />
+                    <ViewReportButton key={doc.id} label={doc.title} href={doc.fileUrl} />
                   ))}
                 </div>
               ) : (

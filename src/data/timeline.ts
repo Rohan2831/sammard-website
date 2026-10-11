@@ -73,7 +73,7 @@ export const timelineMilestones: TimelineMilestone[] = [
     id: "2026-udbhava",
     year: 2026,
     title: "Into the SRAD Category",
-    description: "Exhibited Airavata at the AP SpaceTech Summit (Guntur) and at Srishti 2026 (Saintgits, Kottayam), winning the Best SolidWorks Project Award. Flew Udbhava at IREC 2026 — the team's first entry in the 10K SRAD category, powered by Project Rudra, an N-class solid motor designed and built in-house — launching and recovering it successfully and placing 3rd in Asia. Showcased Udbhava at Bangalore Space Expo 2026.",
+    description: "Exhibited Airavata at the AP SpaceTech Summit (Guntur) and at Srishti 2026 (Saintgits, Kottayam), taking two 1st and three 2nd positions across its projects. Flew Udbhava at IREC 2026 — the team's first entry in the 10K SRAD category, powered by Project Rudra, an N-class solid motor designed and built in-house — launching and recovering it successfully and placing 3rd in Asia. Showcased Udbhava at Bangalore Space Expo 2026.",
     category: "award",
   },
 ];

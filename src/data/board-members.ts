@@ -1,6 +1,7 @@
 import type { BoardYear } from "@/types";
 
-// Every board year, member, position and headshot from the team's previous
+// 2026–2027 (the current board) is from the team directly (2026-10).
+// Every earlier board year, member, position and headshot is from the team's previous
 // website's source (Team_Sammard-_2025_2026_Website, components/about.tsx),
 // imported 2026-10 — it lists more members per year than the live site's
 // rendered page did. Latest year first. Photos are looked up by name at build
@@ -12,6 +13,21 @@ import type { BoardYear } from "@/types";
 // "Avionics Lead" -> Electronics, "Creative Lead" -> Management). Team-wide
 // roles (Captain, Head of Operations, competition and R&D leads) have none.
 export const boardYears: BoardYear[] = [
+  {
+    year: "2026–2027",
+    members: [
+      { id: "board-2627-1", name: "Gahan Shekhar", position: "Captain" },
+      { id: "board-2627-2", name: "Aditi Bhore", position: "Team Manager & CanSat Lead" },
+      { id: "board-2627-3", name: "Aalap Panda", position: "Operations Lead" },
+      { id: "board-2627-4", name: "Swaraj Sharma", position: "Mechanical Lead", department: "Mechanical" },
+      { id: "board-2627-5", name: "Yug Solanki", position: "Propulsion Lead", department: "Propulsion" },
+      { id: "board-2627-6", name: "Vedanjali Gautam", position: "Electronics Lead", department: "Electronics" },
+      { id: "board-2627-7", name: "Hansika Naresh", position: "Design & Management Lead", department: "Management" },
+      { id: "board-2627-8", name: "Prateek Sreenath", position: "Computer Science Lead", department: "Computer Science" },
+      { id: "board-2627-9", name: "Adit Goyal", position: "Payload Lead" },
+      { id: "board-2627-10", name: "Advay Kulkarni", position: "IREC Lead" },
+    ],
+  },
   {
     year: "2024–2025",
     members: [

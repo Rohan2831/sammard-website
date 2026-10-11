@@ -1,8 +1,9 @@
 import { notFound } from "next/navigation";
-import { ExternalLink, FileText } from "lucide-react";
+import { ExternalLink } from "lucide-react";
 import type { Metadata } from "next";
 import { SectionHeader } from "@/components/common/SectionHeader";
 import { DownloadButton } from "@/components/common/DownloadButton";
+import { ViewReportButton } from "@/components/common/ViewReportButton";
 import { MediaCard } from "@/components/common/MediaCard";
 import { EmptyState } from "@/components/common/EmptyState";
 import { Button } from "@/components/ui/button";
@@ -61,13 +62,7 @@ export default async function EventDetailPage({ params }: { params: Promise<{ sl
           {event.reportUrls.length > 0 ? (
             <div className={styles.reports}>
               {event.reportUrls.map((url) => (
-                // Opens in the browser's viewer with its toolbar (incl. download) hidden — view, not download.
-                <Button key={url} asChild variant="outline">
-                  <a href={`${url}#toolbar=0&navpanes=0`} target="_blank" rel="noopener noreferrer">
-                    <FileText />
-                    Technical Report
-                  </a>
-                </Button>
+                <ViewReportButton key={url} href={url} />
               ))}
             </div>
           ) : (

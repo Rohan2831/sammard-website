@@ -1,5 +1,58 @@
 # Progress
 
+## Content inventory
+
+What's on the site and where it came from, so nothing gets lost. Gaps are tracked in ASSETS_NEEDED.md.
+
+**Sources:**
+- teamsammard.com (the live site) and the previous website's source repo (`Team_Sammard-_2025_2026_Website`).
+- The PTRs for Udbhava (IREC 2026), Airavata (IREC 2025) and Agneya (SA Cup 2024).
+- The sponsorship brochure.
+- Team-supplied photos, CAD, renders and answers.
+
+**Where sources disagree:**
+- The team's own answers win over everything.
+- PTRs win over the old websites.
+- The latest source wins otherwise.
+
+**Pages:**
+- **Home:**
+  - hero video;
+  - Who We Are copy and photo;
+  - Udbhava's 3D exploded view (decal, Rudra motor and airbrake CAD, real finishes);
+  - fleet lineup with renders for all 5 rockets;
+  - Team in Action (2 videos, 2 photos);
+  - Competitions (5 cards, all with photos; the CanSat one is a stand-in);
+  - Sponsors.
+- **About:**
+  - mission, vision, values and legacy copy;
+  - board members: 2026–27 (10, current, always open) plus 2017–2025 (76 people, 73 headshots, in collapsible rows).
+- **Departments:**
+  - the brochure's 5 domains;
+  - Management: overview, 5 areas, skills, technologies;
+  - Computer Science: overview.
+- **Projects:**
+  - **Rockets:** Udbhava (full specs and 9 subsystems from its PTR, 3D model); Airavata and Agneya (full specs and 7 subsystems each from their PTRs); Vajra and Pinaka (specs from the previous website's carousel, provisional; Vajra 5 of 7 subsystems, Pinaka 1). Udbhava's average thrust (2,622 N theoretical) is from its PTR.
+  - **CanSats:** CanSat 2025 and 2023, with images.
+  - **R&D:** 8 projects with images: Propulsion (Ignis, Tejas, Rudra), Avionics (SPARC, Sirius, Bessie), BHAGAT-C, ATS, Ground Station (Shrota, CyberDeck), Bioprinter, Recovery, ViziNav.
+- **Events:** 10 events, latest first, each with:
+  - official website link;
+  - photo folder (`images.txt`);
+  - IREC 2026, IREC 2025 and SA Cup 2024 also show their PTR, view-only.
+  - Photos currently on: Srishti, APSA, BSX, IREC 2026, IREC 2025, IN-SPACe 2025, SA Cup.
+  - Srishti: full award list.
+  - IREC 2025: 28th globally in Design and Build Quality.
+  - CanSat 2025 season: not drawn to fly.
+- **Timeline:** 2017–2026.
+- **Gallery:** 72 items from the live and previous sites and the team's folders, with 12 filters.
+- **Sponsors:**
+  - 6 sponsors (Convergent links to convergecfd.com and LinkedIn);
+  - why-sponsor copy;
+  - brochure PDF;
+  - sponsor form.
+- **Documentation:** 3 PTRs, view-only.
+- **Contact and Join:** email, phone, address, Instagram, LinkedIn, X (no YouTube); forms use mailto.
+
 ## Done
 
 - Full site build-out: all 11 routes live (`/`, `/about`, `/projects`, `/departments`, `/events` + `/events/[slug]`, `/timeline`, `/gallery`, `/documentation`, `/sponsors`, `/join`, `/contact`). Data-driven from `src/data/*.ts` per ARCHITECTURE.md.
@@ -51,7 +104,8 @@
 - Event pages: Reports section now only on the two IREC events (`reportUrls` is optional on `EventRecord`; omitting it hides the section). Each event links to its official competition website, and every event has its own `public/assets/events/<slug>/` folder with an `images.txt` photo list read at build time (existing BSX/Srishti/APSA photos moved into those lists). Dropped the redundant "Team: TBD" field from events (it's always Team Sammard). Removed the irrelevant `AALAP_ASSESSMENT.pdf` (user).
 - Media slots (2026-10-11): every `public/assets/` folder now has an `images.txt` — list-driven for Gallery + each event (add photos with no code change, read at build time by `src/lib/medialist.ts`), a `[have]/[MISSING]` checklist of exact file names everywhere else. Board members get one photo each by name (`about/board/<name>.jpg`, placeholder fallback, resolved at build time). New slots: R&D `future-research.jpg`, sponsor logo renamed `aerospace-association-of-india.png`. Not yet committed or deployed.
 - User answers applied (2026-10-11): Airavata specs from the competition poster (2.82 m / 14 cm / 23.7 kg); IREC 2025 rank = brochure's 28th in Design and Build Quality; CanSat 2025 season = not drawn to fly at the finals (random draw); 2018 timeline adds 7th in Asia-Pacific; CanSat 2026 stays upcoming; departments renamed/reordered to the brochure (Mechanical, Electronics, Computer Science, Propulsion, Management); Convergent → convergecfd.com + LinkedIn icon (new optional `Sponsor.linkedinUrl`). Udbhava's PTR published view-only on IREC 2026 (19.5 MB). Competition photos pulled from the team's own live-site albums + brochure into `events/{in-space,irec,sa-cup,irec-2026}/` and all 4 missing homepage competition cards (CanSat card is a stand-in). Not yet committed or deployed.
-- Previous-website import (2026-10-11, from the cloned `Team_Sammard-_2025_2026_Website` repo): board rebuilt from its source (76 members / 7 years, 73 headshots, latest year first; department only where the role names a domain, otherwise omitted); ViziNav R&D card (renamed from "Future Research") with its CAD render; CanSat images on the CanSats tab (new optional `CanSat.image`); BSX 2024 + VIT-booth photos; sharper SA Cup launch photo; 51 gallery photos (all its non-competition albums + rocket/avionics/motor-test photos; new Rockets/Avionics/Exhibitions filters). Cross-checked every page (events, timeline, sponsors, projects, about, home copy) — text was already present and current. Its two .glb files were not used (single mesh, livery on a flat sheet). Board section then reworked: current board always open, earlier years as collapsible rows ("Previous boards"). Waiting on the team's latest board details. Not yet committed or deployed. Not yet committed or deployed.
+- Previous-website import (2026-10-11, from the cloned `Team_Sammard-_2025_2026_Website` repo): board rebuilt from its source (76 members / 7 years, 73 headshots, latest year first; department only where the role names a domain, otherwise omitted); ViziNav R&D card (renamed from "Future Research") with its CAD render; CanSat images on the CanSats tab (new optional `CanSat.image`); BSX 2024 + VIT-booth photos; sharper SA Cup launch photo; 51 gallery photos (all its non-competition albums + rocket/avionics/motor-test photos; new Rockets/Avionics/Exhibitions filters). Cross-checked every page (events, timeline, sponsors, projects, about, home copy) — text was already present and current. Its two .glb files were not used (single mesh, livery on a flat sheet). Board section then reworked: current board always open, earlier years as collapsible rows ("Previous boards"). Deployed (1713607).
+- Team content round (2026-10-12): 2026–2027 board added as the current (always-open) year, photos pending; Management skills/technologies + CS overview; Srishti 2026 award list; Airavata (IREC 2025) and Agneya (SA Cup 2024) specs + subsystems filled from their PTRs, which also corrected Agneya's payload and Airavata's avionics/payload; both PTRs compressed (44→2.8 MB, 7.6→6.9 MB, originals in reference-material/originals/) and linked view-only on their event pages and the Documentation page (now lists all 3 PTRs) via a shared `ViewReportButton`. Not yet committed or deployed. Not yet committed or deployed.
 
 ## Current work
 
