@@ -7,26 +7,33 @@
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
+.card[data-has-image="true"] {
+  display: grid;
+  gap: var(--space-4);
+}
+
+@media (min-width: 768px) {
+  .card[data-has-image="true"] {
+    grid-template-columns: 280px 1fr;
+    align-items: start;
+  }
+}
+
+/* Fixed 4:3 frame — any CanSat photo/render is cropped to fit. */
+.imageWrap {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background-color: var(--surface);
+}
+
 .title {
   margin: 0 0 var(--space-2);
   font-family: var(--font-space), sans-serif;
   font-size: clamp(1.25rem, 1vw + 1rem, 1.5rem);
   font-weight: 700;
   color: #ffffff;
-}
-
-.eyebrow {
-  margin: 0 0 0.5rem;
-  font-size: 0.8125rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: #7b7b7b;
-}
-
-.description {
-  margin: 0;
-  color: #b5b5b5;
-  line-height: 1.6;
 }
 
 .grid {

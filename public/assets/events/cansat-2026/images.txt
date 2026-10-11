@@ -1,0 +1,14 @@
+# Event page — CanSat Competition 2026
+#
+# This list IS the content: add a line, drop the file in this folder, redeploy.
+# One file per line:   file-name.jpg | Short description
+#   - Exact file name, lowercase-with-hyphens, no spaces.
+#   - The description is what screen readers and search engines see.
+#   - .jpg / .png / .webp show as photos; .mp4 (also .webm/.mov) as videos. Any size or shape.
+#   - Order here = order on the page. A listed file that isn't in the folder yet is skipped.
+#   - A name starting with / points elsewhere on the site (e.g. /assets/shared/videos/launch.mp4).
+#   - Lines starting with # are ignored.
+#
+# Example:
+# cansat-2026-team-photo.jpg | Team Sammard at CanSat Competition 2026
+

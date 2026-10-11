@@ -24,7 +24,7 @@ export const actionCards: ActionCardData[] = [
   {
     title: "Testing",
     mediaType: "video",
-    mediaSrc: "/assets/shared/videos/testing_Rudra.mp4",
+    mediaSrc: "/assets/shared/videos/rudra-testing.mp4",
     imageAlt: "Rocket Testing",
   },
   {

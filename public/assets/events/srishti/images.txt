@@ -1,0 +1,24 @@
+# Event page — Srishti
+#
+# This list IS the content: add a line, drop the file in this folder, redeploy.
+# One file per line:   file-name.jpg | Short description
+#   - Exact file name, lowercase-with-hyphens, no spaces.
+#   - The description is what screen readers and search engines see.
+#   - .jpg / .png / .webp show as photos; .mp4 (also .webm/.mov) as videos. Any size or shape.
+#   - Order here = order on the page. A listed file that isn't in the folder yet is skipped.
+#   - A name starting with / points elsewhere on the site (e.g. /assets/shared/videos/launch.mp4).
+#   - Lines starting with # are ignored.
+#
+# Example:
+# srishti-team-photo.jpg | Team Sammard at Srishti
+
+srishti-airavata-poster.jpg | Airavata rocket and technical poster on display at Srishti 2026
+srishti-rocket-booth.jpg | Team Sammard's Srishti 2026 booth with the Airavata rocket
+srishti-booth-group.jpg | Team Sammard members at their Srishti 2026 exhibition booths
+srishti-simulation-booth.jpg | Simulation and CFD work displayed at the Srishti 2026 booth
+srishti-team-arrival.jpg | Team Sammard at Saintgits College of Engineering for Srishti 2026
+srishti-solidworks-award.jpg | Team Sammard receiving the Best SolidWorks Project Award at Srishti 2026
+srishti-award-1.jpg | Team Sammard members receiving a project award on the Srishti 2026 stage
+srishti-award-2.jpg | Team Sammard receiving the Best Computer Applications Project Award at Srishti 2026
+srishti-booth-banner.jpg | Team Sammard's booth banner at Srishti 2026
+srishti-cansat-booth.jpg | A CanSat prototype and CAD models at a Team Sammard exhibition booth at Srishti 2026

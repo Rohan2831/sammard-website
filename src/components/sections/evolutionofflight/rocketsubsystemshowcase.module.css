@@ -19,6 +19,8 @@
   inset: 0;
 }
 
+/* Text visibility is scrubbed by the scroll: --reveal (0–1) is set from the
+   showcase's scroll progress, so there are no timed transitions here. */
 .intro {
   position: absolute;
   /* Let drags through to the 3D view underneath. */
@@ -27,14 +29,8 @@
   right: var(--space-4);
   bottom: 10svh;
   text-align: center;
-  transition:
-    opacity 0.6s ease,
-    transform 0.8s cubic-bezier(0.2, 0.7, 0.2, 1);
-}
-
-.intro[data-active="false"] {
-  opacity: 0;
-  transform: translateY(16px);
+  opacity: var(--reveal, 1);
+  transform: translateY(calc((1 - var(--reveal, 1)) * 16px));
 }
 
 /* Desktop: the intro sits where the subsystem text will, left of the rocket. */
@@ -46,11 +42,7 @@
     bottom: auto;
     width: min(420px, 34vw);
     text-align: left;
-    transform: translateY(-50%);
-  }
-
-  .intro[data-active="false"] {
-    transform: translateY(calc(-50% + 16px));
+    transform: translateY(calc(-50% + (1 - var(--reveal, 1)) * 16px));
   }
 }
 
@@ -114,19 +106,14 @@
   left: var(--space-4);
   right: var(--space-4);
   bottom: 5svh;
-  opacity: 0;
-  transform: translateY(24px);
+  opacity: var(--reveal, 0);
+  transform: translateY(calc((1 - var(--reveal, 0)) * 24px));
   pointer-events: none;
   /* Keeps the copy legible over ghosted parts drifting behind it. */
   text-shadow: 0 1px 14px rgba(0, 0, 0, 0.9);
-  transition:
-    opacity 0.5s ease,
-    transform 0.8s cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 
 .step[data-active="true"] {
-  opacity: 1;
-  transform: translateY(0);
   pointer-events: auto;
 }
 
@@ -137,11 +124,7 @@
     top: 50%;
     bottom: auto;
     width: min(420px, 34vw);
-    transform: translateY(calc(-50% + 24px));
-  }
-
-  .step[data-active="true"] {
-    transform: translateY(-50%);
+    transform: translateY(calc(-50% + (1 - var(--reveal, 0)) * 24px));
   }
 }
 
@@ -181,13 +164,6 @@
   font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .intro,
-  .step {
-    transition: none;
-  }
 }
 
 /* Rockets without a 3D model: a plain rule-divided list. */

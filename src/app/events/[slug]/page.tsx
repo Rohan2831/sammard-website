@@ -1,10 +1,13 @@
 import { notFound } from "next/navigation";
+import { ExternalLink, FileText } from "lucide-react";
 import type { Metadata } from "next";
 import { SectionHeader } from "@/components/common/SectionHeader";
 import { DownloadButton } from "@/components/common/DownloadButton";
 import { MediaCard } from "@/components/common/MediaCard";
 import { EmptyState } from "@/components/common/EmptyState";
+import { Button } from "@/components/ui/button";
 import { events } from "@/data/events";
+import { readMediaList } from "@/lib/medialist";
 import styles from "./page.module.css";
 
 export function generateStaticParams() {
@@ -21,6 +24,7 @@ export default async function EventDetailPage({ params }: { params: Promise<{ sl
   const { slug } = await params;
   const event = events.find((e) => e.slug === slug);
   if (!event) notFound();
+  const gallery = readMediaList(`events/${event.slug}`);
 
   return (
     <section className={styles.section}>
@@ -31,19 +35,19 @@ export default async function EventDetailPage({ params }: { params: Promise<{ sl
         align="left"
       />
 
-      <dl className={styles.meta}>
-        <div>
-          <dt>Team</dt>
-          <dd>{event.team}</dd>
-        </div>
-      </dl>
+      <Button asChild variant="outline" className={styles.website}>
+        <a href={event.website} target="_blank" rel="noopener noreferrer">
+          Official website
+          <ExternalLink />
+        </a>
+      </Button>
 
       <div className={styles.block}>
         <h3 className={styles.subheading}>Gallery</h3>
-        {event.gallery.length > 0 ? (
+        {gallery.length > 0 ? (
           <div className={styles.grid}>
-            {event.gallery.map((item) => (
-              <MediaCard key={item.id} type={item.type} src={item.src} alt={item.alt} />
+            {gallery.map((item) => (
+              <MediaCard key={item.src} type={item.type} src={item.src} alt={item.alt} />
             ))}
           </div>
         ) : (
@@ -51,18 +55,26 @@ export default async function EventDetailPage({ params }: { params: Promise<{ sl
         )}
       </div>
 
-      <div className={styles.block}>
-        <h3 className={styles.subheading}>Reports</h3>
-        {event.reportUrls.length > 0 ? (
-          <div className={styles.reports}>
-            {event.reportUrls.map((url) => (
-              <DownloadButton key={url} label="Report" href={url} />
-            ))}
-          </div>
-        ) : (
-          <DownloadButton label="Technical Report" />
-        )}
-      </div>
+      {event.reportUrls && (
+        <div className={styles.block}>
+          <h3 className={styles.subheading}>Reports</h3>
+          {event.reportUrls.length > 0 ? (
+            <div className={styles.reports}>
+              {event.reportUrls.map((url) => (
+                // Opens in the browser's viewer with its toolbar (incl. download) hidden — view, not download.
+                <Button key={url} asChild variant="outline">
+                  <a href={`${url}#toolbar=0&navpanes=0`} target="_blank" rel="noopener noreferrer">
+                    <FileText />
+                    Technical Report
+                  </a>
+                </Button>
+              ))}
+            </div>
+          ) : (
+            <DownloadButton label="Technical Report" />
+          )}
+        </div>
+      )}
     </section>
   );
 }

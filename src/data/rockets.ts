@@ -31,9 +31,8 @@ const SUBSYSTEM_TEMPLATE = (): Rocket["components"] => [
 // The brochure calls Udbhava's payload "MARK" (coefficient of friction in
 // microgravity), which conflicts with the PTR's bioprinter payload — the
 // PTR text is kept below until the team confirms; see ASSETS_NEEDED.md.
-// The brochure also says Airavata ranked "28th globally in Design and Build
-// Quality" vs the live site's "30th worldwide in design/build/documentation"
-// — left as the live site states, also flagged there.
+// Airavata's IREC 2025 rank uses the brochure's "28th globally in Design and
+// Build Quality" (team's call, 2026-10) over the old site's "30th worldwide".
 //
 // `render`: transparent livery renders supplied by the team (2026-10). No
 // render exists for Pinaka yet, so it keeps its photo stand-in.
@@ -197,12 +196,12 @@ export const rockets: Rocket[] = [
     year: 2025,
     tagline: "IREC 2025 rocket — structural health monitoring payload, SPARC-III avionics.",
     specs: {
-      // NOTE: source conflict — homepage's structured spec table lists
-      // 2.5m length; the /projects page description says "standing 2.8 m
-      // tall". Used the structured-table value; flagged in ASSETS_NEEDED.md.
-      height: "2.5m",
-      diameter: "15cm",
-      totalWeight: "25kg",
+      // Length/diameter/weight from the team's IREC 2025 competition poster
+      // (seen at Srishti 2026), per the team (2026-10) — supersedes the old
+      // site's 2.5m / 15cm / 25kg. Dry weight is still the old site's figure.
+      height: "2.82m",
+      diameter: "14cm",
+      totalWeight: "23.7kg",
       dryWeight: "18kg",
       motor: "Aerotech M1845-NT",
       bodyMaterial: "Fiber Glass",
@@ -211,7 +210,7 @@ export const rockets: Rocket[] = [
     },
     components: SUBSYSTEM_TEMPLATE(),
     flightHistory: [
-      { date: "2025-06", event: "IREC 2025", outcome: "1st in India (10K COTS category), Early Bird Award, 30th worldwide in design/build/documentation" },
+      { date: "2025-06", event: "IREC 2025", outcome: "1st in India (10K COTS category), Early Bird Award, 28th globally in Design and Build Quality" },
     ],
     videoUrls: [],
     gallery: [],

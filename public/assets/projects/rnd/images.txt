@@ -1,0 +1,19 @@
+# Projects page — R&D tab (one photo per project)
+#
+# The site looks for EXACTLY these file names in this folder. To change a photo,
+# replace the file and keep the same name and extension. Any size or shape is fine
+# (photos are cropped to their frame and resized automatically).
+# Editing this list does not change the site — it's a checklist. Need a new slot or
+# a different name? Ask Claude.
+#
+#   [have]    = file is in the folder
+#   [MISSING] = slot is waiting for a file (the spot stays empty until then)
+
+[have]    motors.jpg           Motors
+[have]    avionics.jpg         Avionics
+[have]    airbrakes.jpg        Airbrakes
+[have]    antennas.jpg         Antennas
+[have]    ground-station.jpg   Ground Station
+[have]    payloads.jpg         Payloads
+[have]    recovery.jpg         Recovery Systems
+[have]    vizinav.jpg           ViziNav (Future Research) — CAD render

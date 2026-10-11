@@ -1,3 +1,5 @@
+import { SwapImage } from "@/components/common/SwapImage";
+import { SwapVideo } from "@/components/common/SwapVideo";
 import styles from "./actioncard.module.css";
 
 export interface ActionCardProps {
@@ -33,25 +35,16 @@ export default function ActionCard({
       data-gsap-index={index}
     >
       {mediaType === "video" ? (
-  <video
-    className={styles.image}
-    autoPlay
-    muted
-    loop
-    playsInline
-    data-gsap="action-card-video"
-  >
-    <source src={mediaSrc} type="video/mp4" />
-  </video>
-) : (
-  <img
-    src={mediaSrc}
-    alt={imageAlt}
-    className={styles.image}
-    data-gsap="action-card-image"
-    loading="lazy"
-  />
-)}
+        <SwapVideo src={mediaSrc} className={styles.image} data-gsap="action-card-video" />
+      ) : (
+        <SwapImage
+          src={mediaSrc}
+          alt={imageAlt}
+          sizes="(min-width: 900px) 50vw, 100vw"
+          className={styles.image}
+          data-gsap="action-card-image"
+        />
+      )}
 
       <div className={styles.overlay} data-gsap="action-card-overlay" />
 

@@ -4,17 +4,17 @@ import { useMemo, useState } from "react";
 import { MediaCard } from "@/components/common/MediaCard";
 import { EmptyState } from "@/components/common/EmptyState";
 import { Lightbox } from "@/components/common/Lightbox";
-import { galleryItems, galleryCategories } from "@/data/gallery";
+import { galleryCategories } from "@/data/gallery";
 import type { GalleryItem } from "@/types";
 import styles from "./gallerygrid.module.css";
 
-export function GalleryGrid() {
+export function GalleryGrid({ items }: { items: GalleryItem[] }) {
   const [category, setCategory] = useState<GalleryItem["category"] | "All">("All");
   const [active, setActive] = useState<GalleryItem | null>(null);
 
   const filtered = useMemo(
-    () => (category === "All" ? galleryItems : galleryItems.filter((item) => item.category === category)),
-    [category]
+    () => (category === "All" ? items : items.filter((item) => item.category === category)),
+    [category, items]
   );
 
   return (

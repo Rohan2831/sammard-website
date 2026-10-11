@@ -1,0 +1,24 @@
+# Rocket renders (homepage fleet + Projects cards)
+#
+# The site looks for EXACTLY these file names in this folder. To change a photo,
+# replace the file and keep the same name and extension. Any size or shape is fine
+# (photos are cropped to their frame and resized automatically).
+# Editing this list does not change the site — it's a checklist. Need a new slot or
+# a different name? Ask Claude.
+#
+#   [have]    = file is in the folder
+#   [MISSING] = slot is waiting for a file (the spot stays empty until then)
+#
+# Transparent background required (they sit on the dark page).
+# Made from the rocket SVGs — easiest to send new SVGs to Claude.
+
+[have]    udbhava.webp              Udbhava, vertical
+[have]    airavata.webp             Airavata, vertical
+[have]    agneya.webp               Agneya, vertical
+[have]    vajra.webp                Vajra, vertical
+[have]    pinaka.webp               Pinaka, vertical
+[have]    udbhava-horizontal.webp   Udbhava, horizontal
+[have]    airavata-horizontal.webp  Airavata, horizontal
+[have]    agneya-horizontal.webp    Agneya, horizontal
+[have]    vajra-horizontal.webp     Vajra, horizontal
+[have]    pinaka-horizontal.webp    Pinaka, horizontal

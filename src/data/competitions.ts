@@ -1,31 +1,31 @@
 import type { Competition } from "@/types";
 
-// NOTE: srishti.jpg now exists (real photo, 2026-09). The other 4 image
-// files still don't exist — see ASSETS_NEEDED.md (Home Page).
+// Card photos live in public/assets/home/competitions/ (see its images.txt).
+// cansat.jpg is a stand-in: CanSat assembly at IN-SPACe 2025 (no NASA CanSat photos).
 export const competitions: Competition[] = [
   {
     id: "irec",
     title: "IREC",
     imageSrc: "/assets/home/competitions/irec.jpg",
-    imageAlt: "Team at the Intercollegiate Rocket Engineering Competition",
+    imageAlt: "Team Sammard holding Udbhava at IREC 2026",
   },
   {
     id: "cansat",
     title: "CanSat",
     imageSrc: "/assets/home/competitions/cansat.jpg",
-    imageAlt: "Team working on a CanSat competition entry",
+    imageAlt: "Team Sammard assembling a CanSat",
   },
   {
     id: "in-space",
     title: "IN-SPACe",
     imageSrc: "/assets/home/competitions/in-space.jpg",
-    imageAlt: "Team presenting at an IN-SPACe event",
+    imageAlt: "Team Sammard at IN-SPACe CanSat 2025, Kushinagar",
   },
   {
     id: "bsx",
     title: "BSX",
     imageSrc: "/assets/home/competitions/bsx.jpg",
-    imageAlt: "Team competing at BSX",
+    imageAlt: "Team Sammard's booth at Bangalore Space Expo 2026, showcasing Udbhava",
   },
   {
     id: "srishti",

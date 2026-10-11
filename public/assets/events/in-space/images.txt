@@ -1,0 +1,20 @@
+# Event page — IN-SPACe CanSat
+#
+# This list IS the content: add a line, drop the file in this folder, redeploy.
+# One file per line:   file-name.jpg | Short description
+#   - Exact file name, lowercase-with-hyphens, no spaces.
+#   - The description is what screen readers and search engines see.
+#   - .jpg / .png / .webp show as photos; .mp4 (also .webm/.mov) as videos. Any size or shape.
+#   - Order here = order on the page. A listed file that isn't in the folder yet is skipped.
+#   - A name starting with / points elsewhere on the site (e.g. /assets/shared/videos/launch.mp4).
+#   - Lines starting with # are ignored.
+#
+# Example:
+# in-space-team-photo.jpg | Team Sammard at IN-SPACe CanSat
+in-space-2025-5.jpg | Team Sammard with their ground-station antenna at IN-SPACe CanSat 2025, Kushinagar
+in-space-2025-2.jpg | Team Sammard holding their CanSat at IN-SPACe CanSat 2025
+in-space-2025-3.jpg | Team members aiming a Yagi antenna and running the ground station by the river at IN-SPACe CanSat 2025
+in-space-2025-4.jpg | Team members assembling the CanSat's structure at IN-SPACe CanSat 2025
+in-space-2025-7.jpg | Team members preparing the CanSat and its parachute at IN-SPACe CanSat 2025
+in-space-2025-1.jpg | Team Sammard working on their CanSat in the team tent at IN-SPACe CanSat 2025
+in-space-2025-6.jpg | Team Sammard in their tent at IN-SPACe CanSat 2025

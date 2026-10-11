@@ -4,24 +4,12 @@
   margin: 0 auto;
 }
 
-.meta {
-  margin: 0 0 var(--space-6);
+.website {
+  margin-bottom: var(--space-6);
 }
 
 .block {
   margin-bottom: var(--space-6);
-}
-
-.meta dt {
-  font-size: 0.8125rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--foreground-subtle);
-}
-
-.meta dd {
-  margin: 0.25rem 0 0;
-  color: var(--foreground);
 }
 
 .subheading {

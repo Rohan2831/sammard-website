@@ -13,7 +13,7 @@ import type { RndProject } from "@/types";
 // PTR's bioprinter below; kept as-is pending team confirmation.
 // Images are figures from the same PTR (static-fire setup, Sirius layout,
 // airbrake/payload renders, ATS hardware, Shrota Pro, main parachute test).
-// ViziNav (Future Research) isn't in the PTR, so it has none yet.
+// ViziNav's image is its CAD render from the team's previous website (2026-10).
 export const rndProjects: RndProject[] = [
   {
     id: "rnd-motors",
@@ -74,7 +74,9 @@ export const rndProjects: RndProject[] = [
   {
     id: "rnd-future-research",
     category: "Future Research",
-    title: "Future Research",
+    title: "ViziNav",
     description: "ViziNav (Visual-Aided Inertial Navigation System) is a GPS-independent, vision-based navigation system built around a Raspberry Pi, monocular camera, and IMU. It performs real-time 6-DOF pose estimation and 3D trajectory reconstruction — useful both for in-flight orientation and post-flight path visualization, with future potential for autonomous planetary landings.",
+    image: "/assets/projects/rnd/vizinav.jpg",
+    imageAlt: "CAD render of ViziNav's stacked electronics module",
   },
 ];

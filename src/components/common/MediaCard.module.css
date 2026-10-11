@@ -16,10 +16,19 @@ button.card {
   cursor: pointer;
 }
 
-.media {
+.frame {
+  position: relative;
   display: block;
   width: 100%;
   aspect-ratio: 4 / 3;
+  background: var(--surface);
+}
+
+.media {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
 }
 

@@ -1,0 +1,14 @@
+# Used on several pages
+#
+# The site looks for EXACTLY these file names in this folder. To change a photo,
+# replace the file and keep the same name and extension. Any size or shape is fine
+# (photos are cropped to their frame and resized automatically).
+# Editing this list does not change the site — it's a checklist. Need a new slot or
+# a different name? Ask Claude.
+#
+#   [have]    = file is in the folder
+#   [MISSING] = slot is waiting for a file (the spot stays empty until then)
+#
+# Sub-folders: sponsors/ (logos), videos/, rockets/ (renders), models/ (3D).
+
+[have]    logo.png  Team logo (navbar, footer)

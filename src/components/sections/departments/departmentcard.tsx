@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
+import { SwapImage } from "@/components/common/SwapImage";
 import { Plus } from "lucide-react";
 import type { Department } from "@/types";
 import styles from "./departmentcard.module.css";
@@ -13,10 +13,9 @@ export function DepartmentCard({ department, index }: { department: Department; 
     <div className={styles.card} data-expanded={expanded}>
       <button type="button" className={styles.trigger} onClick={() => setExpanded((v) => !v)} aria-expanded={expanded}>
         <div className={styles.coverWrap}>
-          <Image
+          <SwapImage
             src={department.coverImage}
             alt={department.name}
-            fill
             sizes="(min-width: 768px) 45vw, 100vw"
             className={styles.cover}
           />

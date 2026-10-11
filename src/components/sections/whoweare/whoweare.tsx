@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { SwapImage } from "@/components/common/SwapImage";
 import Link from "next/link";
 import { useEffect, useRef } from "react";
 
@@ -70,13 +70,7 @@ export default function WhoWeAre({
     </div>
 
     <div className={styles.imageContainer}>
-      <Image
-        src={imageSrc}
-        alt={imageAlt}
-        fill
-        sizes="100vw"
-        className={styles.image}
-      />
+      <SwapImage src={imageSrc} alt={imageAlt} sizes="(min-width: 900px) 50vw, 100vw" className={styles.image} />
     </div>
 
   </div>

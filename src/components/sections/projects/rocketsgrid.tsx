@@ -3,7 +3,7 @@
 import { useSearchParams } from "next/navigation";
 import { rockets } from "@/data/rockets";
 import { RocketCard } from "./rocketcard";
-import styles from "./rocketstab.module.css";
+import styles from "./projectgrid.module.css";
 
 export function RocketsGrid({ openRocketId = null }: { openRocketId?: string | null }) {
   return (

@@ -1,0 +1,7 @@
+# Documentation / report PDFs
+#
+# The site looks for EXACTLY these file names in this folder. To update a report,
+# replace the file and keep the same name. Keep PDFs under ~25 MB (compress first).
+# Editing this list does not change the site — it's a checklist. Ask Claude to add new reports.
+
+[have]    irec-2026-project-technical-report.pdf   IREC 2026 page, "Technical Report" button (Udbhava's PTR, compressed from 162 MB)

@@ -1,0 +1,21 @@
+# Event page — IREC
+#
+# This list IS the content: add a line, drop the file in this folder, redeploy.
+# One file per line:   file-name.jpg | Short description
+#   - Exact file name, lowercase-with-hyphens, no spaces.
+#   - The description is what screen readers and search engines see.
+#   - .jpg / .png / .webp show as photos; .mp4 (also .webm/.mov) as videos. Any size or shape.
+#   - Order here = order on the page. A listed file that isn't in the folder yet is skipped.
+#   - A name starting with / points elsewhere on the site (e.g. /assets/shared/videos/launch.mp4).
+#   - Lines starting with # are ignored.
+#
+# Example:
+# irec-team-photo.jpg | Team Sammard at IREC
+irec-2025-1.jpg | Team Sammard with their rocket and the Indian flag at IREC 2025, Midland
+irec-2025-3.jpg | Team Sammard with Airavata at their IREC 2025 booth
+irec-2025-2.jpg | Team Sammard with the Indian flag at IREC 2025
+irec-2025-6.jpg | Team Sammard at the IREC 2025 launch site
+irec-2025-7.jpg | Team members during their rocket inspection with an IREC official
+irec-2025-8.jpg | Team members preparing the rocket under the tent at IREC 2025
+irec-2025-4.jpg | Checking the avionics bay wiring at IREC 2025
+irec-2025-5.jpg | A team member fitting an avionics module into its sled at IREC 2025

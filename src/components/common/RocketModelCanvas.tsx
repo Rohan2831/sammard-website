@@ -27,9 +27,14 @@ const SPIN_SPEED = 0.25;
 const CUTAWAY_TURN = 0.45;
 // Exponential ease rate for camera moves (higher = snappier).
 const CAMERA_EASE = 2.5;
-// Moving between two subsystems, the camera first pulls back to the whole
-// exploded rocket for this long (seconds), then zooms into the next one.
-const ZOOM_OUT_TIME = 0.8;
+// When the scroll drives the camera (focusAmount), everything follows it this
+// tightly: enough smoothing to absorb wheel steps, not enough to feel like a lag.
+const SCROLL_EASE = 10;
+
+const smoothstep = (edge0: number, edge1: number, x: number) => {
+  const t = THREE.MathUtils.clamp((x - edge0) / (edge1 - edge0), 0, 1);
+  return t * t * (3 - 2 * t);
+};
 
 export type ExplodeSource = number | RefObject<number>;
 type Orientation = "vertical" | "horizontal";
@@ -453,6 +458,13 @@ interface RocketPartsProps {
    * shot and spin pause; moving on to another step (or a double-click) hands it back.
    */
   manual: RefObject<boolean>;
+  /**
+   * How far "in" on the active subsystem, 0 (whole rocket) → 1 (framed on it),
+   * read every frame. Scroll-driven in the homepage showcase, so the zoom, the
+   * ghosting and any cutaway scrub with the page instead of jumping. Without it
+   * a focused view is fully in.
+   */
+  focusAmount?: RefObject<number>;
   onReady?: () => void;
   decalImage?: HTMLImageElement;
 }
@@ -472,6 +484,7 @@ function RocketParts({
   shift,
   interacting,
   manual,
+  focusAmount,
   onReady,
   decalImage,
 }: RocketPartsProps) {
@@ -494,9 +507,7 @@ function RocketParts({
   const framing = useRef<Framing>({ ...assembled });
   // Explode amount when the visitor took the camera; scrolling well past it hands it back.
   const manualSince = useRef<number | null>(null);
-  // The subsystem last seen, and until when (clock time) to stay pulled back after a change.
-  const lastActive = useRef(activeSubsystemId);
-  const zoomedOutUntil = useRef(0);
+  const zoom = useRef(0);
 
   // A new step always reframes automatically.
   useEffect(() => {
@@ -513,40 +524,42 @@ function RocketParts({
   );
 
   useFrame((state, delta) => {
+    const scrolled = focusAmount !== undefined;
     const target = typeof explode === "number" ? explode : (explode.current ?? 0);
-    explodeCurrent.current = reducedMotion ? target : THREE.MathUtils.damp(explodeCurrent.current, target, 5, delta);
+    explodeCurrent.current = reducedMotion ? target : THREE.MathUtils.damp(explodeCurrent.current, target, scrolled ? SCROLL_EASE : 5, delta);
 
     if (!manual.current) manualSince.current = null;
     else if (manualSince.current === null) manualSince.current = target;
     else if (Math.abs(target - manualSince.current) > 0.15) manual.current = false;
 
-    // Subsystem → subsystem: pull back to the whole rocket first (everything un-ghosted),
-    // then go in. Each further change restarts the pull-back, so fast scrolling stays wide.
-    const now = state.clock.elapsedTime;
-    if (lastActive.current !== activeSubsystemId) {
-      if (lastActive.current !== null && activeSubsystemId !== null && !reducedMotion) {
-        zoomedOutUntil.current = now + ZOOM_OUT_TIME;
-      }
-      lastActive.current = activeSubsystemId;
-    }
-    const current = now < zoomedOutUntil.current ? null : activeSubsystemId;
+    // How far in on the active subsystem: 0 = the whole rocket, 1 = framed on it. Every
+    // emphasis below scales with it, so a scroll-driven zoom never jumps between steps.
+    const zoomGoal = activeSubsystemId === null ? 0 : scrolled ? THREE.MathUtils.clamp(focusAmount.current ?? 0, 0, 1) : 1;
+    zoom.current = reducedMotion || !scrolled ? zoomGoal : THREE.MathUtils.damp(zoom.current, zoomGoal, SCROLL_EASE, delta);
+    const z = zoom.current;
+    const current = activeSubsystemId;
     const activeHasParts = current !== null && parts.some((p) => p.group === current);
     const focused = (focus && current && groups[current]) || null;
+    // A cutaway takes over from the full part through the middle of the zoom.
+    const cutawayIn = smoothstep(0.3, 0.7, z);
+    const fade = scrolled ? SCROLL_EASE + 4 : 8;
 
     for (const part of parts) {
       part.object.position.copy(part.base).addScaledVector(part.offset, explodeCurrent.current);
       const isActive = activeHasParts && part.group === current;
       // Attachment variants crossfade: a "focus" cutaway replaces the full part while its subsystem is active.
-      const shown = !part.show || (part.show === "focus") === (part.group === current);
-      const emphasis = (shown ? 1 : 0) * (!activeHasParts || isActive ? 1 : DIM_OPACITY);
-      let visible = shown;
+      const variant =
+        !part.show || part.group !== current ? (part.show === "focus" ? 0 : 1) : part.show === "focus" ? cutawayIn : 1 - cutawayIn;
+      const ghost = !activeHasParts || isActive ? 1 : THREE.MathUtils.lerp(1, DIM_OPACITY, z);
+      const emphasis = variant * ghost;
+      let visible = variant > 0.01;
       for (const entry of part.materials) {
         const goal = entry.baseOpacity * emphasis;
         const { material, glowable } = entry;
-        material.opacity = reducedMotion ? goal : THREE.MathUtils.damp(material.opacity, goal, 8, delta);
+        material.opacity = reducedMotion ? goal : THREE.MathUtils.damp(material.opacity, goal, fade, delta);
         if (glowable) {
-          const glow = isActive ? ACTIVE_GLOW : 0;
-          glowable.emissiveIntensity = reducedMotion ? glow : THREE.MathUtils.damp(glowable.emissiveIntensity, glow, 8, delta);
+          const glow = isActive ? ACTIVE_GLOW * z : 0;
+          glowable.emissiveIntensity = reducedMotion ? glow : THREE.MathUtils.damp(glowable.emissiveIntensity, glow, fade, delta);
         }
         const dimmed = entry.baseTransparent || material.opacity < 0.995;
         if (material.transparent !== dimmed) {
@@ -560,7 +573,7 @@ function RocketParts({
     }
 
     const spin = spinRef.current;
-    const cutaway = parts.find((p) => p.faceCameraAt !== undefined && p.group === current);
+    const cutaway = cutawayIn > 0.05 ? parts.find((p) => p.faceCameraAt !== undefined && p.group === current) : undefined;
     if (spin && cutaway?.faceCameraAt !== undefined) {
       // Settle on the nearest equivalent angle rather than unwinding whole turns.
       const turns = Math.round((spin.rotation.y - cutaway.faceCameraAt) / (2 * Math.PI));
@@ -571,14 +584,16 @@ function RocketParts({
     }
 
     // Whole-rocket framing follows the explode (tight when assembled, wide when
-    // exploded); a focused subsystem uses its own exploded extents.
+    // exploded), then blends toward the focused subsystem's own extents by the zoom.
     const f = framing.current;
-    if (focused) Object.assign(f, focused);
-    else {
-      const t = explodeCurrent.current;
-      f.min = THREE.MathUtils.lerp(assembled.min, whole.min, t);
-      f.max = THREE.MathUtils.lerp(assembled.max, whole.max, t);
-      f.radial = THREE.MathUtils.lerp(assembled.radial, whole.radial, t);
+    const t = explodeCurrent.current;
+    f.min = THREE.MathUtils.lerp(assembled.min, whole.min, t);
+    f.max = THREE.MathUtils.lerp(assembled.max, whole.max, t);
+    f.radial = THREE.MathUtils.lerp(assembled.radial, whole.radial, t);
+    if (focused) {
+      f.min = THREE.MathUtils.lerp(f.min, focused.min, z);
+      f.max = THREE.MathUtils.lerp(f.max, focused.max, z);
+      f.radial = THREE.MathUtils.lerp(f.radial, focused.radial, z);
     }
     const controls = state.controls as unknown as { target: THREE.Vector3 } | null;
     if (manual.current) {
@@ -586,9 +601,12 @@ function RocketParts({
       shot.current = controls ? { look: controls.target.clone(), distance: camera.position.distanceTo(controls.target) } : null;
       return;
     }
-    const goal = frameShot(camera, size.width / Math.max(size.height, 1), f, orientation, focused ? 1.6 : 1.1, shift);
+    // Focused shots leave room along the axis so ghosted neighbours show where the part sits.
+    const alongMargin = focused ? THREE.MathUtils.lerp(1.1, 1.6, z) : 1.1;
+    const goal = frameShot(camera, size.width / Math.max(size.height, 1), f, orientation, alongMargin, shift);
     // Navigable views also swing back to straight-on after a visitor's orbit.
-    shot.current = aimCamera(camera, shot.current, goal, reducedMotion ? Infinity : CAMERA_EASE, delta, manualHome(manual));
+    const ease = reducedMotion ? Infinity : scrolled ? SCROLL_EASE : CAMERA_EASE;
+    shot.current = aimCamera(camera, shot.current, goal, ease, delta, manualHome(manual));
     controls?.target.copy(shot.current.look);
   });
 
@@ -700,6 +718,8 @@ interface RocketSceneProps {
    * double-click to hand the camera back. Plain wheel and one-finger swipes still scroll.
    */
   navigable?: boolean;
+  /** See `RocketPartsProps.focusAmount`. */
+  focusAmount?: RefObject<number>;
   onReady?: () => void;
 }
 
@@ -757,12 +777,13 @@ function RocketScene({
   shift = NO_SHIFT,
   interactive = false,
   navigable = false,
+  focusAmount,
   onReady,
 }: RocketSceneProps) {
   const interacting = useRef(false);
   const navigation = useRef(false);
   const manual = navigable ? navigation : NOT_NAVIGABLE;
-  const partsProps = { model, orientation, activeSubsystemId, explode, focus, shift, interacting, manual, onReady };
+  const partsProps = { model, orientation, activeSubsystemId, explode, focus, shift, interacting, manual, focusAmount, onReady };
 
   return (
     <>
@@ -816,6 +837,8 @@ export interface RocketModelCanvasProps {
   interactive: boolean;
   /** See `RocketSceneProps.navigable`. */
   navigable?: boolean;
+  /** See `RocketPartsProps.focusAmount`. */
+  focusAmount?: RefObject<number>;
   /** Frame the camera on the active subsystem instead of the whole rocket. */
   focus?: boolean;
   shift?: Shift;

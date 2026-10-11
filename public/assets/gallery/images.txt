@@ -1,0 +1,84 @@
+# Gallery page
+#
+# This list IS the content: add a line, drop the file in this folder, redeploy.
+# One file per line:   file-name.jpg | Short description | Category
+#   - Exact file name, lowercase-with-hyphens, no spaces.
+#   - The description is what screen readers and search engines see.
+#   - .jpg / .png / .webp show as photos; .mp4 (also .webm/.mov) as videos. Any size or shape.
+#   - Order here = order on the page. A listed file that isn't in the folder yet is skipped.
+#   - A name starting with / points elsewhere on the site (e.g. /assets/shared/videos/launch.mp4).
+#   - Lines starting with # are ignored.
+#   - Category is one of: Launches, Testing, Assembly, Manufacturing, Recovery, Competitions, Team, Ground Station, Behind the Scenes, Rockets, Avionics, Exhibitions.
+
+team-1.jpg | Team SAMMARD | Team
+team-2.jpg | Team SAMMARD at work | Team
+manufacturing.png | Team SAMMARD manufacturing | Manufacturing
+/assets/shared/videos/launch.mp4 | Rocket launch | Launches
+/assets/shared/videos/inflight.mp4 | Rocket in flight | Launches
+/assets/shared/videos/rudra-testing.mp4 | Rocket testing | Testing
+team-at-work-1.jpg | Team SAMMARD working at Creation Labs, VIT Vellore | Behind the Scenes
+team-at-work-2.jpg | CFD and structural simulations running at the team's lab | Behind the Scenes
+team-at-work-3.jpg | A team member assembling a component in the lab | Assembly
+team-at-work-4.jpg | Team SAMMARD members at a competition venue | Behind the Scenes
+team-at-work-5.jpg | Team members working together at Creation Labs | Behind the Scenes
+team-at-work-6.jpg | CFD meshing and simulation work on laptops | Behind the Scenes
+team-at-work-7.jpg | A team member soldering an electronics board | Assembly
+team-at-work-8.jpg | A team member rework-soldering a PCB with a heat gun | Assembly
+team-at-work-9.jpg | PCB layout and routing in progress | Ground Station
+team-at-work-10.jpg | Firmware development on an embedded flight computer | Ground Station
+team-at-work-11.jpg | Flight simulation code running on a laptop | Ground Station
+team-at-work-12.jpg | CAD design of a motor assembly, IREC 2025 stickers visible on the laptop | Manufacturing
+team-at-work-13.jpg | Team members sketching a design together on a tablet | Behind the Scenes
+srishti-cansat-booth.jpg | A CanSat prototype and CAD models at a Team Sammard exhibition booth | Competitions
+l-class-motor-test.mov | L-class motor static-fire test | Testing
+team-photo-1.jpg | Team Sammard group photo, 2025 | Team
+team-photo-2.jpg | Team Sammard group photo | Team
+team-photo-3.jpg | Team Sammard group photo | Team
+team-photo-4.jpg | Team Sammard group photo | Team
+static-fire-night.jpg | Night static-fire test setup for an in-house solid rocket motor | Testing
+ignis-test-stand.jpg | Ignis, the team's first in-house J-class KNSB motor, on its test stand | Testing
+vajra.jpg | Vajra on display at VIT Vellore | Rockets
+agneya.jpg | Agneya on display at VIT Vellore | Rockets
+pinaka.jpg | Pinaka on display at VIT Vellore | Rockets
+avionics-bay-cad.jpg | CAD render of an avionics bay with its battery pack | Avionics
+sparc-3.jpg | SPARC 3 flight computer | Avionics
+sparc-4.jpg | SPARC 4 flight computer | Avionics
+sirius.jpg | Sirius flight computer | Avionics
+bessie-1.jpg | Bessie 1.0 SRAD GPS tracker | Avionics
+bessie-2.jpg | Bessie 2.0 SRAD GPS tracker | Avionics
+shrota-2.jpg | Shrota 2.0 telemetry receiver and tracker | Ground Station
+vit-exhibition-1.jpg | Team Sammard exhibiting its rockets at VIT Vellore | Exhibitions
+vit-exhibition-2.jpg | Team Sammard exhibiting its rockets at VIT Vellore | Exhibitions
+vit-exhibition-3.jpg | Team Sammard exhibiting its rockets at VIT Vellore | Exhibitions
+vit-exhibition-4.jpg | Team Sammard exhibiting its rockets at VIT Vellore | Exhibitions
+vit-exhibition-5.jpg | Team Sammard exhibiting its rockets at VIT Vellore | Exhibitions
+vit-exhibition-6.jpg | Team Sammard exhibiting its rockets at VIT Vellore | Exhibitions
+vit-exhibition-7.jpg | Team Sammard exhibiting its rockets at VIT Vellore | Exhibitions
+vit-exhibition-8.jpg | Team Sammard exhibiting its rockets at VIT Vellore | Exhibitions
+vit-exhibition-9.jpg | Team Sammard exhibiting its rockets at VIT Vellore | Exhibitions
+vit-exhibition-10.jpg | Team Sammard exhibiting its rockets at VIT Vellore | Exhibitions
+vit-exhibition-11.jpg | Team Sammard exhibiting its rockets at VIT Vellore | Exhibitions
+vit-exhibition-12.jpg | Team Sammard exhibiting its rockets at VIT Vellore | Exhibitions
+vit-exhibition-13.jpg | Team Sammard exhibiting its rockets at VIT Vellore | Exhibitions
+vit-exhibition-14.jpg | Team Sammard exhibiting its rockets at VIT Vellore | Exhibitions
+vit-exhibition-15.jpg | Team Sammard exhibiting its rockets at VIT Vellore | Exhibitions
+vit-exhibition-16.jpg | Team Sammard exhibiting its rockets at VIT Vellore | Exhibitions
+republic-day-2025-1.jpg | Team Sammard at the Republic Day 2025 exhibition, VIT Vellore | Exhibitions
+republic-day-2025-2.jpg | Team Sammard at the Republic Day 2025 exhibition, VIT Vellore | Exhibitions
+republic-day-2025-3.jpg | Team Sammard at the Republic Day 2025 exhibition, VIT Vellore | Exhibitions
+republic-day-2025-4.jpg | Team Sammard at the Republic Day 2025 exhibition, VIT Vellore | Exhibitions
+independence-day-2025-1.jpg | Team Sammard at the Independence Day 2025 exhibition, VIT Vellore | Exhibitions
+independence-day-2025-2.jpg | Team Sammard at the Independence Day 2025 exhibition, VIT Vellore | Exhibitions
+independence-day-2025-3.jpg | Team Sammard at the Independence Day 2025 exhibition, VIT Vellore | Exhibitions
+independence-day-2025-4.jpg | Team Sammard at the Independence Day 2025 exhibition, VIT Vellore | Exhibitions
+independence-day-2025-5.jpg | Team Sammard at the Independence Day 2025 exhibition, VIT Vellore | Exhibitions
+independence-day-2025-6.jpg | Team Sammard at the Independence Day 2025 exhibition, VIT Vellore | Exhibitions
+independence-day-2025-7.jpg | Team Sammard at the Independence Day 2025 exhibition, VIT Vellore | Exhibitions
+techkriti-2024-1.jpg | Team Sammard showcasing its work at Techkriti 2024, IIT Kanpur | Exhibitions
+techkriti-2024-2.jpg | Team Sammard showcasing its work at Techkriti 2024, IIT Kanpur | Exhibitions
+techkriti-2024-3.jpg | Team Sammard showcasing its work at Techkriti 2024, IIT Kanpur | Exhibitions
+lab-1.jpg | Inside Team Sammard's lab | Behind the Scenes
+lab-2.jpg | Inside Team Sammard's lab | Behind the Scenes
+lab-3.jpg | Inside Team Sammard's lab | Behind the Scenes
+lab-4.jpg | Inside Team Sammard's lab | Behind the Scenes
+lab-5.jpg | Inside Team Sammard's lab | Behind the Scenes

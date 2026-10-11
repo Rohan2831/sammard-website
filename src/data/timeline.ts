@@ -17,7 +17,7 @@ export const timelineMilestones: TimelineMilestone[] = [
     id: "2018-making-our-mark",
     year: 2018,
     title: "Making Our Mark",
-    description: "Achieved 18th rank worldwide in the international CanSat competition, marking Team Sammard's first appearance on the global stage.",
+    description: "Placed 18th globally and 7th in Asia-Pacific in NASA's international CanSat competition, marking Team Sammard's first appearance on the global stage.",
     category: "international",
   },
   {
@@ -66,7 +66,7 @@ export const timelineMilestones: TimelineMilestone[] = [
     id: "2025-breaking-new-frontiers",
     year: 2025,
     title: "Breaking New Frontiers",
-    description: "Successful static-fire test of the team's first in-house J-class KNSB solid rocket motor (Ignis). Flew Airavata at IREC 2025 — 1st in India (10K COTS), Early Bird Award, 30th worldwide in design/build/documentation.",
+    description: "Successful static-fire test of the team's first in-house J-class KNSB solid rocket motor (Ignis). Flew Airavata at IREC 2025 — 1st in India (10K COTS), Early Bird Award, 28th globally in Design and Build Quality.",
     category: "award",
   },
   {

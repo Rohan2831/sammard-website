@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Plus } from "lucide-react";
 import type { Rocket } from "@/types";
 import { RocketViewer3D } from "@/components/common/RocketViewer3D";
 import { getLenis } from "@/animations/lenis";
+import { SwapImage } from "@/components/common/SwapImage";
+import { ExpandButton } from "./expandbutton";
 import styles from "./rocketcard.module.css";
 
 export function RocketCard({ rocket, initiallyExpanded = false }: { rocket: Rocket; initiallyExpanded?: boolean }) {
@@ -46,8 +47,7 @@ export function RocketCard({ rocket, initiallyExpanded = false }: { rocket: Rock
           // eslint-disable-next-line @next/next/no-img-element
           <img src={rocket.render.horizontal} alt={`${rocket.name} rocket`} className={styles.render} loading="lazy" />
         ) : (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={rocket.heroImage} alt={rocket.name} className={styles.image} loading="lazy" />
+          <SwapImage src={rocket.heroImage} alt={rocket.name} sizes="(min-width: 1024px) 66vw, 100vw" className={styles.image} />
         )}
         <div className={styles.overlay} />
         <h3 className={styles.title}>
@@ -69,15 +69,7 @@ export function RocketCard({ rocket, initiallyExpanded = false }: { rocket: Rock
           </>
         )}
 
-        <button
-          type="button"
-          className={styles.expandButton}
-          onClick={toggleExpanded}
-          aria-expanded={expanded}
-          aria-label={expanded ? `Collapse ${rocket.name} details` : `Expand ${rocket.name} details`}
-        >
-          <Plus className={styles.plusIcon} data-expanded={expanded} size={20} />
-        </button>
+        <ExpandButton expanded={expanded} label={rocket.name} onToggle={toggleExpanded} />
       </div>
 
       {expanded && (

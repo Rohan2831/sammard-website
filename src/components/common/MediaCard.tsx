@@ -1,3 +1,5 @@
+import { SwapImage } from "./SwapImage";
+import { SwapVideo } from "./SwapVideo";
 import styles from "./MediaCard.module.css";
 
 export interface MediaCardProps {
@@ -10,15 +12,16 @@ export interface MediaCardProps {
 
 /** Generic image/video card. Generalizes the image-or-video branching used by actioncard.tsx for reuse across Gallery/Events/Departments. */
 export function MediaCard({ type, src, alt, caption, onClick }: MediaCardProps) {
-  const media =
-    type === "video" ? (
-      <video className={styles.media} muted loop playsInline autoPlay>
-        <source src={src} type="video/mp4" />
-      </video>
-    ) : (
-      // eslint-disable-next-line @next/next/no-img-element
-      <img src={src} alt={alt} className={styles.media} loading="lazy" />
-    );
+  // A fixed 4:3 frame: whatever size or shape the file is, it's cropped to fit.
+  const media = (
+    <span className={styles.frame}>
+      {type === "video" ? (
+        <SwapVideo src={src} className={styles.media} aria-label={alt} />
+      ) : (
+        <SwapImage src={src} alt={alt} sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw" className={styles.media} />
+      )}
+    </span>
+  );
 
   if (onClick) {
     return (

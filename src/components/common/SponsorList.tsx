@@ -1,5 +1,7 @@
 import { forwardRef } from "react";
+import { FaLinkedin } from "react-icons/fa";
 import type { Sponsor } from "@/types";
+import { SwapImage } from "./SwapImage";
 import styles from "./SponsorList.module.css";
 
 /**
@@ -16,8 +18,9 @@ export const SponsorList = forwardRef<HTMLUListElement, { sponsors: Sponsor[] }>
           const content = (
             <>
               <span className={styles.logoWrap}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={sponsor.logoSrc} alt={sponsor.logoAlt} className={styles.logo} loading="lazy" />
+                <span className={styles.logoBox}>
+                  <SwapImage src={sponsor.logoSrc} alt={sponsor.logoAlt} fit="contain" sizes="96px" />
+                </span>
               </span>
               <span className={styles.name}>{sponsor.name}</span>
             </>
@@ -31,6 +34,17 @@ export const SponsorList = forwardRef<HTMLUListElement, { sponsors: Sponsor[] }>
                 </a>
               ) : (
                 <span className={styles.link}>{content}</span>
+              )}
+              {sponsor.linkedinUrl && (
+                <a
+                  href={sponsor.linkedinUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={styles.social}
+                  aria-label={`${sponsor.name} on LinkedIn`}
+                >
+                  <FaLinkedin size={16} />
+                </a>
               )}
             </li>
           );

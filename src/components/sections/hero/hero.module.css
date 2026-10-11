@@ -52,12 +52,6 @@
     line-height: 1.15;
 }
 
-.subtitle {
-    margin-top: 24px;
-    max-width: 800px;
-    font-size: 1.25rem;
-}
-
 .ctaGroup {
     display: flex;
     flex-wrap: wrap;

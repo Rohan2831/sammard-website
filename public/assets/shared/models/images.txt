@@ -1,0 +1,18 @@
+# 3D model (homepage exploded view)
+#
+# The site looks for EXACTLY these file names in this folder. To change a photo,
+# replace the file and keep the same name and extension. Any size or shape is fine
+# (photos are cropped to their frame and resized automatically).
+# Editing this list does not change the site — it's a checklist. Need a new slot or
+# a different name? Ask Claude.
+#
+#   [have]    = file is in the folder
+#   [MISSING] = slot is waiting for a file (the spot stays empty until then)
+#
+# Re-exported CAD needs the same part names, or ask Claude to re-fit it.
+
+[have]    udbhava.glb             Udbhava full CAD
+[have]    udbhava-decal.webp      Udbhava livery, wrapped around the body tubes in code
+[have]    n_class_motor.glb       Rudra motor CAD
+[have]    n_class_motor_half.glb  Rudra motor half-section (cutaway)
+[have]    airbrakes.glb           Airbrake module CAD

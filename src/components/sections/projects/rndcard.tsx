@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { Plus } from "lucide-react";
 import type { RndProject } from "@/types";
+import { SwapImage } from "@/components/common/SwapImage";
+import { ExpandButton } from "./expandbutton";
 import styles from "./rndcard.module.css";
 
 /**
@@ -16,20 +17,16 @@ export function RndCard({ project }: { project: RndProject }) {
     <article className={styles.card} data-expanded={expanded}>
       <div className={styles.imageWrap} data-empty={!project.image}>
         {project.image && (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={project.image} alt={project.imageAlt ?? project.title} className={styles.image} loading="lazy" />
+          <SwapImage
+            src={project.image}
+            alt={project.imageAlt ?? project.title}
+            sizes="(min-width: 1024px) 50vw, (min-width: 640px) 50vw, 100vw"
+            className={styles.image}
+          />
         )}
         <div className={styles.overlay} />
         <h3 className={styles.title}>{project.title}</h3>
-        <button
-          type="button"
-          className={styles.expandButton}
-          onClick={() => setExpanded((v) => !v)}
-          aria-expanded={expanded}
-          aria-label={expanded ? `Collapse ${project.title} details` : `Expand ${project.title} details`}
-        >
-          <Plus className={styles.plusIcon} data-expanded={expanded} size={20} />
-        </button>
+        <ExpandButton expanded={expanded} label={project.title} onToggle={() => setExpanded((v) => !v)} />
       </div>
 
       {expanded && (

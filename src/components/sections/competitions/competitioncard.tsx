@@ -1,3 +1,4 @@
+import { SwapImage } from "@/components/common/SwapImage";
 import styles from "./competitioncard.module.css";
 
 export interface CompetitionCardProps {
@@ -31,12 +32,12 @@ export default function CompetitionCard({
       data-gsap="competition-card"
       data-gsap-index={index}
     >
-      <img
+      <SwapImage
         src={imageSrc}
         alt={imageAlt}
+        sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
         className={styles.image}
         data-gsap="competition-card-image"
-        loading="lazy"
       />
 
       <div className={styles.overlay} data-gsap="competition-card-overlay" />

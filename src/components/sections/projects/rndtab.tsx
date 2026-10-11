@@ -1,6 +1,6 @@
 import { rndProjects } from "@/data/rnd";
 import { RndCard } from "./rndcard";
-import styles from "./rndtab.module.css";
+import styles from "./projectgrid.module.css";
 
 export function RndTab() {
   return (

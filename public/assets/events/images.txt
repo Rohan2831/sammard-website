@@ -1,0 +1,4 @@
+# Event photos
+#
+# One sub-folder per event (named like the page address, e.g. /events/irec-2026 -> irec-2026/).
+# Each has its own images.txt — add photos there.

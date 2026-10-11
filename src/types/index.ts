@@ -31,7 +31,10 @@ export interface GalleryItem {
     | "Competitions"
     | "Team"
     | "Ground Station"
-    | "Behind the Scenes";
+    | "Behind the Scenes"
+    | "Rockets"
+    | "Avionics"
+    | "Exhibitions";
   caption?: string;
 }
 
@@ -143,6 +146,8 @@ export interface CanSat {
   electronics: string;
   results: string;
   competition?: string;
+  image?: string;
+  imageAlt?: string;
   gallery: GalleryItem[];
 }
 
@@ -178,6 +183,7 @@ export interface Sponsor {
   logoSrc: string;
   logoAlt: string;
   website?: string;
+  linkedinUrl?: string;
   description?: string;
   tier?: SponsorTier;
 }
@@ -205,8 +211,8 @@ export interface BoardMember {
   id: string;
   name: string;
   position: string;
-  department: string;
-  photo: string;
+  /** Only when the position names one of the 5 domains. */
+  department?: string;
   linkedinUrl?: string;
 }
 
@@ -221,13 +227,14 @@ export interface EventRecord {
   name: string;
   year: number | "TBD";
   location: string;
-  team: string;
+  /** The competition's official website. */
+  website: string;
   rocketId?: string;
   /** "upcoming" hasn't happened yet — sorts before every "completed" event regardless of its (sometimes unreliable) date. */
   status: "upcoming" | "completed";
-  gallery: GalleryItem[];
   videoUrls: string[];
-  reportUrls: string[];
+  /** Omit to hide the Reports section (only IREC publishes a technical report). Opened for viewing, not downloaded. */
+  reportUrls?: string[];
   summary: string;
 }
 

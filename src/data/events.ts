@@ -35,6 +35,10 @@ import type { EventRecord } from "@/types";
 // NFL season). Kept `year: 2025` (matches the team's own branding) but
 // sorted by the real June 2024 date, and spelled the date out in the
 // summary so the discrepancy isn't hidden.
+// Each event's photos live in `public/assets/events/<slug>/` and are listed in
+// that folder's `images.txt` (read at build time by `readMediaList`), so
+// adding photos never needs a code change. `website` is the competition's
+// official site (verified 2026-10).
 export const events: EventRecord[] = [
   {
     id: "cansat-2026",
@@ -42,12 +46,10 @@ export const events: EventRecord[] = [
     name: "CanSat Competition 2026",
     year: 2026,
     location: "Texas, USA",
-    team: "TBD",
+    website: "https://www.cansatcompetition.com/",
     status: "upcoming",
-    gallery: [],
     videoUrls: [],
-    reportUrls: [],
-    summary: "An international competition pushing students to integrate complete satellite systems into a compact can-sized payload. Team Sammard's upcoming entry, listed on the live site's Events page under \"Upcoming Events\" — its printed date (April 5–7, 2025) is likely stale leftover text; the real 2026 date isn't known yet.",
+    summary: "An international competition pushing students to integrate complete satellite systems into a compact can-sized payload. Team Sammard's 2026 CanSat is in development — the competition is still ahead.",
   },
   {
     id: "bsx",
@@ -55,20 +57,10 @@ export const events: EventRecord[] = [
     name: "Bangalore Space Expo (BSX)",
     year: 2026,
     location: "Bengaluru, Karnataka, India",
-    team: "TBD",
+    website: "https://bsxindia.com/",
     status: "completed",
     rocketId: "udbhava",
-    gallery: [
-      {
-        id: "bsx-2026-1",
-        type: "image",
-        src: "/assets/events/bsx/bsx-2026-udbhava-booth.jpg",
-        alt: "Team Sammard's booth at Bangalore Space Expo 2026, showcasing the Udbhava rocket",
-        category: "Competitions",
-      },
-    ],
     videoUrls: [],
-    reportUrls: [],
     summary: "Presented innovations at ISRO's Bangalore Space Expo, strengthening industry connections. Team Sammard has presented at BSX in 2019, 2022, 2024, and 2026 — the 2026 booth (Sept 2026) showcased Udbhava, the team's newest rocket.",
   },
   {
@@ -77,12 +69,11 @@ export const events: EventRecord[] = [
     name: "IREC 2026",
     year: 2026,
     location: "Midland, Texas, USA",
-    team: "TBD",
+    website: "https://www.esrarocket.org/",
     status: "completed",
     rocketId: "udbhava",
-    gallery: [],
     videoUrls: [],
-    reportUrls: [],
+    reportUrls: ["/assets/documentation/irec-2026-project-technical-report.pdf"],
     summary: "International Rocket Engineering Competition — the world's largest collegiate rocket engineering competition. Team Sammard's first entry in the 10K SRAD category, flying Udbhava on Project Rudra, an N-class solid rocket motor designed and manufactured entirely in-house. Udbhava was launched and recovered successfully and placed 3rd in Asia in the 10K SRAD category.",
   },
   {
@@ -91,23 +82,10 @@ export const events: EventRecord[] = [
     name: "Srishti",
     year: 2026,
     location: "Saintgits College of Engineering, Kottayam, Kerala, India",
-    team: "TBD",
+    website: "https://www.saintgits.org/",
     status: "completed",
     rocketId: "airavata",
-    gallery: [
-      { id: "srishti-1", type: "image", src: "/assets/events/srishti/srishti-airavata-poster.jpg", alt: "Airavata rocket and technical poster on display at Srishti 2026", category: "Competitions" },
-      { id: "srishti-2", type: "image", src: "/assets/events/srishti/srishti-rocket-booth.jpg", alt: "Team Sammard's Srishti 2026 booth with the Airavata rocket", category: "Competitions" },
-      { id: "srishti-3", type: "image", src: "/assets/events/srishti/srishti-booth-group.jpg", alt: "Team Sammard members at their Srishti 2026 exhibition booths", category: "Competitions" },
-      { id: "srishti-4", type: "image", src: "/assets/events/srishti/srishti-simulation-booth.jpg", alt: "Simulation and CFD work displayed at the Srishti 2026 booth", category: "Competitions" },
-      { id: "srishti-5", type: "image", src: "/assets/events/srishti/srishti-team-arrival.jpg", alt: "Team Sammard at Saintgits College of Engineering for Srishti 2026", category: "Competitions" },
-      { id: "srishti-6", type: "image", src: "/assets/events/srishti/srishti-solidworks-award.jpg", alt: "Team Sammard receiving the Best SolidWorks Project Award at Srishti 2026", category: "Competitions" },
-      { id: "srishti-7", type: "image", src: "/assets/events/srishti/srishti-award-1.jpg", alt: "Team Sammard members receiving a project award on the Srishti 2026 stage", category: "Competitions" },
-      { id: "srishti-8", type: "image", src: "/assets/events/srishti/srishti-award-2.jpg", alt: "Team Sammard receiving the Best Computer Applications Project Award at Srishti 2026", category: "Competitions" },
-      { id: "srishti-9", type: "image", src: "/assets/events/srishti/srishti-booth-banner.jpg", alt: "Team Sammard's booth banner at Srishti 2026", category: "Competitions" },
-      { id: "srishti-10", type: "image", src: "/assets/events/srishti/srishti-cansat-booth.jpg", alt: "A CanSat prototype and CAD models at a Team Sammard exhibition booth at Srishti 2026", category: "Competitions" },
-    ],
     videoUrls: [],
-    reportUrls: [],
     summary: "Srishti 2026 — the 12th National Level Technical Project Exhibition and Competition (theme: \"Engineering Resilience: Designing for Uncertainty\"), hosted by Saintgits College of Engineering, Kottayam, on 23–24 February 2026. Team Sammard exhibited Airavata and won the Best SolidWorks Project Award, plus what a second stage photo indicates is the Best Computer Applications Project Award (partially obscured in both photos — confirm exact wording).",
   },
   {
@@ -116,15 +94,10 @@ export const events: EventRecord[] = [
     name: "AP SpaceTech Summit & Rocketry Challenge",
     year: 2026,
     location: "Guntur, Andhra Pradesh, India",
-    team: "TBD",
+    website: "https://www.vignan.ac.in/newvignan/spacetech.php",
     status: "completed",
     rocketId: "airavata",
-    gallery: [
-      { id: "apsa-1", type: "image", src: "/assets/events/apsa/apsa-airavata-display.jpg", alt: "Team Sammard's Airavata rocket on display at the AP SpaceTech Summit 2026", category: "Competitions" },
-      { id: "apsa-2", type: "image", src: "/assets/events/apsa/apsa-summit.jpg", alt: "Team Sammard on stage at the AP SpaceTech Summit & Rocketry Challenge 2026", category: "Competitions" },
-    ],
     videoUrls: [],
-    reportUrls: [],
     summary: "AP SpaceTech Summit & Rocketry Challenge 2k26 (\"Connecting Space Science, Technology & Innovation\"), hosted by Vignan's Foundation for Science, Technology & Research in Guntur, Andhra Pradesh, on 24 January 2026. Team Sammard exhibited Airavata. Not yet listed on the team's live site — added from team-supplied event photos (2026-09).",
   },
   {
@@ -133,11 +106,9 @@ export const events: EventRecord[] = [
     name: "Gravitas",
     year: 2025,
     location: "VIT Vellore",
-    team: "TBD",
+    website: "https://vit.ac.in/campuslife/fests",
     status: "completed",
-    gallery: [],
     videoUrls: [],
-    reportUrls: [],
     summary: "VIT's biggest tech fest, 26–29 October 2025 — an outreach/exhibition event, not a competition Team Sammard enters.",
   },
   {
@@ -146,11 +117,9 @@ export const events: EventRecord[] = [
     name: "IN-SPACe CanSat",
     year: 2025,
     location: "Kushinagar, Uttar Pradesh, India",
-    team: "TBD",
+    website: "https://www.inspace.gov.in/",
     status: "completed",
-    gallery: [],
     videoUrls: [],
-    reportUrls: [],
     summary: "National-level CanSat competition, held 25–30 October 2025.",
   },
   {
@@ -159,12 +128,11 @@ export const events: EventRecord[] = [
     name: "IREC",
     year: 2025,
     location: "Midland, Texas, USA",
-    team: "TBD",
+    website: "https://www.esrarocket.org/",
     status: "completed",
-    gallery: [],
     videoUrls: [],
     reportUrls: [],
-    summary: "International Rocket Engineering Competition, held 18–22 June 2025 in Midland. Team Sammard flew Airavata: 1st in India (10K COTS category), Early Bird Award, ranked 30th worldwide in design, build & documentation.",
+    summary: "International Rocket Engineering Competition, held 18–22 June 2025 in Midland. Team Sammard flew Airavata: 1st in India (10K COTS category), Early Bird Award, ranked 28th globally in Design and Build Quality.",
   },
   {
     id: "cansat",
@@ -172,12 +140,10 @@ export const events: EventRecord[] = [
     name: "CanSat Competition",
     year: 2025,
     location: "Virginia, USA",
-    team: "TBD",
+    website: "https://www.cansatcompetition.com/",
     status: "completed",
-    gallery: [],
     videoUrls: [],
-    reportUrls: [],
-    summary: "NASA's \"CanSat 2025\" competition season — Team Sammard's actual launch was 18–22 June 2024, per the live site's own Past Events card. Flew a container–payload system with a coaxial contra-rotating autogyro for a controlled ~5 m/s descent, with dual cameras and real-time telemetry.",
+    summary: "NASA's \"CanSat 2025\" competition season. Team Sammard built a container–payload system with a coaxial contra-rotating autogyro for a controlled ~5 m/s descent, with dual cameras and real-time telemetry. The team didn't get to fly it at the finals: places at the launch were decided by a random draw, purely down to luck, and Team Sammard wasn't picked.",
   },
   {
     id: "sa-cup",
@@ -185,11 +151,9 @@ export const events: EventRecord[] = [
     name: "Spaceport America Cup",
     year: 2024,
     location: "New Mexico, USA",
-    team: "TBD",
+    website: "https://www.esrarocket.org/",
     status: "completed",
-    gallery: [],
     videoUrls: [],
-    reportUrls: [],
     summary: "The world's largest intercollegiate rocket engineering competition, held 10–12 June 2024. Team Sammard has competed multiple years, including launching Vajra (2023) and Agneya (2024); placed 23rd worldwide in 2022.",
   },
 ];

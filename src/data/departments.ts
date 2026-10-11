@@ -1,7 +1,7 @@
 import type { Department } from "@/types";
 
-// The team's 5 real divisions, confirmed by the team from Udbhava's PTR:
-// Mechanical, Propulsion, Electrical, CS, and Management. Management's copy
+// The team's 5 domains, named and ordered as in the team's brochure:
+// Mechanical, Electronics, Computer Science, Propulsion, Management. Management's copy
 // is the team's own (2026-10); the other four divisions' overview,
 // responsibilities, skills, technologies, and major projects still aren't
 // supplied — left as labeled placeholders. See ASSETS_NEEDED.md (Departments Page).
@@ -33,9 +33,9 @@ const content: Record<string, DepartmentContent> = {
 
 export const departments: Department[] = [
   { slug: "mechanical", name: "Mechanical" },
+  { slug: "electronics", name: "Electronics" },
+  { slug: "computer-science", name: "Computer Science" },
   { slug: "propulsion", name: "Propulsion" },
-  { slug: "electrical", name: "Electrical" },
-  { slug: "cs", name: "CS" },
   { slug: "management", name: "Management" },
 ].map(({ slug, name }) => ({
   id: `department-${slug}`,

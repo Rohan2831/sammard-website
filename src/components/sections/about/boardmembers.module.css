@@ -49,6 +49,8 @@
 
 .photo {
   object-fit: cover;
+  /* Some headshots are full-length shots — keep the face in frame. */
+  object-position: center 20%;
 }
 
 .name {
@@ -69,8 +71,87 @@
   color: #7b7b7b;
 }
 
+/* Earlier years: editorial rule-divided rows that expand in place. */
+.past {
+  margin-top: var(--space-10);
+}
+
+.pastHeading {
+  margin: 0 0 var(--space-2);
+  font-family: var(--font-space), sans-serif;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #7b7b7b;
+}
+
+.pastYear {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.pastYear:first-of-type {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.summary {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) 0;
+  cursor: pointer;
+  list-style: none;
+}
+
+.summary::-webkit-details-marker {
+  display: none;
+}
+
+.summary:focus-visible {
+  outline: 2px solid #ffffff;
+  outline-offset: 4px;
+}
+
+.summaryYear {
+  font-family: var(--font-space), sans-serif;
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #d9d9d9;
+  transition: color 0.3s ease;
+}
+
+.summaryCount {
+  font-size: 0.875rem;
+  color: #7b7b7b;
+}
+
+.chevron {
+  margin-left: auto;
+  color: #7b7b7b;
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.summary:hover .summaryYear,
+.pastYear[open] .summaryYear {
+  color: #ffffff;
+}
+
+.summary:hover .chevron {
+  color: #ffffff;
+}
+
+.pastYear[open] .chevron {
+  transform: rotate(180deg);
+}
+
+.pastBody {
+  padding: var(--space-2) 0 var(--space-6);
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .photoWrap {
+  .photoWrap,
+  .summaryYear,
+  .chevron {
     transition: none;
   }
 }

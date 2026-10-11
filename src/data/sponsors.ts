@@ -10,11 +10,12 @@ export const sponsors: Sponsor[] = [
   {
     id: "converge",
     name: "Convergent",
-    logoSrc: "/assets/shared/sponsors/converge.png",
+    logoSrc: "/assets/shared/sponsors/convergent.png",
     logoAlt: "Convergent company logo",
     tier: "platinum",
-    description: "Leading aerospace manufacturing company providing materials and technical expertise.",
-    website: "https://www.converge.com/",
+    description: "Computational fluid dynamics (CFD) company — makers of CONVERGE CFD software.",
+    website: "https://convergecfd.com/",
+    linkedinUrl: "https://www.linkedin.com/company/convergent-science-inc/",
   },
   {
     id: "solidworks",
@@ -51,7 +52,7 @@ export const sponsors: Sponsor[] = [
   {
     id: "aerospace-association-of-india",
     name: "Aerospace Association of India",
-    logoSrc: "/assets/shared/sponsors/sponsor-six.png",
+    logoSrc: "/assets/shared/sponsors/aerospace-association-of-india.png",
     logoAlt: "Aerospace Association of India logo",
     description: "National organization supporting collegiate aerospace initiatives.",
   },
