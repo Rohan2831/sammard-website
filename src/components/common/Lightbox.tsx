@@ -1,6 +1,7 @@
 "use client";
 
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { posterFor } from "./SwapVideo";
 import type { GalleryItem } from "@/types";
 import styles from "./Lightbox.module.css";
 
@@ -16,7 +17,7 @@ export function Lightbox({ item, onClose }: LightboxProps) {
       <DialogContent className={styles.content}>
         <DialogTitle className={styles.srOnly}>{item?.alt ?? "Media viewer"}</DialogTitle>
         {item?.type === "video" ? (
-          <video className={styles.media} src={item.src} controls autoPlay />
+          <video className={styles.media} src={item.src} poster={posterFor(item.src)} controls autoPlay />
         ) : item ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img className={styles.media} src={item.src} alt={item.alt} />

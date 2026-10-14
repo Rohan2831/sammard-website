@@ -12,7 +12,7 @@ export const actionCards: ActionCardData[] = [
   {
     title: "Launches",
     mediaType: "video",
-    mediaSrc: "/assets/shared/videos/inflight.mp4",
+    mediaSrc: "/assets/shared/videos/inflight-loop.mp4",
     imageAlt: "Rocket Launch",
   },
   {

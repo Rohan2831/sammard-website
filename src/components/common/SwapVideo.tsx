@@ -7,19 +7,23 @@ type SwapVideoProps = Omit<VideoHTMLAttributes<HTMLVideoElement>, "src" | "autoP
   src: string;
 };
 
+/** The still shown before a video plays: same name, `.jpg` (e.g. inflight-loop.mp4 → inflight-loop.jpg). */
+export const posterFor = (src: string) => src.replace(/\.(mp4|webm|mov)$/i, ".jpg");
+
 /**
  * A muted, looping background video that stays cheap however big the file
- * dropped into its slot is: nothing downloads until it nears the viewport, it
- * plays only while visible, and a missing file disappears instead of leaving a
- * broken player. Style it to fill a fixed-aspect frame with object-fit: cover,
- * so any resolution or aspect ratio fits.
+ * dropped into its slot is: it starts downloading well before it scrolls into
+ * view, plays only while visible, shows its still (`posterFor`) instead of a
+ * black frame until it can play, and a missing file disappears instead of
+ * leaving a broken player. Style it to fill a fixed-aspect frame with
+ * object-fit: cover, so any resolution or aspect ratio fits.
  */
 export function SwapVideo({ src, ...props }: SwapVideoProps) {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const [requested, setRequested] = useState(false);
   const [missing, setMissing] = useState(false);
   const { ref, inView } = useInView({
-    rootMargin: "300px 0px",
+    rootMargin: "1000px 0px",
     onChange: (visible) => {
       if (visible) setRequested(true);
     },
@@ -41,10 +45,11 @@ export function SwapVideo({ src, ...props }: SwapVideoProps) {
         ref(el);
       }}
       src={requested ? src : undefined}
+      poster={posterFor(src)}
       muted
       loop
       playsInline
-      preload="none"
+      preload={requested ? "auto" : "none"}
       onError={() => setMissing(true)}
     />
   );

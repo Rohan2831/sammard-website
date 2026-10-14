@@ -60,6 +60,7 @@ What's on the site and where it came from, so nothing gets lost. Gaps are tracke
   - IREC 2025: 28th globally in Design and Build Quality.
   - CanSat 2025 season: not drawn to fly.
 - **Browser tab icon:** the logo's emblem (no lettering) on a white disc — `src/app/icon.png` (512) and `apple-icon.png` (180), generated from `shared/logo.png`; the default Next.js favicon is gone. The homepage hero has no scroll-down arrow.
+- **Performance pass (2026-10-14):** native wheel scrolling (Lenis only for eased jumps), eased scroll scenes, 3D built once and GPU-warmed before it's reached, video stills + 14 s homepage flight loop, WebP-only images. See ARCHITECTURE.md "Caching and media weight".
 - **Timeline:** 2017–2026, as a scroll-driven scene: year-partitioned rail (click to jump), one milestone at a time with fades, rocket fly-out at the present.
 - **Gallery:** 72 items from the live and previous sites and the team's folders, with 12 filters.
 - **Sponsors:**

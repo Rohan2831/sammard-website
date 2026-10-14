@@ -1,6 +1,7 @@
 "use client";
 
 import { ScrollTrigger } from "./gsap";
+import { smoothProgress } from "./smoothprogress";
 import type { AnimationCleanup, SectionAnimationRefs } from "./types";
 
 /** `root` is the tall scroll track the showcase's sticky stage rides inside. */
@@ -21,14 +22,18 @@ export function rocketSubsystemShowcaseAnimation(
   const { root } = refs;
   if (!root.current) return () => {};
 
+  const progress = smoothProgress(onProgress);
   const trigger = ScrollTrigger.create({
     trigger: root.current,
     start: "top top",
     end: "bottom bottom",
-    onUpdate: (self) => onProgress(self.progress),
-    onRefresh: (self) => onProgress(self.progress),
+    onUpdate: (self) => progress.set(self.progress),
+    onRefresh: (self) => progress.set(self.progress, true),
   });
-  onProgress(trigger.progress);
+  progress.set(trigger.progress, true);
 
-  return () => trigger.kill();
+  return () => {
+    progress.dispose();
+    trigger.kill();
+  };
 }

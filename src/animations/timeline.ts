@@ -3,6 +3,7 @@
 import type { RefObject } from "react";
 import { ScrollTrigger, prefersReducedMotion } from "./gsap";
 import { getLenis } from "./lenis";
+import { smoothProgress } from "./smoothprogress";
 import type { AnimationCleanup, SectionAnimationRefs } from "./types";
 
 /** Scroll length per year, and for the closing fly-out, in vh. */
@@ -141,6 +142,7 @@ export function timelineAnimation(refs: TimelineAnimationRefs): AnimationCleanup
     }
   };
 
+  const progress = smoothProgress(render);
   const trigger = ScrollTrigger.create({
     trigger: sectionEl,
     start: `top ${NAV_OFFSET}px`,
@@ -148,12 +150,12 @@ export function timelineAnimation(refs: TimelineAnimationRefs): AnimationCleanup
     invalidateOnRefresh: true,
     onRefresh: (self) => {
       measure();
-      render(self.progress);
+      progress.set(self.progress, true);
     },
-    onUpdate: (self) => render(self.progress),
+    onUpdate: (self) => progress.set(self.progress),
   });
   measure();
-  render(trigger.progress);
+  progress.set(trigger.progress, true);
 
   // Clicking a year glides to the scroll position where that year is centred on the rail.
   const handlers = stops.current.map((stop, i) => {
@@ -169,6 +171,7 @@ export function timelineAnimation(refs: TimelineAnimationRefs): AnimationCleanup
 
   return () => {
     handlers.forEach((off) => off());
+    progress.dispose();
     trigger.kill();
   };
 }

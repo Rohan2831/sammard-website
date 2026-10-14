@@ -28,9 +28,14 @@ export function initLenis(): () => void {
   if (typeof window === "undefined") return () => {};
   if (lenisInstance) return () => {};
 
+  // Native wheel/touch scrolling (smoothWheel off): JS-driven smooth scrolling
+  // stutters whenever the main thread is busy (3D, videos), which made the
+  // homepage feel laggy on every device. Lenis is kept for its eased scrollTo
+  // (timeline year jumps, deep links); scroll-driven scenes ease themselves
+  // via smoothProgress.
   const lenis = new Lenis({
     autoRaf: false,
-    smoothWheel: true,
+    smoothWheel: false,
   });
 
   lenisInstance = lenis;

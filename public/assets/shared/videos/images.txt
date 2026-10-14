@@ -9,8 +9,10 @@
 #   [have]    = file is in the folder
 #   [MISSING] = slot is waiting for a file (the spot stays empty until then)
 #
-# Use .mp4 (H.264) so they play on every browser. Re-encoded 2026-10 to 720p with fast start (originals in reference-material/originals/).
+# Use .mp4 (H.264) so they play on every browser. Each video has a still with the
+# same name and .jpg (e.g. launch.jpg) shown until it plays — replace both together. Re-encoded 2026-10 to 720p with fast start (originals in reference-material/originals/).
 
 [have]    launch.mp4         Homepage hero background + Gallery
-[have]    inflight.mp4       Homepage "In Flight" card + Gallery
+[have]    inflight.mp4       Gallery (full 3-minute onboard flight)
+[have]    inflight-loop.mp4  Homepage "In Flight" card (14 s loop cut from inflight.mp4)
 [have]    rudra-testing.mp4  Homepage "Testing" card + Gallery

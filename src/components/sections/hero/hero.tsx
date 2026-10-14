@@ -23,7 +23,16 @@ export function Hero() {
 
   return (
     <section ref={sectionRef} className={styles.hero} data-hero>
-      <video ref={videoRef} className={styles.video} autoPlay muted loop playsInline>
+      <video
+        ref={videoRef}
+        className={styles.video}
+        poster="/assets/shared/videos/launch.jpg"
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="auto"
+      >
         <source src="/assets/shared/videos/launch.mp4" type="video/mp4" />
       </video>
 

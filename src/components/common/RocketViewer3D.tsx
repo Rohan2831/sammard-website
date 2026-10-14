@@ -45,15 +45,25 @@ export function RocketViewer3D({
   focusAmount,
   shift,
 }: RocketViewer3DProps) {
-  // Mount the canvas the first time the viewer nears the viewport, then keep it mounted
-  // (`inView` alone only pauses rendering, so scrolling back doesn't reload the model).
+  // Mount the canvas well before the viewer reaches the viewport (1500px ahead — on the
+  // homepage that's during page load), so downloading, decoding and building the
+  // model is done before the visitor scrolls to it, and keep it mounted. Rendering
+  // runs only while it's actually on screen (`inView`), so it costs nothing otherwise.
   const [mounted, setMounted] = useState(false);
-  const { ref, inView } = useInView({
-    rootMargin: "300px 0px",
-    onChange: (visible) => {
-      if (visible) setMounted(true);
+  const { ref: mountRef } = useInView({
+    rootMargin: "1500px 0px",
+    onChange: (near) => {
+      if (near) setMounted(true);
     },
   });
+  const { ref: viewRef, inView } = useInView({ rootMargin: "50px 0px" });
+  const ref = useCallback(
+    (el: HTMLDivElement | null) => {
+      mountRef(el);
+      viewRef(el);
+    },
+    [mountRef, viewRef]
+  );
   const [ready, setReady] = useState(false);
   const handleReady = useCallback(() => setReady(true), []);
 
