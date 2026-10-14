@@ -53,6 +53,16 @@
   object-position: center 20%;
 }
 
+/* Stand-in for members without a headshot. */
+.silhouette {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--surface);
+  fill: rgba(255, 255, 255, 0.14);
+}
+
 .name {
   margin: 0;
   font-weight: 600;

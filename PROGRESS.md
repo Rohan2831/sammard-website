@@ -15,6 +15,20 @@ What's on the site and where it came from, so nothing gets lost. Gaps are tracke
 - PTRs win over the old websites.
 - The latest source wins otherwise.
 
+**Settled from the shared documents (2026-10-14, team: all docs shared):**
+- Udbhava's payload = **MARK** (brochure, written after the flight, supersedes the PTR's bioprinter, which stays as an R&D project).
+- Agneya and Airavata follow their PTRs over the old website.
+- The NASA CanSat random draw stays on the CanSat 2025 season (the team's answer).
+- Project Rudra = 6 grains, per its PTR. The motor CAD shows 5 and isn't edited.
+- No 2025–26 board in any source.
+- Team-wide roles show no department.
+- Srishti's two 1st places stay unnamed.
+- Vajra and Pinaka keep the previous website's specs. Pinaka is recorded as built, not flown.
+
+**Board:**
+- 2026–27 is in the data but hidden until photos arrive; 2024–25 shows as current.
+- Members without a headshot show a silhouette. 3 older members have no photo anywhere; not pursued.
+
 **Pages:**
 - **Home:**
   - hero video;
@@ -26,11 +40,13 @@ What's on the site and where it came from, so nothing gets lost. Gaps are tracke
   - Sponsors.
 - **About:**
   - mission, vision, values and legacy copy;
-  - board members: 2026–27 (10, current, always open) plus 2017–2025 (76 people, 73 headshots, in collapsible rows).
+  - board members: 2024–25 shown as current (always open), earlier years in collapsible rows (76 people, 73 headshots, silhouettes for the rest); 2026–27 (10) in the data, hidden until photos arrive.
 - **Departments:**
   - the brochure's 5 domains;
   - Management: overview, 5 areas, skills, technologies;
-  - Computer Science: overview.
+  - Mechanical, Electronics, Propulsion: overview, responsibilities, skills, technologies (team copy, condensed);
+  - Computer Science: overview, responsibilities, skills, technologies (incl. this website's full stack);
+  - no Major Projects section (removed per the team).
 - **Projects:**
   - **Rockets:** Udbhava (full specs and 9 subsystems from its PTR, 3D model); Airavata and Agneya (full specs and 7 subsystems each from their PTRs); Vajra and Pinaka (specs from the previous website's carousel, provisional; Vajra 5 of 7 subsystems, Pinaka 1). Udbhava's average thrust (2,622 N theoretical) is from its PTR.
   - **CanSats:** CanSat 2025 and 2023, with images.

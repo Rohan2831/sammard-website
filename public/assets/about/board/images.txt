@@ -7,11 +7,13 @@
 # a different name? Ask Claude.
 #
 #   [have]    = file is in the folder
-#   [MISSING] = slot is waiting for a file (the spot stays empty until then)
+#   [MISSING] = slot is waiting for a file
+#   [none]    = no photo exists; silhouette shown (not needed)
 #
 # Named after the person (lowercase, hyphens). .jpg, .jpeg, .png or .webp all work.
 # Square-ish headshots look best; keep the face centred, they're cropped to fit.
-# Until a person's photo is added, the placeholder is shown.
+# Anyone without a photo shows a neutral silhouette.
+# The 2026–2027 board is hidden on the site until its photos are in (see board-members.ts).
 # Headshots imported from the team's previous website (2026-10).
 
 [MISSING] gahan-shekhar.jpg           Gahan Shekhar — Captain (2026–2027)
@@ -38,9 +40,9 @@
 [have]    mukul-sharma.jpg            Mukul Sharma — Electronics Senior (2024–2025)
 [have]    ranjith.jpg                 Ranjith — Electronics Senior (2024–2025)
 [have]    robin-phillip.jpg           Robin Phillip — Electronics Senior (2024–2025)
-[MISSING] khyati-kejriwal.jpg         Khyati Kejriwal — Electronics Senior (2024–2025)
+[none]    khyati-kejriwal.jpg         Khyati Kejriwal — Electronics Senior (2024–2025)
 [have]    b-keertana.jpg              B Keertana — CS Senior (2024–2025)
-[MISSING] syed-zeeshan-ahmed.jpg      Syed Zeeshan Ahmed — CS Senior (2024–2025)
+[none]    syed-zeeshan-ahmed.jpg      Syed Zeeshan Ahmed — CS Senior (2024–2025)
 [have]    gunjan-siddharth.jpg        Gunjan Siddharth — CS Senior (2024–2025)
 [have]    rahul-laxman.jpg            Rahul Laxman — CS Senior (2024–2025)
 [have]    paavan-kalyani.jpg          Paavan Kalyani — Captain (2023–2024)
@@ -94,10 +96,9 @@
 [have]    shashwat-rajput.jpg         Shashwat Rajput — Captain (2017–2018)
 [have]    shashank-amin.jpg           Shashank Amin — Vice Captain & Mech Lead (2017–2018)
 [have]    karishnu-poddar.jpg         Karishnu Poddar — CS Lead (2017–2018)
-[MISSING] rajarshi-bhattacharyya.jpg  Rajarshi Bhattacharyya — Avionics Lead (2017–2018)
+[none]    rajarshi-bhattacharyya.jpg  Rajarshi Bhattacharyya — Avionics Lead (2017–2018)
 [have]    baishayan-gupta.jpg         Baishayan Gupta — Management Lead (2017–2018)
 [have]    kartik-vijayakumar.jpg      Kartik Vijayakumar — Mechanical (2017–2018)
 [have]    ksp-anirudh.jpg             KSP Anirudh — Mechanical (2017–2018)
 [have]    arunava-basu.jpg            Arunava Basu — Avionics (2017–2018)
 [have]    preet-derasari.jpg          Preet Derasari — Avionics (2017–2018)
-[have]    placeholder.jpg             Shown for anyone without a photo yet

@@ -17,9 +17,9 @@ import type { Rocket } from "@/types";
 // team-sammard-brochure.pdf) confirms Udbhava flew at IREC 2026 — launched
 // and recovered, 3rd in Asia in the 10K SRAD category — and names its motor
 // "Project Rudra". Status moved from in-development to flown accordingly.
-// The brochure calls Udbhava's payload "MARK" (coefficient of friction in
-// microgravity), which conflicts with the PTR's bioprinter payload — the
-// PTR text is kept below until the team confirms; see ASSETS_NEEDED.md.
+// Udbhava's payload follows the brochure ("MARK", coefficient of friction in
+// microgravity): it's the later document, written after the flight, so it
+// supersedes the PTR's bioprinter (still shown as an R&D project in rnd.ts).
 // Airavata's IREC 2025 rank uses the brochure's "28th globally in Design and
 // Build Quality" (team's call, 2026-10) over the old site's "30th worldwide".
 //
@@ -65,7 +65,7 @@ export const rockets: Rocket[] = [
       {
         id: "payload",
         name: "Payload",
-        description: "A compact, autonomous 3D micro bioprinter that performs controlled extrusion-based printing during flight, studying bioink flow and print fidelity under transient acceleration and reduced-gravity conditions for future aerospace and biomanufacturing applications.",
+        description: "MARK — a scientific payload that measured the coefficient of friction in microgravity during flight.",
       },
       {
         id: "recovery",

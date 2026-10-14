@@ -54,16 +54,6 @@ export function DepartmentCard({ department, index }: { department: Department; 
                 ))}
               </ul>
             </div>
-            {department.majorProjects && department.majorProjects.length > 0 && (
-              <div>
-                <h4>Major Projects</h4>
-                <ul>
-                  {department.majorProjects.map((p) => (
-                    <li key={p}>{p}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
           </div>
         </div>
       )}

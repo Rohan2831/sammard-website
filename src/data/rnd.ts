@@ -9,8 +9,8 @@ import type { RndProject } from "@/types";
 // full team subsystem projects, not just per-rocket components.
 // 2026-10: Project Rudra, Sirius's STM32 basis, the CyberDeck ground station
 // and BHAGAT-C's ESP32/4-leaf details added from the team's sponsorship
-// brochure. The brochure names Udbhava's payload "MARK" — conflicts with the
-// PTR's bioprinter below; kept as-is pending team confirmation.
+// brochure. Udbhava flew MARK (per the brochure, the later document); the
+// bioprinter is kept here as an R&D project documented in Udbhava's PTR.
 // Images are figures from the same PTR (static-fire setup, Sirius layout,
 // airbrake/payload renders, ATS hardware, Shrota Pro, main parachute test).
 // ViziNav's image is its CAD render from the team's previous website (2026-10).
@@ -58,8 +58,8 @@ export const rndProjects: RndProject[] = [
   {
     id: "rnd-payloads",
     category: "Payloads",
-    title: "In-Flight Bioprinter",
-    description: "Our current payload project is a compact, autonomous 3D micro bioprinter, first flying aboard Udbhava. It performs controlled extrusion-based printing during flight using a specialized bio-ink formulation, studying bioink flow and print fidelity under transient acceleration and reduced-gravity conditions, with applications in future aerospace and biomanufacturing research.",
+    title: "Payloads",
+    description: "MARK, the scientific payload aboard Udbhava at IREC 2026, measured the coefficient of friction in microgravity. The team has also developed a compact, autonomous 3D micro bioprinter that performs controlled extrusion-based printing during flight using a specialized bio-ink formulation, studying bioink flow and print fidelity under transient acceleration and reduced-gravity conditions, with applications in future aerospace and biomanufacturing research.",
     image: "/assets/projects/rnd/payloads.jpg",
     imageAlt: "CAD render of the fully assembled bioprinter payload",
   },

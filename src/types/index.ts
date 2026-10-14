@@ -203,8 +203,6 @@ export interface Department {
   responsibilities: string[];
   skills: string[];
   technologies: string[];
-  /** Omitted for divisions without projects of their own (Management). */
-  majorProjects?: string[];
 }
 
 export interface BoardMember {
@@ -219,6 +217,8 @@ export interface BoardMember {
 export interface BoardYear {
   year: string; // e.g. "2026–2027"
   members: BoardMember[];
+  /** Kept in the data but not shown on the site yet (e.g. while photos are pending). */
+  hidden?: boolean;
 }
 
 export interface EventRecord {

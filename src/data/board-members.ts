@@ -15,6 +15,12 @@ import type { BoardYear } from "@/types";
 export const boardYears: BoardYear[] = [
   {
     year: "2026–2027",
+    // Hidden until the photos arrive (per the team) — the site shows 2024–2025
+    // as the current board meanwhile. Photo slots, in public/assets/about/board/:
+    // gahan-shekhar, aditi-bhore, aalap-panda, swaraj-sharma, yug-solanki,
+    // vedanjali-gautam, hansika-naresh, prateek-sreenath, adit-goyal,
+    // advay-kulkarni (.jpg/.png/.webp). Delete `hidden: true` to publish.
+    hidden: true,
     members: [
       { id: "board-2627-1", name: "Gahan Shekhar", position: "Captain" },
       { id: "board-2627-2", name: "Aditi Bhore", position: "Team Manager & CanSat Lead" },
