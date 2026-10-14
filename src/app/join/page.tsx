@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { SectionHeader } from "@/components/common/SectionHeader";
-import { ContactForm } from "@/components/common/ContactForm";
+import { ContactDetails } from "@/components/common/ContactDetails";
 import { departments } from "@/data/departments";
-import { CONTACT_EMAIL } from "@/data/navigation";
 import styles from "./page.module.css";
 
 export const metadata: Metadata = {
@@ -16,7 +15,7 @@ export default function JoinPage() {
     <section className={styles.section}>
       <SectionHeader
         heading="Join Team SAMMARD"
-        description="We're a student-led aerospace team building real hardware — rockets, payloads, CanSats — and we're always looking for people who want to learn by building. Pick a department below and tell us about yourself."
+        description="We're a student-led aerospace team building real hardware — rockets, payloads, CanSats — and we're always looking for people who want to learn by building. Pick a department below, then email us or call our team captain to apply."
       />
 
       <div className={styles.departments}>
@@ -27,18 +26,7 @@ export default function JoinPage() {
         ))}
       </div>
 
-      <ContactForm
-        recipientEmail={CONTACT_EMAIL}
-        subject="Recruitment Application"
-        submitLabel="Send Application"
-        fields={[
-          { name: "name", label: "Name", type: "text" },
-          { name: "email", label: "Email", type: "email" },
-          { name: "yearBranch", label: "Year / Branch", type: "text" },
-          { name: "department", label: "Department Interest", type: "text" },
-          { name: "message", label: "Why do you want to join?", type: "textarea" },
-        ]}
-      />
+      <ContactDetails />
     </section>
   );
 }

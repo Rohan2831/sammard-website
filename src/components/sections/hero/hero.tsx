@@ -2,7 +2,6 @@
 import styles from "./hero.module.css";
 import { useEffect, useRef } from "react";
 import Link from "next/link";
-import { ChevronDown } from "lucide-react";
 import { heroAnimation } from "@/animations/hero";
 import { Button } from "@/components/ui/button";
 
@@ -11,7 +10,6 @@ export function Hero() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
   const ctaGroupRef = useRef<HTMLDivElement>(null);
-  const scrollIndicatorRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const cleanup = heroAnimation({
@@ -19,7 +17,6 @@ export function Hero() {
       video: videoRef,
       heading: titleRef,
       ctaGroup: ctaGroupRef,
-      scrollIndicator: scrollIndicatorRef,
     });
     return cleanup;
   }, []);
@@ -40,10 +37,6 @@ export function Hero() {
             <Link href="/about">Learn More</Link>
           </Button>
         </div>
-      </div>
-
-      <div ref={scrollIndicatorRef} className={styles.scrollIndicator} aria-hidden="true">
-        <ChevronDown size={28} />
       </div>
     </section>
   );

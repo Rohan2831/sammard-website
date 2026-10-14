@@ -14,13 +14,12 @@ export interface HeroAnimationRefs extends SectionAnimationRefs {
   video: RefObject<HTMLVideoElement | null>;
   heading: RefObject<HTMLHeadingElement | null>;
   ctaGroup: RefObject<HTMLDivElement | null>;
-  scrollIndicator: RefObject<HTMLDivElement | null>;
 }
 
 export function heroAnimation(
   refs: HeroAnimationRefs
 ): AnimationCleanup {
-  const { root, video, heading, ctaGroup, scrollIndicator } = refs;
+  const { root, video, heading, ctaGroup } = refs;
 
   if (!root.current) {
     return () => {};
@@ -76,26 +75,12 @@ export function heroAnimation(
 
     /*
      * ---------------------------------------------------------------
-     * CTA GROUP + SCROLL INDICATOR — fade in after the letter-reveal
+     * CTA GROUP — fade in after the letter-reveal
      * ---------------------------------------------------------------
      */
 
     if (ctaGroup.current) {
       fadeUp(ctaGroup.current, { delay: 1.2, duration: 0.9 });
-    }
-    if (scrollIndicator.current) {
-      fadeUp(scrollIndicator.current, { delay: 1.4, duration: 0.9, y: 16 });
-
-      if (!prefersReducedMotion()) {
-        gsap.to(scrollIndicator.current, {
-          y: 10,
-          duration: 1.4,
-          ease: "power1.inOut",
-          repeat: -1,
-          yoyo: true,
-          delay: 1.8,
-        });
-      }
     }
 
     /*
@@ -123,7 +108,7 @@ export function heroAnimation(
           0
         )
         .to(
-          [heading.current, ctaGroup.current, scrollIndicator.current].filter(Boolean),
+          [heading.current, ctaGroup.current].filter(Boolean),
           {
             opacity: 0,
             y: -80,

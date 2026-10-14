@@ -14,6 +14,8 @@ export interface SocialLink {
 export interface ContactInfo {
   email: string;
   phone: string;
+  /** Whose number it is, shown next to it (e.g. "Team Captain"). */
+  phoneLabel?: string;
   addressLines: string[];
 }
 

@@ -62,8 +62,5 @@ Only what's still missing. Everything already on the site is listed in PROGRESS.
 
 ## Site-wide
 
-- [ ] Optional: smaller re-exports of `public/assets/shared/videos/rudra-testing.mp4` (34 MB) and `inflight.mp4` (14 MB), a few MB each, same names.
 - [ ] Optional: Join page details: who can apply, eligibility, and how the application process works.
-- [ ] Optional: a form service (Formspree, Google Form or similar), so the Contact, Join and Sponsor forms submit directly instead of opening the visitor's email app.
-- [ ] Optional: a favicon made from the team logo. The default Next.js icon is shown now.
 - [ ] Optional: more flight and testing videos.

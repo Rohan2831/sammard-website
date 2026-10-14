@@ -7,24 +7,3 @@
   align-items: center;
   gap: var(--space-4);
 }
-
-.details {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.6rem;
-}
-
-.detailRow {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  color: #b5b5b5;
-  font-weight: 500;
-  text-align: center;
-}
-
-.detailRow:is(a):hover {
-  color: #ffffff;
-}
-

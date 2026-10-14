@@ -59,6 +59,7 @@ What's on the site and where it came from, so nothing gets lost. Gaps are tracke
   - Srishti: full award list.
   - IREC 2025: 28th globally in Design and Build Quality.
   - CanSat 2025 season: not drawn to fly.
+- **Browser tab icon:** the logo's emblem (no lettering) on a white disc — `src/app/icon.png` (512) and `apple-icon.png` (180), generated from `shared/logo.png`; the default Next.js favicon is gone. The homepage hero has no scroll-down arrow.
 - **Timeline:** 2017–2026, as a scroll-driven scene: year-partitioned rail (click to jump), one milestone at a time with fades, rocket fly-out at the present.
 - **Gallery:** 72 items from the live and previous sites and the team's folders, with 12 filters.
 - **Sponsors:**
@@ -67,7 +68,7 @@ What's on the site and where it came from, so nothing gets lost. Gaps are tracke
   - brochure PDF;
   - sponsor form.
 - **Documentation:** 3 PTRs, view-only.
-- **Contact and Join:** email, phone, address, Instagram, LinkedIn, X (no YouTube); forms use mailto to teamsammard@gmail.com, subjects tagged "[From Website] <form>" (+ the visitor's subject on Contact).
+- **Contact, Join and Sponsors:** no forms (removed per the team) — the team email (click copies it) and the team captain's phone, +91 80509 20665, also in the footer; address, Instagram, LinkedIn, X (no YouTube).
 
 ## Done
 

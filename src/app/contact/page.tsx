@@ -1,10 +1,7 @@
 import type { Metadata } from "next";
-import { Mail, Phone, MapPin } from "lucide-react";
 import { SectionHeader } from "@/components/common/SectionHeader";
-import { ContactForm } from "@/components/common/ContactForm";
 import { SocialLinks } from "@/components/common/SocialLinks";
-import { CopyableMailLink } from "@/components/common/CopyableMailLink";
-import { CONTACT_EMAIL, contactInfo } from "@/data/navigation";
+import { ContactDetails } from "@/components/common/ContactDetails";
 import styles from "./page.module.css";
 
 export const metadata: Metadata = {
@@ -15,36 +12,9 @@ export const metadata: Metadata = {
 export default function ContactPage() {
   return (
     <section className={styles.section}>
-      <SectionHeader heading="Contact" />
-
-      <div className={styles.details}>
-        <CopyableMailLink email={CONTACT_EMAIL} className={styles.detailRow}>
-          <Mail size={18} />
-          {CONTACT_EMAIL}
-        </CopyableMailLink>
-        <a href={`tel:${contactInfo.phone}`} className={styles.detailRow}>
-          <Phone size={18} />
-          {contactInfo.phone}
-        </a>
-        <span className={styles.detailRow}>
-          <MapPin size={18} />
-          {contactInfo.addressLines.join(", ")}
-        </span>
-      </div>
-
+      <SectionHeader heading="Contact" description="Email the team, or call our team captain." />
+      <ContactDetails showAddress />
       <SocialLinks size={22} />
-
-      <ContactForm
-        recipientEmail={CONTACT_EMAIL}
-        subject="Contact"
-        submitLabel="Send Message"
-        fields={[
-          { name: "name", label: "Name", type: "text" },
-          { name: "email", label: "Email", type: "email" },
-          { name: "subject", label: "Subject", type: "text" },
-          { name: "message", label: "Message", type: "textarea" },
-        ]}
-      />
     </section>
   );
 }

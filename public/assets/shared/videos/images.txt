@@ -9,7 +9,7 @@
 #   [have]    = file is in the folder
 #   [MISSING] = slot is waiting for a file (the spot stays empty until then)
 #
-# Use .mp4 (H.264) so they play on every browser.
+# Use .mp4 (H.264) so they play on every browser. Re-encoded 2026-10 to 720p with fast start (originals in reference-material/originals/).
 
 [have]    launch.mp4         Homepage hero background + Gallery
 [have]    inflight.mp4       Homepage "In Flight" card + Gallery

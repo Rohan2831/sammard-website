@@ -59,15 +59,3 @@
     gap: 16px;
     margin-top: 40px;
 }
-
-.scrollIndicator {
-    position: absolute;
-    left: 50%;
-    bottom: 32px;
-    transform: translateX(-50%);
-    z-index: 10;
-    color: rgba(255, 255, 255, 0.8);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}

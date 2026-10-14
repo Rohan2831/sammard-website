@@ -45,6 +45,7 @@ export const CONTACT_EMAIL = "teamsammard@gmail.com";
 
 export const contactInfo: ContactInfo = {
   email: CONTACT_EMAIL,
-  phone: "+91-8095390385",
+  phone: "+91 80509 20665",
+  phoneLabel: "Team Captain",
   addressLines: ["Creation Labs, VIT Vellore", "Vellore, Tamil Nadu, India"],
 };

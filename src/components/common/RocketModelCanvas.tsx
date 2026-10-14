@@ -4,7 +4,7 @@
    the standard React Three Fiber pattern, which the React Compiler's
    immutability model doesn't account for. */
 
-import { Suspense, useEffect, useMemo, useRef, type RefObject } from "react";
+import { Suspense, useEffect, useMemo, useRef, useState, type RefObject } from "react";
 import { Canvas, useFrame, useLoader, useThree } from "@react-three/fiber";
 import { Environment, Lightformer, OrbitControls, PerspectiveCamera, useGLTF } from "@react-three/drei";
 import * as THREE from "three";
@@ -475,6 +475,16 @@ function DecalledRocketParts({ decalSrc, ...props }: RocketPartsProps & { decalS
   return <RocketParts {...props} decalImage={decalImage} />;
 }
 
+/**
+ * Loads the attachment CADs (motor, cutaway, airbrakes) in their own Suspense
+ * boundary, after the main model is already on screen, and hands them back.
+ */
+function AttachmentLoader({ srcs, onLoad }: { srcs: string[]; onLoad: (gltfs: { scene: THREE.Group }[]) => void }) {
+  const gltfs = useGLTF(srcs, DRACO_DECODER_PATH);
+  useEffect(() => onLoad(gltfs), [gltfs, onLoad]);
+  return null;
+}
+
 function RocketParts({
   model,
   orientation,
@@ -488,16 +498,20 @@ function RocketParts({
   onReady,
   decalImage,
 }: RocketPartsProps) {
-  // One call for the model and its attachments (always a non-empty list, so the hook is unconditional).
-  const gltfs = useGLTF([model.src, ...(model.attachments ?? []).map((a) => a.src)], DRACO_DECODER_PATH);
+  // Staged loading: the main model alone gets the rocket on screen; the attachment
+  // CADs (several MB) stream in afterwards and the assembly is rebuilt with them.
+  const main = useGLTF(model.src, DRACO_DECODER_PATH);
+  const attachmentSrcs = useMemo(() => (model.attachments ?? []).map((a) => a.src), [model.attachments]);
+  const [attachmentGltfs, setAttachmentGltfs] = useState<{ scene: THREE.Group }[] | null>(null);
   const { root, parts, center, assembled, whole, groups } = useMemo(() => {
-    const [main, ...rest] = gltfs;
     if (model.finishes) applyFinishes(main.scene, model.finishes);
     if (model.decal && decalImage) applyDecal(main.scene, model.decal, decalImage);
-    const attachments = (model.attachments ?? []).map((spec, i) => ({ spec, scene: rest[i].scene }));
+    const attachments = attachmentGltfs
+      ? (model.attachments ?? []).map((spec, i) => ({ spec, scene: attachmentGltfs[i].scene }))
+      : [];
     if (model.finishes) attachments.forEach(({ scene }) => applyFinishes(scene, model.finishes!));
     return prepare(main.scene, model.partGroups, attachments);
-  }, [gltfs, model.partGroups, model.attachments, model.finishes, model.decal, decalImage]);
+  }, [main, attachmentGltfs, model.partGroups, model.attachments, model.finishes, model.decal, decalImage]);
   const spinRef = useRef<THREE.Group>(null);
   const explodeCurrent = useRef(typeof explode === "number" ? explode : 0);
   const reducedMotion = useMemo(() => prefersReducedMotion(), []);
@@ -615,6 +629,11 @@ function RocketParts({
       <group ref={spinRef}>
         <primitive object={root} position={[-center.x, -center.y, -center.z]} />
       </group>
+      {attachmentSrcs.length > 0 && (
+        <Suspense fallback={null}>
+          <AttachmentLoader srcs={attachmentSrcs} onLoad={setAttachmentGltfs} />
+        </Suspense>
+      )}
     </group>
   );
 }

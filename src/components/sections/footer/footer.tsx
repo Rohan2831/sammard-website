@@ -101,9 +101,9 @@ export default function Footer({
             <Mail size={16} className={styles.icon} aria-hidden="true" />
             {contactEmail}
           </CopyableMailLink>
-          <a href={`tel:${contactInfo.phone}`} className={styles.link}>
+          <a href={`tel:${contactInfo.phone.replace(/\s/g, "")}`} className={styles.link}>
             <Phone size={16} className={styles.icon} aria-hidden="true" />
-            {contactInfo.phone}
+            {contactInfo.phoneLabel ? `${contactInfo.phoneLabel} · ${contactInfo.phone}` : contactInfo.phone}
           </a>
           <span className={styles.link}>
             <MapPin size={16} className={styles.icon} aria-hidden="true" />
