@@ -48,7 +48,7 @@ What's on the site and where it came from, so nothing gets lost. Gaps are tracke
   - Computer Science: overview, responsibilities, skills, technologies (incl. this website's full stack);
   - no Major Projects section (removed per the team).
 - **Projects:**
-  - **Rockets:** Udbhava (full specs and 9 subsystems from its PTR, 3D model); Airavata and Agneya (full specs and 7 subsystems each from their PTRs); Vajra and Pinaka (specs from the previous website's carousel, provisional; Vajra 5 of 7 subsystems, Pinaka 1). Udbhava's average thrust (2,622 N theoretical) is from its PTR.
+  - **Rockets:** (only Udbhava's card expands, with its 3D model; the others show their render only) Udbhava (full specs and 9 subsystems from its PTR, 3D model); Airavata and Agneya (full specs and 7 subsystems each from their PTRs); Vajra and Pinaka (specs from the previous website's carousel, provisional; Vajra 5 of 7 subsystems, Pinaka 1). Udbhava's average thrust (2,622 N theoretical) is from its PTR.
   - **CanSats:** CanSat 2025 and 2023, with images.
   - **R&D:** 8 projects with images: Propulsion (Ignis, Tejas, Rudra), Avionics (SPARC, Sirius, Bessie), BHAGAT-C, ATS, Ground Station (Shrota, CyberDeck), Bioprinter, Recovery, ViziNav.
 - **Events:** 10 events, latest first, each with:
@@ -59,7 +59,7 @@ What's on the site and where it came from, so nothing gets lost. Gaps are tracke
   - Srishti: full award list.
   - IREC 2025: 28th globally in Design and Build Quality.
   - CanSat 2025 season: not drawn to fly.
-- **Timeline:** 2017–2026.
+- **Timeline:** 2017–2026, as a scroll-driven scene: year-partitioned rail (click to jump), one milestone at a time with fades, rocket fly-out at the present.
 - **Gallery:** 72 items from the live and previous sites and the team's folders, with 12 filters.
 - **Sponsors:**
   - 6 sponsors (Convergent links to convergecfd.com and LinkedIn);
@@ -67,7 +67,7 @@ What's on the site and where it came from, so nothing gets lost. Gaps are tracke
   - brochure PDF;
   - sponsor form.
 - **Documentation:** 3 PTRs, view-only.
-- **Contact and Join:** email, phone, address, Instagram, LinkedIn, X (no YouTube); forms use mailto.
+- **Contact and Join:** email, phone, address, Instagram, LinkedIn, X (no YouTube); forms use mailto to teamsammard@gmail.com, subjects tagged "[From Website] <form>" (+ the visitor's subject on Contact).
 
 ## Done
 

@@ -9,7 +9,9 @@ import { ExpandButton } from "./expandbutton";
 import styles from "./rocketcard.module.css";
 
 export function RocketCard({ rocket, initiallyExpanded = false }: { rocket: Rocket; initiallyExpanded?: boolean }) {
-  const [expanded, setExpanded] = useState(initiallyExpanded);
+  // Only rockets with a 3D model (Udbhava) open up; the rest are render-only cards.
+  const expandable = Boolean(rocket.model);
+  const [expanded, setExpanded] = useState(initiallyExpanded && expandable);
   const [exploded, setExploded] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
   const showModel = expanded && Boolean(rocket.model);
@@ -69,7 +71,7 @@ export function RocketCard({ rocket, initiallyExpanded = false }: { rocket: Rock
           </>
         )}
 
-        <ExpandButton expanded={expanded} label={rocket.name} onToggle={toggleExpanded} />
+        {expandable && <ExpandButton expanded={expanded} label={rocket.name} onToggle={toggleExpanded} />}
       </div>
 
       {expanded && (

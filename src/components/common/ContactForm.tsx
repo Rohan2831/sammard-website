@@ -26,7 +26,8 @@ export interface ContactFormProps {
  * Generic contact form, parameterized by field schema so Sponsor/Join/Contact
  * pages can each define their own fields. No backend exists yet — on submit
  * it opens a pre-filled `mailto:` link. Swap this for a real API call once a
- * backend/form service is chosen (see ASSETS_NEEDED.md).
+ * backend/form service is chosen (see ASSETS_NEEDED.md). Every subject is
+ * prefixed "[From Website]" so the team can filter it in teamsammard@gmail.com.
  */
 export function ContactForm({ fields, recipientEmail, subject, submitLabel = "Send" }: ContactFormProps) {
   const [submitted, setSubmitted] = useState(false);
@@ -56,7 +57,10 @@ export function ContactForm({ fields, recipientEmail, subject, submitLabel = "Se
 
   const onSubmit = (data: FormValues) => {
     const body = fields.map((field) => `${field.label}: ${data[field.name] ?? ""}`).join("\n");
-    const mailto = `mailto:${recipientEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    // Tagged so the team can filter website mail; a visitor-typed subject (Contact form) is appended.
+    const typed = typeof data.subject === "string" ? data.subject.trim() : "";
+    const fullSubject = `[From Website] ${subject}${typed ? ` — ${typed}` : ""}`;
+    const mailto = `mailto:${recipientEmail}?subject=${encodeURIComponent(fullSubject)}&body=${encodeURIComponent(body)}`;
     window.location.assign(mailto);
     setSubmitted(true);
   };

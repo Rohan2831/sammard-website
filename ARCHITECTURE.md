@@ -135,11 +135,14 @@ Every section is styled via a co-located `*.module.css` — no Tailwind in secti
 
 ## Timeline's pinned scroll — why sticky, not GSAP `pin`
 
+**Current design (2026-10-14):** one sticky scene (`.scene`, held under the 80px navbar) containing the heading, a rail split into one partition per year (clickable — `getLenis().scrollTo` to that year's scroll point), and the milestones stacked in one grid cell. `src/animations/timeline.ts` renders straight from a single ScrollTrigger's progress (`start: "top 80px"`, so the first scroll moves it): a travel phase (`TIMELINE_STEP_VH` per year — rocket rides the rail, nearest milestone fades/slides in, previous fades out) then a fly-out (`TIMELINE_FLY_VH` — rocket follows a cubic Bézier across the screen, nose on the tangent, drawing an SVG trail, and exits the top). The section's height is exactly that scroll budget, so the page ends when the flight does. Year labels tilt -45° below 768px so all ten fit. The notes below are about why it's sticky rather than pinned.
+
 `Timeline`'s horizontal scrub (`src/animations/timeline.ts`) uses a `position: sticky` wrapper (`.sticky` in `timeline.module.css`) with the section's height set to `100vh + trackDistance` in JS, rather than ScrollTrigger's `pin: true`. Originally used `pin: true`; switched after a reported crash navigating away from Timeline via the header (`Uncaught NotFoundError: Failed to execute 'removeChild'`). Investigation found:
 - The crash reproduces from **any** page, not just Timeline, and **only** in `npm run dev` — a full `npm run build && npm run start` test (including scrolling mid-Timeline before navigating away) had zero errors. It's a React Strict Mode double-effect-invoke + Turbopack Fast Refresh dev artifact, not a real production bug.
 - Switched Timeline off `pin: true` anyway as a hardening measure: pinning makes GSAP insert a "pin-spacer" wrapper div outside React's control, which is a real (if here unconfirmed) source of exactly this class of bug on route changes. Sticky positioning gets the same held-in-place effect with zero DOM restructuring, so there's nothing for GSAP to leave lying around for React to trip over. If a similar crash ever recurs, check for `pin: true` first — currently nothing in the codebase uses it (the `pinSection` primitive in `primitives.ts` still exists for future use, but nothing calls it).
 
 ## Design language
+
 
 Source of truth: the original homepage sections (`hero`, `whoweare`, `competitions`, `sponsors`, `footer` — predate this build-out, authored by the team). Every new page must match this, not a generic component-library look:
 

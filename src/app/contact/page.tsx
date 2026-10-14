@@ -36,7 +36,7 @@ export default function ContactPage() {
 
       <ContactForm
         recipientEmail={CONTACT_EMAIL}
-        subject="Website Contact"
+        subject="Contact"
         submitLabel="Send Message"
         fields={[
           { name: "name", label: "Name", type: "text" },
