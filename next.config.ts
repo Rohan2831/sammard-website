@@ -18,8 +18,10 @@ const nextConfig: NextConfig = {
     root: path.resolve(__dirname),
   },
   images: {
-    // AVIF first (~20–30% smaller than WebP), WebP for browsers without it.
-    formats: ["image/avif", "image/webp"],
+    // WebP only: AVIF was ~20–30% smaller but ~50% slower for Vercel to create
+    // on first view and heavier to decode, which showed as black photo slots
+    // and scroll jank on the dark site (2026-10-14).
+    formats: ["image/webp"],
     // Resized copies made by the image optimizer are reused for a week too.
     minimumCacheTTL: ONE_WEEK,
   },
