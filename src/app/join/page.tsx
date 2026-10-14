@@ -14,7 +14,7 @@ export default function JoinPage() {
   return (
     <section className={styles.section}>
       <SectionHeader
-        heading="Join Team SAMMARD"
+        heading={"Join Team SAMMARD"}
         description="We're a student-led aerospace team building real hardware — rockets, payloads, CanSats — and we're always looking for people who want to learn by building. Pick a department below, then email us or call our team captain to apply."
       />
 

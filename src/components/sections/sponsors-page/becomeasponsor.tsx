@@ -7,7 +7,7 @@ export function BecomeASponsor() {
   return (
     <section className={styles.section}>
       <SectionHeader
-        heading="Partner With Team SAMMARD"
+        heading={"Partner with Team SAMMARD"}
         description="Email us or call our team captain about your company and sponsorship interest — we'll follow up with the right package details."
       />
 
